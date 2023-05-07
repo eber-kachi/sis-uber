@@ -42,7 +42,7 @@ export class UserController {
   // @Auth(RoleType.USER)
   @HttpCode(HttpStatus.OK)
   async admin(@AuthUser() user: UserEntity): Promise<string> {
-    return `${user.firstName}`;
+    return `${user.email}`;
   }
 
   @Get()
@@ -102,5 +102,4 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }
-
 }

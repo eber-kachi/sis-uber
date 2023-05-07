@@ -59,7 +59,7 @@ export class UserService {
     }
 
     if (file) {
-      user.avatar = await this.awsS3Service.uploadImage(file);
+      // user.avatar = await this.awsS3Service.uploadImage(file);
     }
 
     return this.userRepository.save(user);

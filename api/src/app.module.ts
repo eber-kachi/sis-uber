@@ -12,6 +12,10 @@ import { ConfigService } from './shared/services/config.service';
 
 import { NotificationModule } from './modules/notification/notification.module';
 import { SchedulesModule } from './modules/schedules/schedules.module';
+import { SocioModule } from './modules/socio/socio.module';
+import { VeiculoModule } from './modules/veiculo/veiculo.module';
+import { ViajesModule } from './modules/viajes/viajes.module';
+import { ClienteModule } from './modules/cliente/cliente.module';
 
 @Module({
   imports: [
@@ -27,6 +31,10 @@ import { SchedulesModule } from './modules/schedules/schedules.module';
       useFactory: (configService: ConfigService) => configService.typeOrmConfig,
       inject: [ConfigService],
     }),
+    SocioModule,
+    VeiculoModule,
+    ViajesModule,
+    ClienteModule,
 
     // TypeOrmModule.forRoot({
     //   type: 'mysql',

@@ -22,6 +22,11 @@
   "include": [
     "src/**/*"
   ],
+  "paths": {
+    "@src/*": ["src/*"],
+    "@common/*": ["src/common/*"],
+    "@modules/*": ["src/modules/*"]
+},
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
