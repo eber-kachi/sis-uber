@@ -7,7 +7,8 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('socios')
 @ApiTags('socios')
 export class SocioController {
-  constructor(private socioService: SocioService) {}
+  constructor(private socioService: SocioService) {
+  }
 
   @Post()
   async create(@Body() createSocioDto: any) {
@@ -31,7 +32,7 @@ export class SocioController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.socioService.remove(+id);
+ async remove(@Param('id') id: string) {
+    return  await this.socioService.remove(id);
   }
 }

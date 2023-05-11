@@ -5,17 +5,17 @@ import { Column } from 'typeorm';
 import { Trim } from '../../../decorators/transforms.decorator';
 
 export class UserRegisterDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @Trim()
-  readonly firstName: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @Trim()
-  readonly lastName: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsNotEmpty()
+  // @Trim()
+  // readonly firstName: string;
+  //
+  // @ApiProperty()
+  // @IsString()
+  // @IsNotEmpty()
+  // @Trim()
+  // readonly lastName: string;
 
   @ApiProperty()
   @IsString()
@@ -29,9 +29,9 @@ export class UserRegisterDto {
   @MinLength(6)
   readonly password: string;
 
-  @ApiProperty()
-  @Column()
-  // @IsPhoneNumber('ZZ')
-  @IsOptional()
-  phone: string;
+  // @ApiProperty()
+  // @Column()
+  // // @IsPhoneNumber('ZZ')
+  // @IsOptional()
+  // phone: string;
 }

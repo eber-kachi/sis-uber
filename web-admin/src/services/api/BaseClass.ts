@@ -8,7 +8,7 @@ export abstract class BaseAPIClass {
     this.baseUrl = '';
   }
 
-  getAll(filterObject) {
+  getAll(filterObject?) {
     let queryString = '';
     if (filterObject) {
       const fitlerKeys = Object.keys(filterObject);

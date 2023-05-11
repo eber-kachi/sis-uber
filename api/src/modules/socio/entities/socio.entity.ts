@@ -6,7 +6,7 @@ import { ViajeEntity } from '../../viajes/entities/viaje.entity';
 import { VeiculoEntity } from '../../veiculo/entities/veiculo.entity';
 
 @Entity({ name: 'socios' })
-export class SocioEntity extends AbstractEntity<SocioDto> {
+export class SocioEntity extends  AbstractEntity<SocioDto> {
   @Column({ nullable: true })
   nombres: string;
 
@@ -41,7 +41,7 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
   // @Column()
   // userId: string;
 
-  @OneToOne(() => UserEntity)
+  @OneToOne(() => UserEntity ,{ cascade:true })
   @JoinColumn()
   user: UserEntity;
 
