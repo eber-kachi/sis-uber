@@ -21,6 +21,11 @@ export class ViajesController {
   findOne(@Param('id') id: string) {
     return this.viajesService.findOne(+id);
   }
+  // obtener todos los viajes segun el socio_id
+  @Get('get-by-cliente-id/:id')
+  async findAllByClientId(@Param('id') id: string) {
+    return await this.viajesService.findAllByClientId(id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateViajeDto: UpdateViajeDto) {
