@@ -31,14 +31,15 @@ export class SocioService {
     return socios;
   }
 
-  findOne(id: number) {
-    return this.socioRepository.findOne({
+  async findOne(id: string) {
+    return await this.socioRepository.findOneOrFail(id);
+    // {
       // where: findData,
       // relations: ['medico'],
-    });
+    // });
   }
 
-  async update(id: number, updateSocioDto: UpdateSocioDto) {
+  async update(id: string, updateSocioDto: UpdateSocioDto) {
     const socioUpdate = await this.socioRepository.findOne(id);
     if (!socioUpdate.id) {
       // tslint:disable-next-line:no-console
