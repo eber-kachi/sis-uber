@@ -10,24 +10,25 @@ import Button from "react-bootstrap/Button"
 import CustomModal from "@components/Modal/CustomModal"
 import Link from "next/link"
 import { toast } from "react-toastify"
+import ClienteService from "../../../services/api/Cliente.service"
 
 
 const SocioListPage: NextPage = ({ dataResponce }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
   // console.log("user value=>", userValue)
   console.log("list=>", dataResponce)
-  const socioService = new SocioService()
+  const clienteService = new ClienteService()
   const [modalShow, setModalShow] = useState(false)
   const [objects, setObjects] = useState(dataResponce ? dataResponce : [])
 
   const getData = async () => {
-    const responce: any[] = await socioService.getAll() as any[]
+    const responce: any[] = await clienteService.getAll() as any[]
     // getLinks(responce.links);
     setObjects(responce)
   }
 
   const onClickDelete = (id: string) => {
-    socioService.delete(id).then(res => {
+    clienteService.delete(id).then(res => {
       console.log(res)
        toast("Eliminado con exito.");
       getData()
@@ -45,12 +46,12 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
       <div className="row">
         <div className="m-2 d-flex flex flex-row justify-content-between">
           <div>
-            <h3>Lista de socios</h3>
+            <h3>Lista de Clientes</h3>
           </div>
           <div>
-            <Link className="btn btn-success" href={{ pathname: "/dashboard/socios/[id]", query: { id: "new" } }}>
-              Crear Nuevo
-            </Link>
+            {/*<Link className="btn btn-success" href={{ pathname: "/dashboard/socios/[id]", query: { id: "new" } }}>*/}
+            {/*  Crear Nuevo*/}
+            {/*</Link>*/}
             {/*<Button variant="primary" onClick={() => setModalShow(true)}>*/}
             {/*  Crear Nuevo*/}
             {/*</Button>*/}
@@ -64,8 +65,8 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
             <th>#</th>
             <th>Foto</th>
             <th>Nombre completo</th>
-            <th>Estado</th>
-            <th>Licencia</th>
+            {/*<th>Estado</th>*/}
+            {/*<th>Licencia</th>*/}
             <th>Acciones</th>
           </tr>
           </thead>
@@ -75,36 +76,34 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
               <td>{++index}</td>
               <td>Otto</td>
               <td>{object.nombres} {object.apellidos}</td>
-              <td>{object.estado}</td>
-              <td>
-                <ul>
-                  <li>Emision: {object.emision}</li>
-                  <li>N° Licencia: {object.nroLicencia}</li>
-                  <li>Vencimiento: {object.vencimiento}</li>
-                </ul>
-              </td>
+              {/*<td>{object.estado}</td>*/}
+              {/*<td>*/}
+              {/*  <ul>*/}
+              {/*    <li>Emision: {object.emision}</li>*/}
+              {/*    <li>N° Licencia: {object.nroLicencia}</li>*/}
+              {/*    <li>Vencimiento: {object.vencimiento}</li>*/}
+              {/*  </ul>*/}
+              {/*</td>*/}
               <td>
                 <div className="">
-                  {/*<Button variant="outline-warning" >*/}
-                  <Link className="btn btn-outline-warning"
+                  {/*<Link className="btn btn-outline-warning"*/}
+                  {/*      href={{*/}
+                  {/*        pathname: "/dashboard/socios/[id]/veiculo/[veiculo_id]",*/}
+                  {/*        query: { id: object.id , veiculo_id: (object?.veiculo==null)? 'new': object?.veiculo?.id },*/}
+                  {/*      }}>*/}
+                  {/*  /!*<a className='btn-warning m-1'>*!/*/}
+                  {/*  Veiculo*/}
+                  {/*  /!*</a>*!/*/}
+                  {/*</Link>*/}
+                  <Link className="btn btn-outline-warning" title="Ver viajes"
                         href={{
-                          pathname: "/dashboard/socios/[id]/veiculo/[veiculo_id]",
-                          query: { id: object.id , veiculo_id: (object?.veiculo==null)? 'new': object?.veiculo?.id },
-                        }}>
-                    {/*<a className='btn-warning m-1'>*/}
-                    Veiculo
-                    {/*</a>*/}
-                  </Link>
-                  <Link className="btn btn-outline-warning"
-                        href={{
-                          pathname: "/dashboard/socios/[id]",
+                          pathname: "/dashboard/clientes/[id]/viajes",
                           query: { id: object.id },
                         }}>
                     {/*<a className='btn-warning m-1'>*/}
-                    Editar
-                    {/*</a>*/}
+                    Viajes
                   </Link>
-                  {/*</Button>*/}
+                  {/*<Button variant="outline-danger" onClick={() => onClickDelete(object.id)}>Eliminar</Button>*/}
                   <Button variant="outline-danger" onClick={() => onClickDelete(object.id)}>Eliminar</Button>
                 </div>
               </td>
@@ -132,7 +131,7 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
 }
 
 export async function getServerSideProps(context) {
-  const service = new SocioService()
+  const service = new ClienteService()
   const responce = await service.getAll()
   // console.log(responce);
   return {

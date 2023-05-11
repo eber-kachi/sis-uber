@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { SocioService } from './socio.service';
 import { SocioDto } from './dto/create-socio.dto';
 import { UpdateSocioDto } from './dto/update-socio.dto';
@@ -7,8 +17,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('socios')
 @ApiTags('socios')
 export class SocioController {
-  constructor(private socioService: SocioService) {
-  }
+  constructor(private socioService: SocioService) {}
 
   @Post()
   async create(@Body() createSocioDto: any) {
@@ -28,7 +37,7 @@ export class SocioController {
     description: 'Get users list',
     type: SocioDto,
   })
- async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return await this.socioService.findOne(id);
   }
 
@@ -44,7 +53,7 @@ export class SocioController {
   }
 
   @Delete(':id')
- async remove(@Param('id') id: string) {
-    return  await this.socioService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.socioService.remove(id);
   }
 }

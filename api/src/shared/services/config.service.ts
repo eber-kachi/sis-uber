@@ -74,7 +74,7 @@ export class ConfigService {
       logging: this.nodeEnv === 'development',
       namingStrategy: new SnakeNamingStrategy(),
       synchronize: true,
-      autoLoadEntities:true
+      autoLoadEntities: true,
     };
   }
 

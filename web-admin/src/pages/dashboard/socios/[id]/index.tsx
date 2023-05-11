@@ -6,9 +6,11 @@ import { Button, Col, Form, InputGroup, Row } from "react-bootstrap"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser } from "@fortawesome/free-regular-svg-icons"
 import { faLock } from "@fortawesome/free-solid-svg-icons"
-import { AuthService } from "../../../services/api/Auth.service"
-import SocioService from "../../../services/api/Socio.service"
+import { AuthService } from "../../../../services/api/Auth.service"
+import SocioService from "../../../../services/api/Socio.service"
 import Modal from "react-bootstrap/Modal"
+import { toast } from "react-toastify"
+import VeiculoService from "../../../../services/api/Veiculo.service"
 
 const categorias = [
   "Particular (P)",
@@ -34,7 +36,7 @@ type Inputs = {
   username: string,
 }
 
-const socioEditPage = ({ isnew, data }) => {
+const VeiculoEditPage = ({ isnew, data }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const socioService = new SocioService();
@@ -69,20 +71,24 @@ const socioEditPage = ({ isnew, data }) => {
     if (isnew) {
       socioService.create(formData)
         .then(res => {
+          toast("Creado con exito.");
           router.back();
           console.log(res);
         })
         .catch(error => {
           console.log(error);
+          toast("Error al crear.",{});
         });
     } else {
       socioService.update(formData, data.id)
         .then(res => {
           // toastSuccess(res.message);
+          toast("Creado con exito.");
           router.back();
         })
         .catch(error => {
           console.log(error);
+          toast("Error al actualizar.",{});
         });
     }
   }
@@ -256,7 +262,9 @@ const socioEditPage = ({ isnew, data }) => {
 }
 
 export async function getServerSideProps(context) {
-  const { id } = context.params
+  const { id } = context.params;
+
+  console.log(context.params);
 
   if (id !== "new") {
     try {
@@ -290,4 +298,4 @@ export async function getServerSideProps(context) {
 }
 
 
-export default socioEditPage
+export default VeiculoEditPage

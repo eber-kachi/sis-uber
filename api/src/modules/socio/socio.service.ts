@@ -11,15 +11,16 @@ export class SocioService {
     public readonly socioRepository: SocioRepository,
     // public readonly userRepository: UserRepository,
     public readonly userService: UserService,
-  ) {
-  }
+  ) {}
 
   async create(createSocioDto: SocioDto) {
-    console.log('createSocioDto =>', createSocioDto);
-    const user = await this.userService.createUser({
-      email: `${createSocioDto.nombres}@gmail.com`,
-      password: createSocioDto.ci,
-    }, null);
+    const user = await this.userService.createUser(
+      {
+        email: `${createSocioDto.nombres}@gmail.com`,
+        password: createSocioDto.ci,
+      },
+      null,
+    );
     const socio = await this.socioRepository.create(createSocioDto);
     socio.user = user;
 
@@ -27,15 +28,15 @@ export class SocioService {
   }
 
   async findAll() {
-    const socios = await this.socioRepository.find({ order: { createdAt: 'DESC' } });
+    const socios = await this.socioRepository.find({ order: { createdAt: 'DESC' }, relations:['veiculo'] });
     return socios;
   }
 
   async findOne(id: string) {
     return await this.socioRepository.findOneOrFail(id);
     // {
-      // where: findData,
-      // relations: ['medico'],
+    // where: findData,
+    // relations: ['medico'],
     // });
   }
 
@@ -43,7 +44,7 @@ export class SocioService {
     const socioUpdate = await this.socioRepository.findOne(id);
     if (!socioUpdate.id) {
       // tslint:disable-next-line:no-console
-      console.error('Todo doesn\'t exist');
+      console.error("Todo doesn't exist");
     }
     await this.socioRepository.update(id, updateSocioDto);
     return await this.socioRepository.findOne(id);
@@ -51,7 +52,9 @@ export class SocioService {
 
   async remove(id: string) {
     const socios = await this.socioRepository.findOneOrFail({ where: { id }, relations: ['user'] });
-      this.userService.remove(socios?.user?.id).then();
+    if (socios != undefined) {
+      this.userService.remove(socios.user?.id).then();
+    }
     return await this.socioRepository.remove(socios);
   }
 }

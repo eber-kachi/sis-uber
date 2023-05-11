@@ -10,6 +10,11 @@ export class ClienteDto extends AbstractDto {
   nombres: string;
   @ApiPropertyOptional()
   apellidos: string;
+  @ApiPropertyOptional()
+  direccionMadre: string;
+
+  @ApiPropertyOptional()
+  ci: string;
 
   @ApiPropertyOptional()
   user: UserEntity;
@@ -21,7 +26,9 @@ export class ClienteDto extends AbstractDto {
     super(entity);
     this.nombres = entity.nombres;
     this.apellidos = entity.apellidos;
+    this.ci = entity.ci;
     this.user = entity.user;
     this.viajes = entity.viajes;
+    this.direccionMadre=entity.direccionMadre;
   }
 }
