@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from './shared/services/config.service';
 import { SharedModule } from './shared/shared.module';
 import { setupSwagger } from './setup-swagger';
+import { TransformationInterceptor } from './interceptors/transform.interceptor';
 
 async function bootstrap() {
   const loger = new Logger();
@@ -11,7 +12,10 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
+  // app.useGlobalInterceptors(new ClassSerializerInterceptor(
+  //   app.get(Reflector))
+  // );
+  // app.useGlobalInterceptors(new TransformationInterceptor());
   const configService = app.select(SharedModule).get(ConfigService);
 
   if (['development', 'staging'].includes(configService.nodeEnv)) {

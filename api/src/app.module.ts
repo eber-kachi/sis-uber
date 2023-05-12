@@ -16,6 +16,9 @@ import { SocioModule } from './modules/socio/socio.module';
 import { VeiculoModule } from './modules/veiculo/veiculo.module';
 import { ViajesModule } from './modules/viajes/viajes.module';
 import { ClienteModule } from './modules/cliente/cliente.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformationInterceptor } from './interceptors/transform.interceptor';
+import { AllExceptionsFilter } from 'interceptors/all-exceptions.filter';
 
 @Module({
   imports: [
@@ -49,6 +52,16 @@ import { ClienteModule } from './modules/cliente/cliente.module';
     // }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformationInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
