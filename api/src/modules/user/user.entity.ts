@@ -4,6 +4,7 @@ import { AbstractEntity } from '../../common/abstract.entity';
 import { RoleType } from '../../common/constants/role-type';
 // import { VirtualColumn } from '../../decorators/virtual-column.decorator';
 import { UserDto } from './dto/UserDto';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class UserEntity extends AbstractEntity<UserDto> {
@@ -22,6 +23,7 @@ export class UserEntity extends AbstractEntity<UserDto> {
   @Column({ default: true })
   activo: boolean;
 
+  @Exclude()
   @Column({ nullable: true })
   password: string;
 
