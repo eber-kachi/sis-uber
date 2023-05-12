@@ -8,11 +8,13 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { SocioService } from './socio.service';
 import { SocioDto } from './dto/create-socio.dto';
 import { UpdateSocioDto } from './dto/update-socio.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ResponseMessage } from 'decorators/response_message.decorator';
 
 @Controller('socios')
 @ApiTags('socios')
@@ -26,8 +28,23 @@ export class SocioController {
   }
 
   @Get()
+  @ResponseMessage('Fetched Stats Succesfully')
   findAll() {
-    return this.socioService.findAll();
+    try {
+      // await this.service.findAll()
+      return this.socioService.findAll();
+      // throw new HttpException('Un super error ', HttpStatus.FORBIDDEN);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   @Get(':id')
