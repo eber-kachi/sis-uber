@@ -56,7 +56,7 @@ export function getGeneralApiProblem(response: ApiResponse<any>): GeneralApiProb
     case "UNKNOWN_ERROR":
       return { kind: "unknown", temporary: true }
     case "CLIENT_ERROR":
-      switch (response.status) {
+      switch (response?.status) {
         case 401:
           return { kind: "unauthorized" }
         case 403:

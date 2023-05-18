@@ -5,8 +5,10 @@ import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
+import { AuthService } from "../services/api"
 
-interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
+interface LoginScreenProps extends AppStackScreenProps<"Login"> {
+}
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
   const authPasswordInput = useRef<TextInput>()
@@ -18,12 +20,13 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const {
     authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
   } = useStores()
+  const service = new AuthService()
 
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
-    setAuthEmail("ignite@infinite.red")
-    setAuthPassword("ign1teIsAwes0m3")
+    setAuthEmail("admin@gmail.com")
+    setAuthPassword("123456")
   }, [])
 
   const error = isSubmitted ? validationError : ""
@@ -31,17 +34,24 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   function login() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
-
-    if (validationError) return
+    console.log("authEmail", authEmail)
+    console.log("authPassword", authPassword)
+    // if (validationError) return
 
     // Make a request to your server to get an authentication token.
-    // If successful, reset the fields and set the token.
-    setIsSubmitted(false)
-    setAuthPassword("")
-    setAuthEmail("")
+    service.login({ email: authEmail, password: authPassword })
+      .then((res: any) => {
+        console.log(res.data)
+        // If successful, reset the fields and set the token.
+        setIsSubmitted(false)
+        setAuthPassword("")
+        setAuthEmail("")
+        // // We'll mock this with a fake token.
+        setAuthToken(res.data.token.accessToken)
 
-    // We'll mock this with a fake token.
-    setAuthToken(String(Date.now()))
+      }).catch(error => {
+      console.log(error)
+    })
   }
 
   const PasswordRightAccessory = useMemo(
@@ -73,9 +83,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn} />
-      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails} />
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
+      <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn}/>
+      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails}/>
+      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint}/>}
 
       <TextField
         value={authEmail}

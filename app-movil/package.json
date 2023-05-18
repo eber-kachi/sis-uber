@@ -23,6 +23,7 @@
     "clean": "npx react-native-clean-project",
     "clean-all": "npx react-native clean-project-auto",
     "expo:start": "expo start",
+    "expo:clear": "expo r -c",
     "expo:android": "expo start --android",
     "expo:ios": "expo start --ios",
     "expo:web": "expo start --web"
@@ -38,7 +39,9 @@
     "@react-navigation/native": "~6.0.1",
     "@react-navigation/native-stack": "^6.0.2",
     "@react-navigation/stack": "~6.2.1",
+    "@types/axios": "^0.14.0",
     "apisauce": "2.1.5",
+    "axios": "^1.4.0",
     "date-fns": "^2.29.2",
     "expo": "^47.0.0",
     "expo-application": "~5.0.1",
