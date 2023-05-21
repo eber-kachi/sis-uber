@@ -11,3 +11,20 @@ $enable-negative-margins: true;
 @import "~nprogress/nprogress.css";
 
 @import "_custom";
+
+.rotate-45{
+  transform: rotate(45deg);
+}
+
+
+//.-mt-5{
+//  margin-top: -30px;
+//  //transform: rotate(45deg);
+//}
+//.marker-label{
+//  background: #000;
+//  margin: 1rem;
+//  border:solid black 0.3rem;
+//  border-radius:  0.3rem;
+//  color: white;
+//}

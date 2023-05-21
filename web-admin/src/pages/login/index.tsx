@@ -31,8 +31,8 @@ const Index: NextPage = () => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data)
     authService.login(data).then(res => {
-      console.log(res)
-      setTokenValue(res?.token?.accessToken)
+      console.log('login',res)
+      setTokenValue(res?.data?.token?.accessToken)
       router.push("/dashboard")
 
     }).catch(errors => {

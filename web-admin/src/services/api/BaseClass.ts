@@ -39,8 +39,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+          // console.error('Promise', error);
+          // console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
