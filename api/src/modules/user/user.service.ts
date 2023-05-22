@@ -64,6 +64,11 @@ export class UserService {
 
     return this.userRepository.save(user);
   }
+  async createWithRole(userRegisterDto: UserRegisterDto, role: RoleType) {
+    const user = this.userRepository.create({ ...userRegisterDto, role });
+
+    return this.userRepository.save(user);
+  }
 
   async create(userRegisterDto: UserDto) {
     const user = this.userRepository.create(userRegisterDto);

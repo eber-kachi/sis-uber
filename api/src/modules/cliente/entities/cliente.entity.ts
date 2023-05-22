@@ -12,13 +12,13 @@ export class ClienteEntity extends AbstractEntity<ClienteDto> {
   @Column({ nullable: true })
   apellidos: string;
 
-  @Column({ nullable: false })
-  ci: string;
+  // @Column({ nullable: true })
+  // ci: string;
 
   @Column({ nullable: true })
-  direccionMadre: string;
+  direccionMadre: string | null;
 
-  @OneToOne(() => UserEntity,{cascade:true})
+  @OneToOne(() => UserEntity, { cascade: true })
   @JoinColumn()
   user: UserEntity;
 
