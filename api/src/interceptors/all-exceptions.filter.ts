@@ -14,6 +14,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const message = exception.message;
+      const responses: any = exception.getResponse();
+
+      if (status === HttpStatus.BAD_REQUEST) {
+        response.status(status).json({
+          statusCode: status,
+          message: typeof responses === 'object' ? responses.message : message,
+          error: exception.name,
+        });
+      }
+
       if (status === HttpStatus.NOT_FOUND || status === HttpStatus.BAD_REQUEST) {
         response.status(status).json({
           statusCode: status,
@@ -31,7 +41,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     } else {
       this.logger.error(exception);
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: 'Ocurrió un error inesperado',
+        message: 'Ocurrió un error:  inesperado',
       });
     }
   }
