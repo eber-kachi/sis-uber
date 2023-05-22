@@ -3,7 +3,7 @@ const es = {
     ok: "OK!",
     cancel: "Cancel",
     back: "Back",
-    logOut: "Log Out", // @demo remove-current-line
+    logOut: "Cerrar sesión", // @demo remove-current-line
   },
   welcomeScreen: {
     postscript:
@@ -32,14 +32,25 @@ const es = {
   },
   loginScreen: {
     signIn: "Iniciar Session",
-    enterDetails:
-      "Enter your details below to unlock top secret info. You'll never guess what we've got waiting. Or maybe you will; it's not rocket science here.",
+    tapToRegister: "Registrar",
+    enterDetails: "Tu viaje, tu destino: Rápido y seguro con nuestra app de taxis",
+    enterDetails2:
+      "Haz que tus viajes sean más eficientes: crea una cuenta y aprovecha todas nuestras funciones.",
     emailFieldLabel: "Correo",
     passwordFieldLabel: "Contraseña",
     emailFieldPlaceholder: "Ingresa tu correo",
     passwordFieldPlaceholder: "*********",
     tapToSignIn: "Iniciar Session",
-    hint: "Hint: you can use any email address and your favorite password :)",
+    hint: "Pista: puedes usar cualquier dirección de correo electrónico y tu contraseña favorita :)",
+  },
+  registerScreen: {
+    nameFieldLabel: "Nombre",
+    nameFieldPlaceholder: "Ingresa tu nombre",
+    emailFieldLabel: "Correo",
+    emailFieldPlaceholder: "Ingresa tu correo",
+    passwordFieldLabel: "Contraseña",
+    passwordFieldPlaceholder: "*********",
+    tapToRegister: "Registarme",
   },
   demoNavigator: {
     componentsTab: "Components",

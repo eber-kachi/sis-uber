@@ -26,7 +26,8 @@
     "expo:clear": "expo r -c",
     "expo:android": "expo start --android",
     "expo:ios": "expo start --ios",
-    "expo:web": "expo start --web"
+    "expo:web": "expo start --web",
+    "generate": "npx ignite-cli generate"
   },
   "overrides": {
     "react-error-overlay": "6.0.9"
@@ -40,6 +41,7 @@
     "@react-navigation/native-stack": "^6.0.2",
     "@react-navigation/stack": "~6.2.1",
     "@types/axios": "^0.14.0",
+    "@types/socket.io-client": "^3.0.0",
     "apisauce": "2.1.5",
     "axios": "^1.4.0",
     "date-fns": "^2.29.2",
@@ -51,9 +53,12 @@
     "expo-font": "~11.0.1",
     "expo-linking": "~3.3.0",
     "expo-localization": "~14.0.0",
+    "expo-location": "~15.0.1",
     "expo-modules-core": "~1.0.4 || ~1.1.0",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
+    "expo-task-manager": "~11.0.1",
+    "hermes-engine": "^0.11.0",
     "i18n-js": "3.9.2",
     "mobx": "6.6.0",
     "mobx-react-lite": "3.4.0",
@@ -67,7 +72,8 @@
     "react-native-screens": "~3.18.0",
     "reactotron-mst": "3.1.4",
     "reactotron-react-js": "^3.3.7",
-    "reactotron-react-native": "5.0.3"
+    "reactotron-react-native": "5.0.3",
+    "socket.io-client": "^4.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

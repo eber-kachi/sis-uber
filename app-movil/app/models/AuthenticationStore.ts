@@ -5,6 +5,7 @@ export const AuthenticationStoreModel = types
   .props({
     authToken: types.maybe(types.string),
     authEmail: "",
+    authRole: "",
   })
   .views((store) => ({
     get isAuthenticated() {
@@ -17,17 +18,28 @@ export const AuthenticationStoreModel = types
         return "must be a valid email address"
       return ""
     },
+    get email(){
+      return store.authEmail
+    },
+    get role(){
+      return store.authRole
+    },
   }))
   .actions((store) => ({
     setAuthToken(value?: string) {
       store.authToken = value
     },
     setAuthEmail(value: string) {
+      console.log('Emaial Store=>', value)
       store.authEmail = value.replace(/ /g, "")
     },
     logout() {
       store.authToken = undefined
+      store.authRole = undefined
       store.authEmail = ""
+    },
+    setRole(value: string){
+      store.authRole=value
     },
   }))
 

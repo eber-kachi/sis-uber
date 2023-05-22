@@ -12,13 +12,14 @@ interface LoginScreenProps extends AppStackScreenProps<"Login"> {
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
   const authPasswordInput = useRef<TextInput>()
+  const { navigation } = _props
 
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
-    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
+    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError, setRole },
   } = useStores()
   const service = new AuthService()
 
@@ -34,24 +35,36 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   function login() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
-    console.log("authEmail", authEmail)
-    console.log("authPassword", authPassword)
-    // if (validationError) return
+    if (validationError) return
 
     // Make a request to your server to get an authentication token.
     service.login({ email: authEmail, password: authPassword })
       .then((res: any) => {
-        console.log(res.data)
+        // console.log("todo bien =>>>>", res)
         // If successful, reset the fields and set the token.
-        setIsSubmitted(false)
-        setAuthPassword("")
-        setAuthEmail("")
-        // // We'll mock this with a fake token.
-        setAuthToken(res.data.token.accessToken)
 
-      }).catch(error => {
-      console.log(error)
-    })
+        // // We'll mock this with a fake token.
+        if (res.kind === "ok") {
+          if (res.data.user && res.data.token) {
+
+            setIsSubmitted(false)
+            setAuthPassword("")
+            // console.log("todo bien =>>>>", res.data.user)
+            setAuthEmail(res.data.user.email)
+            setRole(res.data.user.role)
+            setAuthToken(res.data.token.accessToken)
+          }
+        }
+
+      })
+      .catch(error => {
+        console.log("aqui error ", error)
+      })
+  }
+
+  function handlerClikToRegister() {
+    navigation.navigate("Register")
+
   }
 
   const PasswordRightAccessory = useMemo(
@@ -73,7 +86,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   useEffect(() => {
     return () => {
       setAuthPassword("")
-      setAuthEmail("")
+      // setAuthEmail("")
     }
   }, [])
 
@@ -84,7 +97,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       safeAreaEdges={["top", "bottom"]}
     >
       <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn}/>
-      <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails}/>
+      {/* <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails}/> */}
+      <Text tx="loginScreen.enterDetails2" preset="subheading" style={$enterDetails}/>
       {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint}/>}
 
       <TextField
@@ -124,6 +138,13 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         preset="reversed"
         onPress={login}
       />
+      <Button
+        testID="login-register"
+        tx="loginScreen.tapToRegister"
+        style={$tapButtonRegister}
+        preset="reversed"
+        onPress={handlerClikToRegister}
+      />
     </Screen>
   )
 })
@@ -152,6 +173,10 @@ const $textField: ViewStyle = {
 
 const $tapButton: ViewStyle = {
   marginTop: spacing.extraSmall,
+}
+const $tapButtonRegister: ViewStyle = {
+  marginTop: spacing.extraSmall,
+  backgroundColor: colors.palette.accent500
 }
 
 // @demo remove-file

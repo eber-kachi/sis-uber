@@ -9,7 +9,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/app-icon-all.png",
     "splash": {
-      "image": "./assets/images/splash-logo-all.png",
+      "image": "./assets/images/splash-logo-all2.png",
       "resizeMode": "contain",
       "backgroundColor": "#191015"
     },
@@ -49,6 +49,14 @@
         "resizeMode": "contain",
         "backgroundColor": "#191015"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ]
   }
 }
