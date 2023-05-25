@@ -44,8 +44,10 @@ const es = {
     hint: "Pista: puedes usar cualquier dirección de correo electrónico y tu contraseña favorita :)",
   },
   registerScreen: {
-    nameFieldLabel: "Nombre",
-    nameFieldPlaceholder: "Ingresa tu nombre",
+    nameFieldLabel: "Nombres",
+    nameFieldPlaceholder: "Ingresa tu nombres",
+    lastNameFieldLabel: "Apellidos",
+    lastNameFieldPlaceholder: "Ingresa tu apellidos",
     emailFieldLabel: "Correo",
     emailFieldPlaceholder: "Ingresa tu correo",
     passwordFieldLabel: "Contraseña",
