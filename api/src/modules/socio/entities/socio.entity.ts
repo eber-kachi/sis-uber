@@ -23,7 +23,7 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
   foto: string;
 
   @Column({ nullable: true }) // se usara para saber si el socio esta con un cliente con una carrera
-  estado: string;
+  estado: string; // LIBRE , OCUPADO, SINSERVIC
 
   // licencia
   @Column({ nullable: false, type: 'date' })

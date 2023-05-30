@@ -8,13 +8,17 @@ import {
 } from '@nestjs/websockets';
 import { EstadoViaje } from 'common/constants/estado-viaje';
 import { Server, Socket } from 'socket.io';
+import { SocioService } from '../modules/socio/socio.service';
+
 @WebSocketGateway({
   cors: { origin: '*' },
 })
 export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private pendienteConfirmacion: Array<any> = [];
 
-  constructor() {
+  constructor(
+    private readonly sociosService: SocioService,
+  ) {
     console.log();
   } // private readonly  ticketSrvice: TicketService,
 
@@ -38,6 +42,7 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
     this.server.emit('message', payload);
     // client.join(`room_${payload}`);
   }
+
   // pendiente_confirmacion
   @SubscribeMessage(EstadoViaje.PENDIENTECONFIRMACION)
   handlePendienteConfirmation(client: any, payload: any) {

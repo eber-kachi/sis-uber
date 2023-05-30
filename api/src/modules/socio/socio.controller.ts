@@ -81,4 +81,28 @@ export class SocioController {
   async remove(@Param('id') id: string) {
     return await this.socioService.remove(id);
   }
+
+  @Get('/get-by-status/:status')
+  // @UseGuards(AuthGuard)
+  // @UseInterceptors(AuthUserInterceptor)
+  // @ApiBearerAuth()
+  @ResponseMessage('Fetched Stats Succesfully')
+  findAllByState(@Param('id') status:string) {
+    try {
+      // await this.service.findAll()
+      return this.socioService.findAllByState(status);
+      // throw new HttpException('Un super error ', HttpStatus.FORBIDDEN);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+
 }

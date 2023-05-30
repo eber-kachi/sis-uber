@@ -60,4 +60,13 @@ export class SocioService {
     }
     return await this.socioRepository.remove(socios);
   }
+
+  async findAllByState(state){
+    const socios = await this.socioRepository.find({
+      where: {estado: state},
+      order: { createdAt: 'DESC' },
+      relations: ['veiculo'],
+    });
+    return socios;
+  }
 }
