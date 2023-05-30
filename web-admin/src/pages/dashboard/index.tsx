@@ -45,7 +45,7 @@ const random = (min: number, max: number) => Math.floor(Math.random() * (max - m
 
 const Home: NextPage = () => {
   const { userValue } = useAuthClient({redirectIfAuthenticated:'/'});
-  console.log('user value=>',userValue);
+  // console.log('user value=>',userValue);
 
  return (<AdminLayout>
     <div className="row">

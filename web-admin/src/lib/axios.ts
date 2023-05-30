@@ -1,45 +1,88 @@
+import Axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
+import { Redirect } from "next";
+import TokenStorageService from "@lib/tokenStoraje";
 
-import Axios from "axios";
-import {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
-import TokenStorageService from "@lib/tokenStoraje"
-
-let token = new TokenStorageService();
+const token = new TokenStorageService();
 
 function getToken() {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     // console.log('setItem', window.localStorage.getItem('jwt-token'));
     // return window.localStorage.getItem('jwt-token');
-   return  token.getToken();
+    return token.getToken();
   }
-  return '';
+  console.log("=>>>>>>>>>>>>>>>   mandamdo sin token");
+  return "";
 }
+
+const logOnDev = (message: string) => {
+  // if (import.meta.env.MODE === "development") {
+  console.log(message);
+  // }
+};
 
 const axios = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    Accept: 'application/json',
-    'Access-Control-Allow-Origin' : '*',
-    'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+    "X-Requested-With": "XMLHttpRequest",
+    Accept: "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
   },
   // withCredentials: true,
 });
 
-axios.interceptors.response.use(response => {
-  // console.log('aqui interceptos response', response);
-  if (response.status < 5000) {
-    return response;
+axios.interceptors.response.use(
+  (response) => {
+    console.log("=======================>>aqui interceptos response");
+    // debugger;
+    if (response?.status === 401) {
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    }
+
+    if (response.status < 5000) {
+      return response;
+    }
+    return [];
+    // return ;
+  },
+  (error) => {
+    const message = error?.message;
+    const method = error?.config?.method;
+    const url = error?.config?.url;
+    // const { method, url } = error?.config as AxiosRequestConfig;
+    const { statusText, status } = (error?.response as AxiosResponse) ?? {};
+
+    logOnDev(`🚨 [API] ==> ${method} ${url} | Error ${status} ${message}`);
+    //
+    if (status === 401) {
+      // Delete Token & Go To Login Page if you required.
+      // token.signOut();
+      // Redirect("/login")
+      console.log("mandar a login=>");
+    }
+
+    // } else {
+    //   logOnDev(`🚨 [API] | Error ${error.message}`)
+    // }
+
+    return Promise.reject(error);
   }
-  return [];
-});
+);
 
 axios.interceptors.request.use((config: any) => {
-  // 	console.log('aqui interceptos request', value);
+  console.log("aqui interceptos request");
   // 	// if (response.status<5000){
   // 	// 	// 	return response
   // 	// 	// }
   // console.log('antes del recuest');
-  config.headers.Authorization = 'Bearer ' + getToken();
+  config.headers.Authorization = `Bearer ${getToken()}`;
   return config;
 });
 // const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {

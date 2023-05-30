@@ -3,22 +3,21 @@ import { useAuthClient } from "@hooks/useAuthClient"
 import { AdminLayout } from "@layout/index"
 import React, { useEffect, useState } from "react"
 import Table from "react-bootstrap/Table"
-import SocioService from "../../../services/api/Socio.service"
 import { object } from "prop-types"
 // import { Button } from "react-bootstrap"
 import Button from "react-bootstrap/Button"
 import CustomModal from "@components/Modal/CustomModal"
 import Link from "next/link"
 import { toast } from "react-toastify"
-
+import SocioService from "../../../services/api/Socio.service"
 
 const SocioListPage: NextPage = ({ dataResponce }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
-  // console.log("user value=>", userValue)
-  console.log("list=>", dataResponce)
+  // // console.log("user value=>", userValue)
+  // console.log('list=>', dataResponce)
   const socioService = new SocioService()
   const [modalShow, setModalShow] = useState(false)
-  const [objects, setObjects] = useState(dataResponce ? dataResponce : [])
+  const [objects, setObjects] = useState(dataResponce || [])
 
   const getData = async () => {
     const responce: any[] = await socioService.getAll() as any[]
@@ -27,12 +26,12 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
   }
 
   const onClickDelete = (id: string) => {
-    socioService.delete(id).then(res => {
-      console.log(res)
-       toast("Eliminado con exito.");
+    socioService.delete(id).then((res) => {
+      // console.log(res)
+      toast("Eliminado con exito.")
       getData()
-    }).catch(error => {
-      console.log(error)
+    }).catch((error) => {
+      // console.log(error)
     })
   }
 
@@ -40,8 +39,8 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
 
   }, [])
 
-
-  return (<AdminLayout>
+  return (
+    <AdminLayout>
       <div className="row">
         <div className="m-2 d-flex flex flex-row justify-content-between">
           <div>
@@ -51,12 +50,11 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
             <Link className="btn btn-success" href={{ pathname: "/dashboard/socios/[id]", query: { id: "new" } }}>
               Crear Nuevo
             </Link>
-            {/*<Button variant="primary" onClick={() => setModalShow(true)}>*/}
-            {/*  Crear Nuevo*/}
-            {/*</Button>*/}
+            {/* <Button variant="primary" onClick={() => setModalShow(true)}> */}
+            {/*  Crear Nuevo */}
+            {/* </Button> */}
           </div>
         </div>
-
 
         <Table striped>
           <thead>
@@ -70,74 +68,109 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
           </tr>
           </thead>
           <tbody>
-          {objects.map((object, index) => (
+          {objects.length > 0 && objects.map((object, index) => (
             <tr key={object.id}>
               <td>{++index}</td>
               <td>Otto</td>
-              <td>{object.nombres} {object.apellidos}</td>
+              <td>
+                {object.nombres}
+                {" "}
+                {object.apellidos}
+              </td>
               <td>{object.estado}</td>
               <td>
                 <ul>
-                  <li>Emision: {object.emision}</li>
-                  <li>N° Licencia: {object.nroLicencia}</li>
-                  <li>Vencimiento: {object.vencimiento}</li>
+                  <li>
+                    Emision:
+                    {object.emision}
+                  </li>
+                  <li>
+                    N° Licencia:
+                    {object.nroLicencia}
+                  </li>
+                  <li>
+                    Vencimiento:
+                    {object.vencimiento}
+                  </li>
                 </ul>
               </td>
               <td>
                 <div className="">
-                  {/*<Button variant="outline-warning" >*/}
-                  <Link className="btn btn-outline-warning"
-                        href={{
-                          pathname: "/dashboard/socios/[id]/veiculo/[veiculo_id]",
-                          query: { id: object.id , veiculo_id: (object?.veiculo==null)? 'new': object?.veiculo?.id },
-                        }}>
-                    {/*<a className='btn-warning m-1'>*/}
+                  {/* <Button variant="outline-warning" > */}
+                  <Link
+                    className="btn btn-outline-warning"
+                    href={{
+                      pathname: "/dashboard/socios/[id]/veiculo/[veiculo_id]",
+                      query: { id: object.id, veiculo_id: (object?.veiculo == null) ? "new" : object?.veiculo?.id },
+                    }}
+                  >
+                    {/* <a className='btn-warning m-1'> */}
                     Veiculo
-                    {/*</a>*/}
+                    {/* </a> */}
                   </Link>
-                  <Link className="btn btn-outline-warning"
-                        href={{
-                          pathname: "/dashboard/socios/[id]",
-                          query: { id: object.id },
-                        }}>
-                    {/*<a className='btn-warning m-1'>*/}
+                  <Link
+                    className="btn btn-outline-warning"
+                    href={{
+                      pathname: "/dashboard/socios/[id]",
+                      query: { id: object.id },
+                    }}
+                  >
+                    {/* <a className='btn-warning m-1'> */}
                     Editar
-                    {/*</a>*/}
+                    {/* </a> */}
                   </Link>
-                  {/*</Button>*/}
+                  {/* </Button> */}
                   <Button variant="outline-danger" onClick={() => onClickDelete(object.id)}>Eliminar</Button>
                 </div>
               </td>
             </tr>
           ))}
 
-
           </tbody>
         </Table>
 
-
       </div>
-      {/*onSave={()=> {}}*/}
-      {/*<CustomModal*/}
-      {/*  show={modalShow}*/}
-      {/*  onHide={() => setModalShow(false)}*/}
+      {/* onSave={()=> {}} */}
+      {/* <CustomModal */}
+      {/*  show={modalShow} */}
+      {/*  onHide={() => setModalShow(false)} */}
 
-      {/*  title={"Alerta"}*/}
-      {/*  size="sm"*/}
-      {/*>*/}
-      {/*  <h1>Hola como estas desde la lista </h1>*/}
-      {/*</CustomModal>*/}
+      {/*  title={"Alerta"} */}
+      {/*  size="sm" */}
+      {/* > */}
+      {/*  <h1>Hola como estas desde la lista </h1> */}
+      {/* </CustomModal> */}
     </AdminLayout>
   )
 }
 
 export async function getServerSideProps(context) {
   const service = new SocioService()
-  const responce = await service.getAll()
+  try {
+    const responce = await service.getAll()
+
+    return {
+      props: {
+        dataResponce: responce.data,
+      },
+    }
+  } catch (error) {
+    // console.error("===========================================>", error)
+    if (error?.response?.status == 401) {
+      return {
+        redirect: {
+          permanent: false,
+            destination: "/login",
+        },
+        props:{},
+      };
+    }
+
+  }
   // console.log(responce);
   return {
     props: {
-      dataResponce: responce,
+      dataResponce: [],
     },
   }
 }

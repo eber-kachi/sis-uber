@@ -30,7 +30,7 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
   const onClickDelete = (id: string) => {
     clienteService.delete(id).then(res => {
       console.log(res)
-       toast("Eliminado con exito.");
+      toast("Eliminado con exito.")
       getData()
     }).catch(error => {
       console.log(error)
@@ -71,7 +71,7 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
           </tr>
           </thead>
           <tbody>
-          {objects.map((object, index) => (
+          {objects.length > 0 && objects.map((object, index) => (
             <tr key={object.id}>
               <td>{++index}</td>
               <td>Otto</td>
@@ -136,7 +136,7 @@ export async function getServerSideProps(context) {
   // console.log(responce);
   return {
     props: {
-      dataResponce: responce,
+      dataResponce: responce.data,
     },
   }
 }

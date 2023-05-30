@@ -4,7 +4,7 @@ import SocioService from "../../../../services/api/Socio.service"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { AdminLayout } from "@layout/index"
-import { Button, Col, Form, Row , Badge} from "react-bootstrap"
+import { Button, Col, Form, Row, Badge } from "react-bootstrap"
 import VeiculoService from "../../../../services/api/Veiculo.service"
 import { NextPage } from "next"
 import Link from "next/link"
@@ -28,7 +28,7 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
   const onClickDelete = (id: string) => {
     socioService.delete(id).then(res => {
       console.log(res)
-      toast("Eliminado con exito.");
+      toast("Eliminado con exito.")
       getData()
     }).catch(error => {
       console.log(error)
@@ -69,11 +69,11 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
           </tr>
           </thead>
           <tbody>
-          {objects.map((object, index) => (
+          {objects.length > 0 && objects.map((object, index) => (
             <tr key={object.id}>
               <td>{++index}</td>
               <td>Otto</td>
-              <td> <Badge bg="success"> {object.estado}</Badge> </td>
+              <td><Badge bg="success"> {object.estado}</Badge></td>
               <td>
                 <div className="">
                   {/*<Button variant="outline-warning" >*/}
@@ -119,14 +119,14 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
 }
 
 export async function getServerSideProps(context) {
-  console.log('vaijes=> ', context.params.id);
+  console.log("vaijes=> ", context.params.id)
 
   const service = new ViajeService()
   const responce = await service.getByclienteoId(context.params.id)
   // console.log(responce);
   return {
     props: {
-      dataResponce: responce,
+      dataResponce: responce.data,
     },
   }
 }

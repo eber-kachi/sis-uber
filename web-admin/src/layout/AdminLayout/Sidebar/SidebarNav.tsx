@@ -18,6 +18,8 @@ import {
   faPencil,
   faPuzzlePiece,
   faRightToBracket,
+  faMap,
+  faMapMarker
 } from '@fortawesome/free-solid-svg-icons'
 import React, {
   PropsWithChildren, useContext, useEffect, useState,
@@ -138,8 +140,11 @@ export default function SidebarNav() {
         {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
       </SidebarNavItem>
       <SidebarNavItem icon={faCode} href="/dashboard/clientes">
-        Clientes
-        {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+      Clientes
+      {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+    </SidebarNavItem>
+      <SidebarNavItem icon={faMapMarker} href="/dashboard/maps">
+        Mapa Socios
       </SidebarNavItem>
 
       {/* <SidebarNavTitle>Theme</SidebarNavTitle>

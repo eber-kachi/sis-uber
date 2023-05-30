@@ -15,6 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@popperjs/core": "^2.11.6",
+    "@react-google-maps/api": "^2.18.1",
     "@reduxjs/toolkit": "^1.9.3",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.3",
@@ -33,12 +34,16 @@
     "react-redux": "^8.0.5",
     "react-resize-detector": "^7.1.2",
     "react-toastify": "^9.1.2",
-    "swr": "^2.1.0"
+    "socket.io-client": "^4.6.1",
+    "swr": "^2.1.0",
+    "use-places-autocomplete": "^4.0.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",
     "@types/node": "^18.15.3",
     "@types/nprogress": "^0.2.0",
+    "@types/socket.io": "^2.1.10",
+    "@types/socket.io-client": "^1.4.33",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.55.0",

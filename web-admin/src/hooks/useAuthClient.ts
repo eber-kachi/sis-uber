@@ -50,6 +50,7 @@ export function useAuthClient({ redirectIfAuthenticated } = {}) {
         setUserValue(res.data);
       })
       .catch(error => {
+
         if (error.response.status == 401) {
           token.signOut();
           router.push('/login');
@@ -84,6 +85,7 @@ export function useAuthClient({ redirectIfAuthenticated } = {}) {
   useEffect(() => {
     // debugger;
     const condition = (tokenValue==null )|| (JSON.stringify(userValue) === '{}');
+    console.log("===============>" , condition);
     if (condition) {
       me();
     }
