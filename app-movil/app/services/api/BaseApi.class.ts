@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { getGeneralApiProblem } from "./apiProblem"
+import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
 import { EpisodeSnapshotIn } from "../../models/Episode"
 
 export abstract class BaseApiClass {
@@ -65,7 +65,7 @@ export abstract class BaseApiClass {
     }
   }
 
-  async create(data: any) {
+  async create(data: any): Promise<{ kind: "ok"; message?:string; data: any } | GeneralApiProblem> {
     const response = await api.apisauce.post(`${this.baseUrl}`, data)
     if (!response.ok) {
       const problem = getGeneralApiProblem(response)
@@ -73,9 +73,9 @@ export abstract class BaseApiClass {
     }
 
     try {
-      // const rawData = response.data
+      const rawData = response.data as any
 
-      return { kind: "ok", data: response.data }
+      return { kind: "ok" ,message: rawData.message, data: rawData?.data }
     } catch (e) {
       if (__DEV__) {
         console.tron.error(`Bad data: ${e.message}\n${response.data}`, e.stack)

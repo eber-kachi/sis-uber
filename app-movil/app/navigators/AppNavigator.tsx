@@ -20,6 +20,7 @@ import { useStores } from "../models" // @demo remove-current-line
 import { DemoNavigator, DemoTabParamList } from "./DemoNavigator" // @demo remove-current-line
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { ClientNavigator, ClientTabParamList } from "./ClientNavigator"
+import { ClientConfirmationScreen } from "../screens/ClientConfirmationScreen"
 // import { ClientNavigator } from "./ClientNavigator"
 
 /**
@@ -37,8 +38,9 @@ import { ClientNavigator, ClientTabParamList } from "./ClientNavigator"
  */
 export type AppStackParamList = {
   Register:undefined,
-  Welcome: undefined
-  Login: undefined // @demo remove-current-line
+  Welcome: undefined,
+  ClientConfirmation: undefined,
+  Login: undefined, // @demo remove-current-line
   Demo: NavigatorScreenParams<DemoTabParamList> // @demo remove-current-line
   // 🔥 Your screens go here
   Client: NavigatorScreenParams<ClientTabParamList>
@@ -94,6 +96,7 @@ const AppStack = observer(function AppStack() {
             {/* @demo remove-block-start */}
             <Stack.Screen name="Client" component={ClientNavigator}/>
             <Stack.Screen name="Demo" component={DemoNavigator}/>
+            <Stack.Screen name="ClientConfirmation" component={ClientConfirmationScreen}/>
 
           </>
         ) : (

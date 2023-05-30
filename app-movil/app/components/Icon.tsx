@@ -108,6 +108,7 @@ export const iconRegistry = {
   view: require("../../assets/icons/view.png"),
   x: require("../../assets/icons/x.png"),
   BrandgoogleMaps: require("../../assets/icons/brand-google-maps.png"),
+  loading: require("../../assets/icons/loading.gif"),
 }
 
 const $imageStyle: ImageStyle = {
