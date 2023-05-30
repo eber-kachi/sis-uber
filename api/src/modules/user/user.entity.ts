@@ -5,6 +5,7 @@ import { RoleType } from '../../common/constants/role-type';
 // import { VirtualColumn } from '../../decorators/virtual-column.decorator';
 import { UserDto } from './dto/UserDto';
 import { Exclude } from 'class-transformer';
+import { ClienteEntity } from 'modules/cliente/entities/cliente.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends AbstractEntity<UserDto> {
@@ -35,6 +36,8 @@ export class UserEntity extends AbstractEntity<UserDto> {
 
   // @VirtualColumn()
   // fullName: string;
+  @OneToOne((type) => ClienteEntity, (customer) => customer.user)
+  cliente: ClienteEntity;
 
   dtoClass = UserDto;
 }

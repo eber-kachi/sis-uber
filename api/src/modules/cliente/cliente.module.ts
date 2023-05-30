@@ -7,7 +7,10 @@ import { ClienteRepository } from './cliente.repository';
 import { UserModule } from 'modules/user/user.module';
 
 @Module({
-  imports: [forwardRef(() => UserModule),TypeOrmModule.forFeature([ClienteRepository]), ],
+  imports: [
+    forwardRef(() => UserModule)
+    ,TypeOrmModule.forFeature([ClienteRepository]),
+  ],
   controllers: [ClienteController],
   providers: [ClienteService],
   exports: [ClienteService],

@@ -1,18 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { ViajeDto } from './dto/create-viaje.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UpdateViajeDto } from './dto/update-viaje.dto';
-import { SocioRepository } from '../socio/socio.repository';
 import { UserService } from '../user/user.service';
 import { ViajeRepository } from './viajes.repository';
+import { CreateViajeClient } from './dto/create-viaje-client';
+import { RoleType } from 'common/constants/role-type';
 
 @Injectable()
 export class ViajesService {
   constructor(
     public readonly viajeRepository: ViajeRepository,
+    public readonly userService: UserService,
   ) {}
 
-  create(createViajeDto: any) {
-    return 'This action adds a new viaje';
+  async create(createViajeDto: CreateViajeClient) {
+    console.log('CreateViajeClient', createViajeDto);
+    const user = await this.userService.getByEmail(createViajeDto.user_email);
+    // verificamos que el usuario es de rol cliente
+    if (user && user.role != RoleType.CLIENT) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Cliente No encotrado.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const viaje = this.viajeRepository.create(createViajeDto);
+    viaje.cliente = user.cliente;
+    return this.viajeRepository.save(viaje);
   }
 
   async findAll() {
@@ -35,6 +51,6 @@ export class ViajesService {
   async findAllByClientId(id: string) {
     // const viajes= await this.viajeRepository.find({where: {socio:id}});
 
-    return await this.viajeRepository.find({where: {cliente:id}});
+    return await this.viajeRepository.find({ where: { cliente: id } });
   }
 }

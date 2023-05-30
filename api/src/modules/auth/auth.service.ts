@@ -34,7 +34,7 @@ export class AuthService {
       user && user.password,
     );
     if (!user || !isPasswordValid) {
-      throw new UserNotFoundException();
+      throw new UserNotFoundException('Usuario No existe');
     }
     return user;
   }

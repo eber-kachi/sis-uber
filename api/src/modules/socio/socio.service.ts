@@ -28,7 +28,10 @@ export class SocioService {
   }
 
   async findAll() {
-    const socios = await this.socioRepository.find({ order: { createdAt: 'DESC' }, relations:['veiculo'] });
+    const socios = await this.socioRepository.find({
+      order: { createdAt: 'DESC' },
+      relations: ['veiculo'],
+    });
     return socios;
   }
 

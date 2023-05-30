@@ -18,9 +18,12 @@ export class ClienteEntity extends AbstractEntity<ClienteDto> {
   @Column({ nullable: true })
   direccionMadre: string | null;
 
-  @OneToOne(() => UserEntity, { cascade: true })
+  @OneToOne(() => UserEntity, (user) => user.cliente, { cascade: true })
   @JoinColumn()
   user: UserEntity;
+  // @OneToOne(() => UserEntity, (user) => user.cliente, { cascade: true, lazy: true })
+  // @JoinColumn()
+  // user: UserEntity;
 
   @OneToMany(() => ViajeEntity, (data) => data.cliente)
   viajes: ViajeEntity[];

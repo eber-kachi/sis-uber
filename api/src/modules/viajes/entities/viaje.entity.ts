@@ -27,6 +27,29 @@ export class ViajeEntity extends AbstractEntity<ViajeDto> {
   @Column({ nullable: true, type: 'int' })
   calificacion: number;
 
+  @Column({ nullable: true, type: 'varchar', length: 50 })
+  initial_address: string;
+
+  @Column({ nullable: true, type: 'varchar', length: 50 })
+  final_address: string;
+
+  @Column({ nullable: true, type: 'datetime' })
+  start_time: Date;
+  
+  @Column({ nullable: true, type: 'datetime' })
+  end_time: Date;
+  //posicion  inicial
+  @Column({ nullable: true, type: 'float' })
+  start_latitude: number;
+  @Column({ nullable: true, type: 'float' })
+  start_longitude: number;
+
+  // posicion final
+  @Column({ nullable: true, type: 'float' })
+  end_latitude: number;
+  @Column({ nullable: true, type: 'float' })
+  end_longitude: number;
+
   @ManyToOne(() => ClienteEntity, (data) => data.viajes)
   cliente: ClienteEntity;
 

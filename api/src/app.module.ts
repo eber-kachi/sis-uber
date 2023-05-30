@@ -19,6 +19,7 @@ import { ClienteModule } from './modules/cliente/cliente.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformationInterceptor } from './interceptors/transform.interceptor';
 import { AllExceptionsFilter } from 'interceptors/all-exceptions.filter';
+import { MapTrakingGateway } from './gateways/map-traking.gateway';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { AllExceptionsFilter } from 'interceptors/all-exceptions.filter';
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
     },
+    MapTrakingGateway,
   ],
 })
 export class AppModule {}

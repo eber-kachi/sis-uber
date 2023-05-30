@@ -1,15 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
 import { ViajesService } from './viajes.service';
 import { ViajeDto } from './dto/create-viaje.dto';
 import { UpdateViajeDto } from './dto/update-viaje.dto';
+import { CreateViajeClient } from './dto/create-viaje-client';
+import { ResponseMessage } from 'decorators/response_message.decorator';
 
 @Controller('viajes')
 export class ViajesController {
   constructor(private readonly viajesService: ViajesService) {}
 
   @Post()
-  create(@Body() createViajeDto: ViajeDto) {
-    return this.viajesService.create(createViajeDto);
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Fetched Stats Succesfully')
+  create(@Body() createViajeDto: any) {
+    try {
+      // await this.service.findAll()
+      return this.viajesService.create(createViajeDto);
+      // return this.socioService.findAll();
+      // throw new HttpException('Un super error ', HttpStatus.FORBIDDEN);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   @Get()

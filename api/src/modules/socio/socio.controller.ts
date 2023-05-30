@@ -9,12 +9,17 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { SocioService } from './socio.service';
 import { SocioDto } from './dto/create-socio.dto';
 import { UpdateSocioDto } from './dto/update-socio.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'decorators/response_message.decorator';
+import { AuthUserInterceptor } from 'interceptors/auth-user-interceptor.service';
+// import { AuthGuard } from 'guards/auth.guard';
+import { AuthGuard } from '../../guards/auth.guard';
 
 @Controller('socios')
 @ApiTags('socios')
@@ -28,6 +33,9 @@ export class SocioController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(AuthUserInterceptor)
+  @ApiBearerAuth()
   @ResponseMessage('Fetched Stats Succesfully')
   findAll() {
     try {

@@ -6,12 +6,17 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { EstadoViaje } from 'common/constants/estado-viaje';
 import { Server, Socket } from 'socket.io';
 @WebSocketGateway({
   cors: { origin: '*' },
 })
 export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  constructor() {} // private readonly  ticketSrvice: TicketService,
+  private pendienteConfirmacion: Array<any> = [];
+
+  constructor() {
+    console.log();
+  } // private readonly  ticketSrvice: TicketService,
 
   @WebSocketServer() server: Server;
 
@@ -19,8 +24,8 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
     console.log('Esto se ejecuta cuando inicia');
   }
 
-  handleConnection(client: any, ...args: any[]) {
-    console.log('Hola alguien se conecto al socket 👌👌👌');
+  handleConnection(client: Socket, ...args: any[]) {
+    console.log('Hola alguien se conecto al socket 👌👌👌 => ', client.id);
   }
 
   handleDisconnect(client: any) {
@@ -32,5 +37,11 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
     //  this.server.emit('message', payload);
     this.server.emit('message', payload);
     // client.join(`room_${payload}`);
+  }
+  // pendiente_confirmacion
+  @SubscribeMessage(EstadoViaje.PENDIENTECONFIRMACION)
+  handlePendienteConfirmation(client: any, payload: any) {
+    this.pendienteConfirmacion.push(payload);
+    this.server.emit(EstadoViaje.PENDIENTECONFIRMACION, payload);
   }
 }

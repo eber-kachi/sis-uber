@@ -19,11 +19,11 @@ async function bootstrap() {
   const configService = app.select(SharedModule).get(ConfigService);
 
   if (['development', 'staging'].includes(configService.nodeEnv)) {
-    setupSwagger(app);
+    // setupSwagger(app);
   }
   const port = configService.getNumber('PORT');
 
-  app.enableCors({ origin: '*',  credentials:true});
+  app.enableCors({ origin: '*', credentials: true });
   await app.listen(port);
 
   // app.

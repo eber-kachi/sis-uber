@@ -83,6 +83,22 @@ export class UserService {
     return items.toPageDto(pageMetaDto);
   }
 
+  async getByEmail(email: string): Promise<UserEntity> {
+    // const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+    // queryBuilder.where('user.email = :email', { email });
+    // queryBuilder.relation('cliente');
+
+    // const userEntity = await queryBuilder.getOne();
+    // return userEntity;
+    const socios = await this.userRepository.findOne({
+      where: { email: email },
+      relations: ['cliente'],
+    });
+
+    return socios;
+  }
+
   async getUser(userId: string) {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
