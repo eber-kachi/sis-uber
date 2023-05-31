@@ -10,6 +10,8 @@ import io from "socket.io-client";
 import { log } from "console";
 import CarRed from "../../../../public/assets/img/cars/car-red.svg";
 import SocioService from "../../../services/api/Socio.service";
+import ViajeService from "src/services/api/Viaje.service";
+import { toast } from "react-toastify";
 
 let socket;
 
@@ -35,13 +37,18 @@ const MapsPage = () => {
   // -17.39457571741809, -66.2861413204621
   const [viajePending, setViajePendig] = useState<any[]>([]);
 
-  const [veiculos, setVeiculos] = useState([
-    { lat: -17.39470732739393, lng: -66.28102605202128 },
-    { lat: -17.39418792844535, lng: -66.28356318651015 },
-    { lat: -17.39457571741809, lng: -66.2861413204621 },
-  ]);
+  const [veiculos, setVeiculos] = useState(
+    [
+      // { latitude: -17.39470732739393, longitude: -66.28102605202128 },
+      // { latitude: -17.39418792844535, longitude: -66.28356318651015 },
+      // { latitude: -17.39457571741809, longitude: -66.2861413204621 },
+    ]
+  );
+
+  const [selectedViajeId, setSelectedViajeId] = useState<any>();
 
   const socioService = new SocioService();
+  const viajeService = new ViajeService();
 
   const memoizedMarkers = useMemo(() => veiculos, [veiculos]);
 
@@ -64,7 +71,18 @@ const MapsPage = () => {
   // sockets
   React.useEffect(() => {
     socketInitializer();
-    socioService.getAllByStatus("LIBRES");
+
+    // socioService.getAllByStatus("LIBRE")
+
+    const intervalId = setInterval(async () => {
+      const responce : any = await socioService.getAllByStatus("LIBRE");
+      console.log(responce);
+      setVeiculos(responce.data);
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   const socketInitializer = async () => {
@@ -83,7 +101,7 @@ const MapsPage = () => {
 
     // await fetch('http://localhost:3001')
     // socket = io({host:"http://localhost:3001"})
-    socket = io("http://localhost:3001");
+    socket = io("https://b26f-2803-9400-3-386d-d5ce-e1f-8ea6-b9c0.ngrok-free.app");
 
     socket.on("connect", () => {
       console.log("connected...");
@@ -102,8 +120,16 @@ const MapsPage = () => {
 
   const handleMarkerClick = (id: string | number) => {
     console.log("EL id en el padre=> ", id);
-    // todo hacer la logica de buscar al conductor con el carro para
-    // luego asignar  al cliente en espera
+    console.log(selectedViajeId);
+    viajeService.asignarViajeSocio(selectedViajeId, id)
+      .then(res => {
+        toast("Asignado con exito.");
+        console.log(res);
+      })
+      .catch(error => {
+        console.log(error);
+        toast("Error al Asignado.",{});
+      });
   };
 
   if (!isLoaded) {
@@ -117,8 +143,19 @@ const MapsPage = () => {
           <h4>Sidevar Maps</h4>
           <ul className="">
             {viajePending.map((viaje: any, index) => (
-              <li className="" key={+index}>
-                {viaje.id}
+              <li className="bg-secondary rounded text-center" key={+index}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  value={viaje.id}
+                  id={`viaje-${index}`}
+                  checked={selectedViajeId === viaje.id}
+                  onChange={() => setSelectedViajeId(viaje.id)}
+                ></input>
+                {/* {viaje.cliente.nombres} {viaje.cliente.apellidos} */}
+                <label htmlFor={`viaje-${index}`}>
+                  {viaje.cliente.nombres} {viaje.cliente.apellidos}
+                </label>
               </li>
             ))}
           </ul>
@@ -137,10 +174,10 @@ const MapsPage = () => {
               {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}
               {memoizedMarkers.map((markerData, index) => (
                 <CustomMarker
-                  id={index}
+                  id={markerData.id}
                   key={+index}
                   draggable
-                  position={{ lat: markerData.lat, lng: markerData.lng }}
+                  position={{ lat: markerData.latitude, lng: markerData.longitude }}
                   label={{
                     text: "Richat",
                     color: "black",
