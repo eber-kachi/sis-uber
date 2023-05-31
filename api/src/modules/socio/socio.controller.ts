@@ -33,9 +33,9 @@ export class SocioController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
-  @UseInterceptors(AuthUserInterceptor)
-  @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // @UseInterceptors(AuthUserInterceptor)
+  // @ApiBearerAuth()
   @ResponseMessage('Fetched Stats Succesfully')
   findAll() {
     try {
@@ -80,6 +80,26 @@ export class SocioController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.socioService.remove(id);
+  }
+  @Get('/enabled/:id')
+  // @UseGuards(AuthGuard)
+  // @UseInterceptors(AuthUserInterceptor)
+  // @ApiBearerAuth()
+  @ResponseMessage('Fetched Stats Succesfully')
+  enabled(@Param('id') socio_id: string) {
+    try {
+      return this.socioService.enabled(socio_id);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   @Get('/get-by-status/:status')

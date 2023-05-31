@@ -70,4 +70,12 @@ export class SocioService {
     });
     return socios;
   }
+  // crear un metodo para activar o intivar un socio
+  async enabled(id: string) {
+    const socio = await this.socioRepository.findOne(id);
+
+    socio.activo = !socio.activo;
+
+    return this.socioRepository.save(socio);
+  }
 }

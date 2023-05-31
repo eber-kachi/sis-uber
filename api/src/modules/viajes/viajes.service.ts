@@ -79,14 +79,14 @@ export class ViajesService {
     }
 
     const viaje = await this.viajeRepository.findOne(createViajeDto.viaje_id);
-    viaje.estado= EstadoViaje.PENDIENTECONFIRMACIONSOCIO;
+    viaje.estado = EstadoViaje.PENDIENTECONFIRMACIONSOCIO;
     viaje.socio = socio;
     return await this.viajeRepository.save(viaje);
   }
 
   async confirmarViajeSocioByViajeId(createViajeDto: any) {
     const viaje = await this.viajeRepository.findOne(createViajeDto.viaje_id);
-    viaje.estado= EstadoViaje.CONFIRMADO;
+    viaje.estado = EstadoViaje.CONFIRMADO;
     return await this.viajeRepository.save(viaje);
   }
   // return this.viajeRepository.update('', viaje);

@@ -37,14 +37,17 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
 
   @Column({ nullable: false })
   categoria: string;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  activo: boolean;
   // socio ubicacion
   // @Column({ nullable: true, type: 'float4', precision: 10, scale: 8 })
   // latitude: number;
   // @Column({ nullable: true, type: 'float4', precision: 10, scale: 8 })
   // longitude: number;
-  @Column({ nullable: true, type: 'double precision'})
+  @Column({ nullable: true, type: 'double precision' })
   latitude: number;
-  @Column({ nullable: true, type: 'double precision'})
+  @Column({ nullable: true, type: 'double precision' })
   longitude: number;
 
   // @Column()
