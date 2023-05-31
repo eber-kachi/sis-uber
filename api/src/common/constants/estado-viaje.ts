@@ -2,6 +2,7 @@
 
 export enum EstadoViaje {
   PENDIENTECONFIRMACION = 'pendiente_confirmacion',
+  PENDIENTECONFIRMACIONSOCIO = 'pendiente_confirmacion_socio',
   CONFIRMADO = 'confirmado',
   ENPROGRESO = 'en_progreso',
   FINALIZADO = 'finalizado',

@@ -37,11 +37,20 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
 
   @Column({ nullable: false })
   categoria: string;
+  // socio ubicacion
+  // @Column({ nullable: true, type: 'float4', precision: 10, scale: 8 })
+  // latitude: number;
+  // @Column({ nullable: true, type: 'float4', precision: 10, scale: 8 })
+  // longitude: number;
+  @Column({ nullable: true, type: 'double precision'})
+  latitude: number;
+  @Column({ nullable: true, type: 'double precision'})
+  longitude: number;
 
   // @Column()
   // userId: string;
 
-  @OneToOne(() => UserEntity, {  onDelete: "CASCADE" })
+  @OneToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: UserEntity;
 

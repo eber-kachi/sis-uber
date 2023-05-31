@@ -87,11 +87,9 @@ export class SocioController {
   // @UseInterceptors(AuthUserInterceptor)
   // @ApiBearerAuth()
   @ResponseMessage('Fetched Stats Succesfully')
-  findAllByState(@Param('id') status:string) {
+  findAllByState(@Param('status') status: string) {
     try {
-      // await this.service.findAll()
       return this.socioService.findAllByState(status);
-      // throw new HttpException('Un super error ', HttpStatus.FORBIDDEN);
     } catch (error) {
       console.log(error);
 
@@ -104,5 +102,4 @@ export class SocioController {
       );
     }
   }
-
 }

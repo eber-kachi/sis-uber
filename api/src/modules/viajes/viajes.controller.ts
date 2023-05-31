@@ -42,6 +42,46 @@ export class ViajesController {
     }
   }
 
+  @Post('asignar-socio')
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Fetched Stats Succesfully')
+  async asignationSocioWithClient(@Body() createViajeDto: any) {
+    try {
+      // await this.service.findAll()
+      return await this.viajesService.asignationSocioWithClient(createViajeDto);
+      // return this.socioService.findAll();
+      // throw new HttpException('Un super error ', HttpStatus.FORBIDDEN);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+
+  @Post('socio-confirmar-viaje')
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Fetched Stats Succesfully')
+  async confirmarViajeSocioByViajeId (@Body() createViajeDto: any) {
+    try {
+      return await this.viajesService.confirmarViajeSocioByViajeId(createViajeDto);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+
   @Get()
   findAll() {
     return this.viajesService.findAll();

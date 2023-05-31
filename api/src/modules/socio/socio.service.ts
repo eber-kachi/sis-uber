@@ -61,9 +61,10 @@ export class SocioService {
     return await this.socioRepository.remove(socios);
   }
 
-  async findAllByState(state){
+  async findAllByState(state: string) {
+    // todo validar que tambien esten activos los socios
     const socios = await this.socioRepository.find({
-      where: {estado: state},
+      where: { estado: state },
       order: { createdAt: 'DESC' },
       relations: ['veiculo'],
     });
