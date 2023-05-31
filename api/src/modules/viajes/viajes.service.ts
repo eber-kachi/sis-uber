@@ -4,12 +4,15 @@ import { UserService } from '../user/user.service';
 import { ViajeRepository } from './viajes.repository';
 import { CreateViajeClient } from './dto/create-viaje-client';
 import { RoleType } from 'common/constants/role-type';
+import { SocioService } from '../socio/socio.service';
+import { EstadoViaje } from '../../common/constants/estado-viaje';
 
 @Injectable()
 export class ViajesService {
   constructor(
     public readonly viajeRepository: ViajeRepository,
     public readonly userService: UserService,
+    public readonly socioService: SocioService,
   ) {}
 
   async create(createViajeDto: CreateViajeClient) {
@@ -53,4 +56,38 @@ export class ViajesService {
 
     return await this.viajeRepository.find({ where: { cliente: id } });
   }
+
+  async asignationSocioWithClient(createViajeDto: any) {
+    if (!createViajeDto.socio_id && !createViajeDto.viaje_id) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'socio_id no existe o viaje_id no existe.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    const socio = await this.socioService.findOne(createViajeDto.socio_id);
+    if (!socio) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Socio no encontrado',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const viaje = await this.viajeRepository.findOne(createViajeDto.viaje_id);
+    viaje.estado= EstadoViaje.PENDIENTECONFIRMACIONSOCIO;
+    viaje.socio = socio;
+    return await this.viajeRepository.save(viaje);
+  }
+
+  async confirmarViajeSocioByViajeId(createViajeDto: any) {
+    const viaje = await this.viajeRepository.findOne(createViajeDto.viaje_id);
+    viaje.estado= EstadoViaje.CONFIRMADO;
+    return await this.viajeRepository.save(viaje);
+  }
+  // return this.viajeRepository.update('', viaje);
 }
