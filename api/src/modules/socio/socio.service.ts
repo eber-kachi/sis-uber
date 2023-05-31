@@ -16,7 +16,7 @@ export class SocioService {
   async create(createSocioDto: SocioDto) {
     const user = await this.userService.createUser(
       {
-        email: `${createSocioDto.nombres}@gmail.com`,
+        email: createSocioDto.email,
         password: createSocioDto.ci,
       },
       null,
