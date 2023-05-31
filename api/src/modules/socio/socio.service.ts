@@ -16,7 +16,7 @@ export class SocioService {
   async create(createSocioDto: SocioDto) {
     const user = await this.userService.createUser(
       {
-        email: `${createSocioDto.nombres}@gmail.com`,
+        email: createSocioDto.email,
         password: createSocioDto.ci,
       },
       null,
@@ -69,5 +69,13 @@ export class SocioService {
       relations: ['veiculo'],
     });
     return socios;
+  }
+  // crear un metodo para activar o intivar un socio
+  async enabled(id: string) {
+    const socio = await this.socioRepository.findOne(id);
+
+    socio.activo = !socio.activo;
+
+    return this.socioRepository.save(socio);
   }
 }

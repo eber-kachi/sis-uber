@@ -9,6 +9,8 @@ export class SocioDto extends AbstractDto {
   @ApiPropertyOptional()
   apellidos: string;
   @ApiPropertyOptional()
+  email: string;
+  @ApiPropertyOptional()
   ci: string;
   @ApiPropertyOptional()
   nacionalidad: string;
