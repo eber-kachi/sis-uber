@@ -10,6 +10,7 @@ import CustomModal from "@components/Modal/CustomModal"
 import Link from "next/link"
 import { toast } from "react-toastify"
 import SocioService from "../../../services/api/Socio.service"
+import CustomSwitch from '../../../components/ui/CustomSwitch';
 
 const SocioListPage: NextPage = ({ dataResponce }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
@@ -36,7 +37,7 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
   }
 
   useEffect(() => {
-
+    console.log(dataResponce);
   }, [])
 
   return (
@@ -64,6 +65,7 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
             <th>Nombre completo</th>
             <th>Estado</th>
             <th>Licencia</th>
+            <th>Activar</th>
             <th>Acciones</th>
           </tr>
           </thead>
@@ -93,6 +95,23 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
                     {object.vencimiento}
                   </li>
                 </ul>
+              </td>
+              <td>
+                <CustomSwitch
+                  enabled={object?.activo + '' === '1' || object?.activo === true ? true : false}
+                  onClick={async () => {
+                    await socioService.enabled(object.id)
+                    .then(async res => {
+                      await getData();
+                      toast("Registrado con exito.");
+                      console.log(res);
+                    })
+                    .catch(error => {
+                      console.log(error);
+                      toast("Error al Registrado.",{});
+                    });
+                  }}></CustomSwitch>
+
               </td>
               <td>
                 <div className="">

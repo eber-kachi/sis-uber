@@ -35,6 +35,7 @@ type Inputs = {
   user_id: string;
   // veiculo_id: string,
   username: string;
+  email: string;
 }
 
 const VeiculoEditPage = ({ isnew, data }) => {
@@ -61,6 +62,7 @@ const VeiculoEditPage = ({ isnew, data }) => {
       categoria: data?.categoria ? data.categoria : 'Profesional (B)',
       user_id: data?.user_id ? data.user_id : '',
       username: data?.username ? data.username : '',
+      email: data?.email ? data.email : '',
       // resetPassword: false,
       // veiculo_id: data?.veiculo_id ? data.veiculo_id : "",
     },
@@ -278,6 +280,22 @@ const VeiculoEditPage = ({ isnew, data }) => {
                   {errors.username?.type === 'required' && (
                   <span>
                     {errors.username?.message}
+                    {' '}
+                  </span>
+                  )}
+                </Form.Group>
+              </Col>
+              <Col xs={6} md={4}>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Correo Electronico</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder=""
+                    {...register('email', { required: true })}
+                  />
+                  {errors.email?.type === 'required' && (
+                  <span>
+                    {errors.email?.message}
                     {' '}
                   </span>
                   )}

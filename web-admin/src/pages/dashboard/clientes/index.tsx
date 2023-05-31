@@ -11,7 +11,7 @@ import CustomModal from "@components/Modal/CustomModal"
 import Link from "next/link"
 import { toast } from "react-toastify"
 import ClienteService from "../../../services/api/Cliente.service"
-
+import CustomSwitch from '../../../components/ui/CustomSwitch';
 
 const SocioListPage: NextPage = ({ dataResponce }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
@@ -84,6 +84,23 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
               {/*    <li>Vencimiento: {object.vencimiento}</li>*/}
               {/*  </ul>*/}
               {/*</td>*/}
+              <td>
+                <CustomSwitch
+                    enabled={object?.activo + '' === '1' || object?.activo === true ? true : false}
+                    onClick={() => {
+                      clienteService.enabled(object.id)
+                      .then(res => {
+                        toast("Registrado con exito.");
+                        console.log(res);
+                        getData();
+                      })
+                      .catch(error => {
+                        console.log(error);
+                        toast("Error al Registrado.",{});
+                      });
+                    }}>
+                </CustomSwitch>
+              </td>
               <td>
                 <div className="">
                   {/*<Link className="btn btn-outline-warning"*/}
