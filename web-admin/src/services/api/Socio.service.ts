@@ -27,4 +27,25 @@ export default class SocioService extends BaseAPIClass {
         });
     });
   }
+
+  addCar(arg0: { socio_id: any; veiculo_id: any }) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`${this.baseUrl}/add-car`, arg0)
+        .then((response) => {
+          // console.log(response);
+          // if (response.statusText === 'OK') {
+          resolve(response.data);
+          // } else {
+          // reject(response.data);
+          // }
+        })
+        .catch((error) => {
+          // console.error('Promise', error);
+          // console.info('Promise', error.message);
+          // todo mostrar al usuario que paso  un error
+          reject(error);
+        });
+    });
+  }
 }

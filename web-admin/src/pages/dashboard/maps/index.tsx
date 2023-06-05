@@ -1,19 +1,16 @@
 import { AdminLayout } from "@layout/index";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   CircleF,
   GoogleMap,
   MarkerF,
   useLoadScript,
 } from "@react-google-maps/api";
-import io from "socket.io-client";
-import { log } from "console";
-import CarRed from "../../../../public/assets/img/cars/car-red.svg";
 import SocioService from "../../../services/api/Socio.service";
 import ViajeService from "src/services/api/Viaje.service";
 import { toast } from "react-toastify";
-
-let socket;
+import socket from "@lib/sockets/socket";
+import { Form, ListGroup } from "react-bootstrap";
 
 const CustomMarker = (props) => {
   // id=> socio id
@@ -28,6 +25,8 @@ const CustomMarker = (props) => {
 
 const MapsPage = () => {
   const libraries = useMemo(() => ["places"], []);
+  const mapRef = useRef(null);
+  const makerRef = useRef(null);
   // -17.39470732739393, -66.28102605202128
   //   -17.39418792844535, -66.28356318651015
   const mapCenter = useMemo(
@@ -36,16 +35,18 @@ const MapsPage = () => {
   );
   // -17.39457571741809, -66.2861413204621
   const [viajePending, setViajePendig] = useState<any[]>([]);
+  const [currenLocationSelect, setCurrenLocationSelect] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
-  const [veiculos, setVeiculos] = useState(
-    [
-      // { latitude: -17.39470732739393, longitude: -66.28102605202128 },
-      // { latitude: -17.39418792844535, longitude: -66.28356318651015 },
-      // { latitude: -17.39457571741809, longitude: -66.2861413204621 },
-    ]
-  );
+  const [veiculos, setVeiculos] = useState([
+    // { latitude: -17.39470732739393, longitude: -66.28102605202128 },
+    // { latitude: -17.39418792844535, longitude: -66.28356318651015 },
+    // { latitude: -17.39457571741809, longitude: -66.2861413204621 },
+  ]);
 
-  const [selectedViajeId, setSelectedViajeId] = useState<any>();
+  const [selectedViajeId, setSelectedViajeId] = useState<any>(null);
 
   const socioService = new SocioService();
   const viajeService = new ViajeService();
@@ -70,18 +71,29 @@ const MapsPage = () => {
 
   // sockets
   React.useEffect(() => {
-    socketInitializer();
+    // socketInitializer();
 
     // socioService.getAllByStatus("LIBRE")
 
     const intervalId = setInterval(async () => {
-      const responce : any = await socioService.getAllByStatus("LIBRE");
+      const responce: any = await socioService.getAllByStatus("LIBRE");
       console.log(responce);
       setVeiculos(responce.data);
     }, 5000);
 
     return () => {
       clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("pendiente_confirmacion", (viajes: any) => {
+      console.log(viajes);
+      // debugger;
+      setViajePendig(() => [...viajePending, viajes]);
+    });
+    return () => {
+      socket.off("pendiente_confirmacion");
     };
   }, []);
 
@@ -98,38 +110,58 @@ const MapsPage = () => {
     //   ]);
     //   console.log(messages);
     // });
-
     // await fetch('http://localhost:3001')
     // socket = io({host:"http://localhost:3001"})
-    socket = io("https://b26f-2803-9400-3-386d-d5ce-e1f-8ea6-b9c0.ngrok-free.app");
-
-    socket.on("connect", () => {
-      console.log("connected...");
-    });
-
-    socket.on("pendiente_confirmacion", (viajes: any) => {
-      console.log(viajes);
-      // debugger;
-      setViajePendig(() => [...viajePending, viajes]);
-    });
-
     // socket.on("message", (message: any) => {
     //   console.log(message);
     // });
   };
 
+  // metodo para asignar  un socio con un veiculo
   const handleMarkerClick = (id: string | number) => {
-    console.log("EL id en el padre=> ", id);
-    console.log(selectedViajeId);
-    viajeService.asignarViajeSocio(selectedViajeId, id)
-      .then(res => {
-        toast("Asignado con exito.");
-        console.log(res);
-      })
-      .catch(error => {
-        console.log(error);
-        toast("Error al Asignado.",{});
-      });
+    // console.log("EL id en el padre=> ", id);
+    // console.log(selectedViajeId);
+    if (selectedViajeId != null) {
+      viajeService
+        .asignarViajeSocio(selectedViajeId, id)
+        .then((res: any) => {
+          // socket.emit("asignacion", { id: selectedViajeId, evento: "" , data: res.data });
+          socket.emit("asignacion_event", { id: selectedViajeId, evento: "" });
+          socket.emit("asignacion_event_socio", {
+            socio_id: res.data.socio.id,
+            data: res.data,
+          });
+
+          toast("Asignado con exito.");
+
+          // const newviajes = viajePending.map((v) => {
+          //   if (v.id != selectedViajeId) {
+          //     return v;
+          //   }
+          // });
+          const newviajes = viajePending.reduce((acc, item) => {
+            if (item.id != selectedViajeId) {
+              return [...acc, item];
+            }
+            return acc;
+          }, []);
+          setViajePendig(newviajes.length == 0 ? [] : newviajes);
+          setSelectedViajeId(null);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast("Error al Asignado.", {});
+        });
+    }
+  };
+
+  // metodo para cuando seleciona al cliente
+  const handlerSelectViaje = (viaje_id: string) => {
+    setSelectedViajeId(viaje_id);
+    // todo marcar donde esta el usuario
+    // mapRef.current.
+    const viaje = viajePending.find((v) => (v.id = viaje_id));
+    // setCurrenLocationSelect({latitude:viaje.start, longitude})
   };
 
   if (!isLoaded) {
@@ -138,31 +170,38 @@ const MapsPage = () => {
 
   return (
     <AdminLayout>
-      <div className="row">
-        <div className="col col-2">
-          <h4>Sidevar Maps</h4>
-          <ul className="">
-            {viajePending.map((viaje: any, index) => (
-              <li className="bg-secondary rounded text-center" key={+index}>
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  value={viaje.id}
-                  id={`viaje-${index}`}
-                  checked={selectedViajeId === viaje.id}
-                  onChange={() => setSelectedViajeId(viaje.id)}
-                ></input>
-                {/* {viaje.cliente.nombres} {viaje.cliente.apellidos} */}
-                <label htmlFor={`viaje-${index}`}>
-                  {viaje.cliente.nombres} {viaje.cliente.apellidos}
-                </label>
-              </li>
-            ))}
-          </ul>
+      <div className="row ">
+        <div
+          className="col col-2"
+          style={{ overflowY: "scroll", height: "75vh" }}
+        >
+          <h5>Nuevos viajes</h5>
+          <Form>
+            <ListGroup>
+              {viajePending &&
+                viajePending.map((viaje: any, index) => (
+                  <ListGroup.Item
+                    key={viaje.id}
+                    onChange={() => handlerSelectViaje(viaje.id)}
+                  >
+                    <Form.Check
+                      key={viaje.id}
+                      value={viaje.id}
+                      type={"radio"}
+                      name="viajes"
+                      label={`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
+                      checked={selectedViajeId === viaje.id}
+                      onChange={() => {}}
+                    />
+                  </ListGroup.Item>
+                ))}
+            </ListGroup>
+          </Form>
         </div>
         <div className="col col-10">
           <div style={{ display: "flex", height: "80vh" }}>
             <GoogleMap
+              ref={mapRef}
               options={mapOptions}
               zoom={14}
               center={mapCenter}
@@ -177,7 +216,10 @@ const MapsPage = () => {
                   id={markerData.id}
                   key={+index}
                   draggable
-                  position={{ lat: markerData.latitude, lng: markerData.longitude }}
+                  position={{
+                    lat: markerData.latitude,
+                    lng: markerData.longitude,
+                  }}
                   label={{
                     text: "Richat",
                     color: "black",
@@ -226,6 +268,21 @@ const MapsPage = () => {
                 //   }}
                 // />
               ))}
+
+              {makerRef.current && (
+                <MarkerF
+                  position={{
+                    lat: currenLocationSelect
+                      ? currenLocationSelect.latitude
+                      : 0,
+                    lng: currenLocationSelect
+                      ? currenLocationSelect.longitude
+                      : 0,
+                  }}
+                  onLoad={() => console.log("Marker Loaded")}
+                  icon="https://picsum.photos/64"
+                />
+              )}
               {/* {[1000, 2500].map((radius, idx) => { */}
               {/*  return ( */}
               {/*    <CircleF */}
