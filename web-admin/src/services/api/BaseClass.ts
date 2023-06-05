@@ -1,19 +1,18 @@
-import axios from "@lib/axios"
-
+import axios from "@lib/axios";
 
 export abstract class BaseAPIClass {
-   baseUrl: string;
+  baseUrl: string;
 
   constructor() {
-    this.baseUrl = '';
+    this.baseUrl = "";
   }
 
   getAll(filterObject?) {
-    let queryString = '';
+    let queryString = "";
     if (filterObject) {
       const fitlerKeys = Object.keys(filterObject);
       if (fitlerKeys.length > 0) {
-        queryString = '?';
+        queryString = "?";
       }
       fitlerKeys.forEach((key, index) => {
         if (filterObject[key] !== undefined && filterObject[key] !== null) {
@@ -22,7 +21,10 @@ export abstract class BaseAPIClass {
           }
         }
       });
-      if (fitlerKeys.length > 0 && queryString[queryString.length - 1] === '&') {
+      if (
+        fitlerKeys.length > 0 &&
+        queryString[queryString.length - 1] === "&"
+      ) {
         queryString = queryString.slice(0, -1);
       }
     }
@@ -30,7 +32,7 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}${queryString}`)
-        .then(response => {
+        .then((response) => {
           console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -38,7 +40,7 @@ export abstract class BaseAPIClass {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
+        .catch((error) => {
           // console.error('Promise', error);
           // console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
@@ -59,7 +61,7 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .get(url)
-        .then(response => {
+        .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -67,9 +69,9 @@ export abstract class BaseAPIClass {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           reject(error);
         });
     });
@@ -79,7 +81,7 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/${id}`)
-        .then(response => {
+        .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -87,9 +89,9 @@ export abstract class BaseAPIClass {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -101,7 +103,7 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .post(`${this.baseUrl}`, data)
-        .then(response => {
+        .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -109,20 +111,20 @@ export abstract class BaseAPIClass {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
     });
   }
 
-  async update(data, id) {
+  async update(data: any, id: string | number) {
     return new Promise((resolve, reject) => {
       axios
-        .put(`${this.baseUrl}/${id}`, data)
-        .then(response => {
+        .patch(`${this.baseUrl}/${id}`, data)
+        .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -130,9 +132,9 @@ export abstract class BaseAPIClass {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -158,7 +160,7 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .delete(`${this.baseUrl}/${id}`)
-        .then(response => {
+        .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -166,9 +168,9 @@ export abstract class BaseAPIClass {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -193,16 +195,16 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/enabled/${id}`)
-        .then(response => {
+        .then((response) => {
           // if (response.statusText === 'OK') {
           resolve(response.data);
           // } else {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           reject(error);
         });
     });
@@ -212,7 +214,7 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/slug/${id}`)
-        .then(response => {
+        .then((response) => {
           // console.log(response);
           // if (response.statusText) {
           resolve(response.data);
@@ -220,9 +222,9 @@ export abstract class BaseAPIClass {
           // reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -234,20 +236,18 @@ export abstract class BaseAPIClass {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/destination/${id}`)
-        .then(response => {
+        .then((response) => {
           // if (response.statusText) {
           resolve(response.data);
           // } else {
           // 	reject(response.data);
           // }
         })
-        .catch(error => {
-          console.error('Promise', error);
-          console.info('Promise', error.message);
+        .catch((error) => {
+          console.error("Promise", error);
+          console.info("Promise", error.message);
           reject(error);
         });
     });
   }
 }
-
-
