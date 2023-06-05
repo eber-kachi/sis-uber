@@ -9,6 +9,9 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  Res,
+  Req,
+  StreamableFile,
 } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { ClienteDto } from './dto/create-cliente.dto';
@@ -17,6 +20,8 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'decorators/response_message.decorator';
 import { ClienteRegisterDto } from './dto/cliente-register.dto';
 
+import type { Response } from 'express';
+import { CustomInterceptorIgnore } from '../../interceptors/custom-interceptor-ignore.service';
 @Controller('clientes')
 @ApiTags('clientes')
 export class ClienteController {
@@ -69,6 +74,44 @@ export class ClienteController {
   async findOne(@Param('id') id: string) {
     try {
       return await this.clienteService.findOne(id);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+
+  @Get('/report/:id')
+  @CustomInterceptorIgnore()
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Cliente Registrado exitosamente.')
+  // async getTrips(@Param('id') id: string, @Res() res) {
+  async getTrips(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const buffer = await this.clienteService.reportviajes();
+      // return this.clienteService.reportviajes();
+      console.log(Buffer.isBuffer(buffer));
+      res.set({
+        // pdf
+        'Content-Type': 'application/pdf',
+        // 'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename=pdf.pdf`,
+        'Content-Length': buffer.length,
+        // prevent cache
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: 0,
+      });
+      // res.end(buffer);
+      res.send(buffer);
+      // return new StreamableFile(buffer);
+      // res.headers.set('Content-Type', 'application/pdf');
     } catch (error) {
       console.log(error);
 
