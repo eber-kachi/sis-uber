@@ -4,6 +4,8 @@ import { VeiculoEntity } from '../entities/veiculo.entity';
 
 export class VeiculoDto extends AbstractDto {
   @ApiPropertyOptional()
+  socio_id: string;
+  @ApiPropertyOptional()
   placa: string;
   @ApiPropertyOptional()
   modelo: string;

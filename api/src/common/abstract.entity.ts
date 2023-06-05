@@ -1,11 +1,12 @@
 'use strict';
 
-import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 import { UtilsService } from '../providers/utils.service';
 import { AbstractDto } from './dto/AbstractDto';
 
 export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
+  // @Column({ length: 150 })
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 

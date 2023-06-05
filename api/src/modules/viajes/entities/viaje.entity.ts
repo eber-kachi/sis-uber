@@ -35,19 +35,19 @@ export class ViajeEntity extends AbstractEntity<ViajeDto> {
 
   @Column({ nullable: true, type: 'datetime' })
   start_time: Date;
-  
+
   @Column({ nullable: true, type: 'datetime' })
   end_time: Date;
   //posicion  inicial
-  @Column({ nullable: true, type: 'float' })
+  @Column({ nullable: true, type: 'double precision' })
   start_latitude: number;
-  @Column({ nullable: true, type: 'float' })
+  @Column({ nullable: true, type: 'double precision' })
   start_longitude: number;
 
   // posicion final
-  @Column({ nullable: true, type: 'float' })
+  @Column({ nullable: true, type: 'double precision' })
   end_latitude: number;
-  @Column({ nullable: true, type: 'float' })
+  @Column({ nullable: true, type: 'double precision' })
   end_longitude: number;
 
   @ManyToOne(() => ClienteEntity, (data) => data.viajes)

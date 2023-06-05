@@ -87,6 +87,13 @@ export class UserController {
     return this.userService.getUser(userId);
   }
 
+  @Get('/email/:email')
+  // @Auth(RoleType.USER)
+  @HttpCode(HttpStatus.OK)
+  async getUserByEmail(@Param('email') email: string): Promise<any> {
+    return await this.userService.findOne({ email });
+  }
+
   @Put(':id')
   updateState(@Param('id') id: string) {
     return this.userService.updateActive(id);

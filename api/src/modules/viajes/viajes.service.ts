@@ -39,8 +39,8 @@ export class ViajesService {
     return datas;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} viaje`;
+  async findOne(id: string) {
+    return await this.viajeRepository.findOneBy({ id });
   }
 
   update(id: number, updateViajeDto: UpdateViajeDto) {
@@ -54,7 +54,7 @@ export class ViajesService {
   async findAllByClientId(id: string) {
     // const viajes= await this.viajeRepository.find({where: {socio:id}});
 
-    return await this.viajeRepository.find({ where: { cliente: id } });
+    return await this.viajeRepository.find({ where: { cliente: { id: id } } });
   }
 
   async asignationSocioWithClient(createViajeDto: any) {
@@ -89,5 +89,28 @@ export class ViajesService {
     viaje.estado = EstadoViaje.CONFIRMADO;
     return await this.viajeRepository.save(viaje);
   }
-  // return this.viajeRepository.update('', viaje);
+
+  async getLastTrip(socio_id = null, cliente_id = null) {
+    if (socio_id != null) {
+      const viajes = await this.viajeRepository.find({
+        where: { socio: socio_id },
+        relations: ['cliente'],
+        take: 5,
+      });
+      return viajes;
+    }
+
+    const viajes = await this.viajeRepository.find({
+      where: { cliente: cliente_id },
+      relations: ['socio'],
+      take: 5,
+    });
+    return viajes;
+  }
+
+  async changeStatusViajeById(viajeid: string, status: EstadoViaje) {
+    const viaje = await this.viajeRepository.findOneBy({ id: viajeid });
+    viaje.estado = status;
+    return await this.viajeRepository.save(viaje);
+  }
 }

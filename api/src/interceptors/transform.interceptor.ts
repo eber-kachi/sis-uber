@@ -16,10 +16,10 @@ export class TransformationInterceptor<T> implements NestInterceptor<T, Response
       map((data) => ({
         message:
           this.reflector.get<string>('response_message', context.getHandler()) ||
-          data.message ||
+          data?.message ||
           '',
         statusCode: context.switchToHttp().getResponse().statusCode,
-        data: data.result || data,
+        data: data?.result || data || null,
       })),
     );
   }

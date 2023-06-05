@@ -5,7 +5,6 @@ import { WhatsappService } from '../../notification/whatsapp/whatsapp.service';
 
 // import { pipe } from 'rxjs';
 
-
 @Injectable()
 export class NotificacionService {
   private readonly logger = new Logger(NotificacionService.name);
@@ -13,9 +12,7 @@ export class NotificacionService {
   constructor(
     public readonly notificacionRepository: NotificacionRepository,
     public readonly whatsappService: WhatsappService,
-  ) {
-
-  }
+  ) {}
 
   @Cron(CronExpression.EVERY_10_MINUTES) // tODO EL TIEMPO CADA 10 MIN”
   // @Cron(CronExpression.EVERY_5_SECONDS) // A las 00 : 00 los lunes. ”
@@ -55,27 +52,27 @@ export class NotificacionService {
     // }),
     // ).subscribe();
 
-    for (let p of pendientes) {
-      this.whatsappService.sendMessage(p.mensaje, p.numero)
+    for (const p of pendientes) {
+      this.whatsappService
+        .sendMessage(p.mensaje, p.numero)
         .pipe()
         .subscribe(
           async (res) => {
-
-            const a = await this.notificacionRepository.findOne(p.id);
+            const a = await this.notificacionRepository.findOne({ where: { id: p.id } });
             a.intentos = a.intentos + 1;
             a.estado = 'ENVIADO';
             await this.notificacionRepository.save(a);
             console.log('guardar como enviado');
           },
           async (error) => {
-            const a = await this.notificacionRepository.findOne(p.id);
+            const a = await this.notificacionRepository.findOne({ where: { id: p.id } });
             a.intentos = a.intentos + 1;
             await this.notificacionRepository.save(a);
             this.logger.error('mensaje no enviado..');
-          });
+          },
+        );
 
-      setTimeout(() => {
-      }, 1000);
+      setTimeout(() => {}, 1000);
       console.log('paso', p.id);
     }
   }
@@ -87,7 +84,7 @@ export class NotificacionService {
     });
   }
 
-  async crear(param: { mensaje: any, estado: string | 'PENDIENTE', numero: string }) {
+  async crear(param: { mensaje: any; estado: string | 'PENDIENTE'; numero: string }) {
     const noti = await this.notificacionRepository.create(param);
     return await this.notificacionRepository.save(noti);
   }

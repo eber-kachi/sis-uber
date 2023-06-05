@@ -17,18 +17,20 @@ export class VeiculoService {
     return socios;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} veiculo`;
+  async findOne(id: string) {
+    return await this.veiculoRepository.findOne({
+      where: { id: id },
+    });
   }
 
-  async update(id: number, updateVeiculoDto: UpdateVeiculoDto) {
-    const socioUpdate = await this.veiculoRepository.findOne(id);
+  async update(id: string, updateVeiculoDto: UpdateVeiculoDto) {
+    const socioUpdate = await this.veiculoRepository.findOneBy({ id });
     if (!socioUpdate.id) {
       // tslint:disable-next-line:no-console
       console.error("Todo doesn't exist");
     }
     await this.veiculoRepository.update(id, updateVeiculoDto);
-    return await this.veiculoRepository.findOne(id);
+    return await this.veiculoRepository.findOneBy({ id });
   }
 
   async remove(id: string) {

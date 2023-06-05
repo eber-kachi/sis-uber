@@ -1,6 +1,11 @@
 /* eslint-disable prettier/prettier */
-import { Repository } from 'typeorm';
-import { EntityRepository } from 'typeorm/decorator/EntityRepository';
+import { DataSource, Repository } from 'typeorm';
 import { SocioEntity } from './entities/socio.entity';
-@EntityRepository(SocioEntity)
-export class SocioRepository extends Repository<SocioEntity> {}
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class SocioRepository extends Repository<SocioEntity> {
+  constructor(private dataSource: DataSource) {
+    super(SocioEntity, dataSource.createEntityManager());
+  }
+}

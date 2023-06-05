@@ -6,6 +6,7 @@ import { RoleType } from '../../common/constants/role-type';
 import { UserDto } from './dto/UserDto';
 import { Exclude } from 'class-transformer';
 import { ClienteEntity } from 'modules/cliente/entities/cliente.entity';
+import { SocioEntity } from 'modules/socio/entities/socio.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends AbstractEntity<UserDto> {
@@ -38,6 +39,9 @@ export class UserEntity extends AbstractEntity<UserDto> {
   // fullName: string;
   @OneToOne((type) => ClienteEntity, (customer) => customer.user)
   cliente: ClienteEntity;
+
+  @OneToOne((type) => SocioEntity, (customer) => customer.user)
+  socio: SocioEntity;
 
   dtoClass = UserDto;
 }

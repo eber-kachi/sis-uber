@@ -19,13 +19,13 @@ export class VeiculoController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.veiculoService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.veiculoService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVeiculoDto: UpdateVeiculoDto) {
-    return this.veiculoService.update(+id, updateVeiculoDto);
+    return this.veiculoService.update(id, updateVeiculoDto);
   }
 
   @Delete(':id')

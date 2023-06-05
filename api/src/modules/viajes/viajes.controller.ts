@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  Query,
 } from '@nestjs/common';
 import { ViajesService } from './viajes.service';
 import { ViajeDto } from './dto/create-viaje.dto';
@@ -67,9 +68,30 @@ export class ViajesController {
   @Post('socio-confirmar-viaje')
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Fetched Stats Succesfully')
-  async confirmarViajeSocioByViajeId (@Body() createViajeDto: any) {
+  async confirmarViajeSocioByViajeId(@Body() createViajeDto: any) {
     try {
       return await this.viajesService.confirmarViajeSocioByViajeId(createViajeDto);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+
+  @Post('change-status-by-id')
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Fetched Stats Succesfully')
+  async changeStatusViajeById(@Body() createViajeDto: any) {
+    try {
+      return await this.viajesService.changeStatusViajeById(
+        createViajeDto.viaje_id,
+        createViajeDto.estado,
+      );
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -88,13 +110,29 @@ export class ViajesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.viajesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.viajesService.findOne(id);
   }
   // obtener todos los viajes segun el socio_id
   @Get('get-by-cliente-id/:id')
   async findAllByClientId(@Param('id') id: string) {
     return await this.viajesService.findAllByClientId(id);
+  }
+  // obtener los ultimos 5 viajes
+  @Get('/get-last/trip-by?')
+  async getLastTrip(@Query('socio_id') socio_id: string, @Query('cliente_id') cliente_id: string) {
+    try {
+      return await this.viajesService.getLastTrip(socio_id, cliente_id);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   @Patch(':id')

@@ -19,7 +19,7 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'decorators/response_message.decorator';
 import { AuthUserInterceptor } from 'interceptors/auth-user-interceptor.service';
 // import { AuthGuard } from 'guards/auth.guard';
-import { AuthGuard } from '../../guards/auth.guard';
+// import { AuthGuard } from '../../guards/auth.guard';
 
 @Controller('socios')
 @ApiTags('socios')
@@ -30,6 +30,36 @@ export class SocioController {
   async create(@Body() createSocioDto: any) {
     const createSocio = await this.socioService.create(createSocioDto);
     return createSocio.toDto();
+  }
+
+  @Post('add-car')
+  async addCar(@Body() createSocioDto: any) {
+    return await this.socioService.addcardBysocioid(createSocioDto);
+  }
+
+  @Post('change-state')
+  async changeState(@Body() createSocioDto: { socio_id: string; state: string }) {
+    try {
+      const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+      if (createSocioDto.socio_id.match(validRegex)) {
+        const user = await this.socioService.findByEmail(createSocioDto.socio_id);
+        if (user.socio) {
+          return await this.socioService.changeState(user.socio.id, createSocioDto.state);
+        }
+      }
+      return await this.socioService.changeState(createSocioDto.socio_id, createSocioDto.state);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   @Get()

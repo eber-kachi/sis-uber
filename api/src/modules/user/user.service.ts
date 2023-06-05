@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FindConditions } from 'typeorm';
+// import { FindConditions } from 'typeorm';
 
 import { PageDto } from '../../common/dto/PageDto';
 import { FileNotImageException } from '../../exceptions/file-not-image.exception';
@@ -25,10 +25,11 @@ export class UserService {
   /**
    * Find single user
    */
-  findOne(findData: FindConditions<UserEntity>): Promise<UserEntity> {
+  // findOne(findData: FindConditions<UserEntity>): Promise<UserEntity> {
+  findOne(findData: any): Promise<UserEntity> {
     return this.userRepository.findOne({
       where: findData,
-      // relations: ['medico'],
+      relations: ['socio', 'cliente'],
     });
   }
 
@@ -93,7 +94,7 @@ export class UserService {
     // return userEntity;
     const socios = await this.userRepository.findOne({
       where: { email: email },
-      relations: ['cliente'],
+      relations: ['cliente', 'socio'],
     });
 
     return socios;
@@ -121,22 +122,22 @@ export class UserService {
 
   async updateActive(id: string) {
     console.log('user id ', id);
-    const consultorio = await this.userRepository.findOne(id);
+    const consultorio = await this.userRepository.findOneBy({ id });
     if (!consultorio.id) {
       // tslint:disable-next-line:no-console
       console.error("Todo doesn't exist");
     }
     await this.userRepository.update(id, { activo: !consultorio.activo });
-    return await this.userRepository.findOne(id);
+    return await this.userRepository.findOneBy({ id });
   }
 
   async update(id: string, updateConsultorioDto: UserUpdateDto) {
-    const userupdate = await this.userRepository.findOne(id);
+    const userupdate = await this.userRepository.findOneBy({ id });
     if (!userupdate.id) {
       // tslint:disable-next-line:no-console
       console.error("Todo doesn't exist");
     }
     await this.userRepository.update(id, updateConsultorioDto);
-    return await this.userRepository.findOne(id);
+    return await this.userRepository.findOneBy({ id });
   }
 }

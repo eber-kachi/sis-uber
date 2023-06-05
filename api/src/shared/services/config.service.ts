@@ -73,7 +73,7 @@ export class ConfigService {
       migrationsRun: false,
       logging: this.nodeEnv === 'development',
       namingStrategy: new SnakeNamingStrategy(),
-      synchronize: true,
+      // synchronize: true,
       autoLoadEntities: true,
     };
   }

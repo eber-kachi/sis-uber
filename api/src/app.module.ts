@@ -29,7 +29,7 @@ import { MapTrakingGateway } from './gateways/map-traking.gateway';
     UserModule,
 
     NotificationModule,
-    SchedulesModule,
+    // SchedulesModule,
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],
       useFactory: (configService: ConfigService) => configService.typeOrmConfig,

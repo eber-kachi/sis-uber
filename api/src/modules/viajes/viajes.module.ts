@@ -10,6 +10,7 @@ import { UserModule } from '../user/user.module';
 // import { UserModule } from '../user/user.module';
 // import { ClienteModule } from 'modules/cliente/cliente.module';
 // import { UserService } from '../user/user.service';
+import { ViajeEntity } from './entities/viaje.entity';
 
 @Module({
   imports: [
@@ -18,10 +19,10 @@ import { UserModule } from '../user/user.module';
     forwardRef(() => ClienteModule),
     forwardRef(() => UserModule),
     // UserModule,
-    TypeOrmModule.forFeature([ViajeRepository]),
+    TypeOrmModule.forFeature([ViajeEntity]),
   ],
   controllers: [ViajesController],
-  providers: [ViajesService],
+  providers: [ViajesService, ViajeRepository],
   exports: [ViajesService],
 })
 export class ViajesModule {}

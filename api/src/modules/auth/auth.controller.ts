@@ -28,8 +28,7 @@ import { UserRegisterDto } from './dto/UserRegisterDto';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(public readonly userService: UserService, public readonly authService: AuthService) {
-  }
+  constructor(public readonly userService: UserService, public readonly authService: AuthService) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -65,8 +64,9 @@ export class AuthController {
   @UseInterceptors(AuthUserInterceptor)
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto, description: 'current user info' })
-  getCurrentUser(@AuthUser() user: UserEntity) {
-    return user.toDto();
+  async getCurrentUser(@AuthUser() user: UserEntity) {
+    const userAll = await this.userService.findOne({ id: user.id });
+    return userAll;
   }
 
   @Post('logout')
