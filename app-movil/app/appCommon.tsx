@@ -23,6 +23,7 @@ const LOCATION_TASK_NAME = "background-location-task"
 
 
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }: any) => {
+  console.log('TaskManager=> ', LOCATION_TASK_NAME)
   if (error) {
     console.log(error)
     return
@@ -64,7 +65,7 @@ const AppCommon = observer(function AppCommon({ children }: any) {
     // GetOneTimeLocation().then();
     StartForegroundGeolocation().then()
     // StopBackgroundLocation();
-  }, [role])
+  }, [])
 
   // manda cuando la locatizacion  cambia
   useEffect(() => {

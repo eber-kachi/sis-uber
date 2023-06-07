@@ -22,6 +22,7 @@ import { ClienteRegisterDto } from './dto/cliente-register.dto';
 
 import type { Response } from 'express';
 import { CustomInterceptorIgnore } from '../../interceptors/custom-interceptor-ignore.service';
+import { log } from 'console';
 @Controller('clientes')
 @ApiTags('clientes')
 export class ClienteController {
@@ -87,16 +88,15 @@ export class ClienteController {
     }
   }
 
-  @Get('/report/:id')
+  @Get('/report/download')
   @CustomInterceptorIgnore()
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Cliente Registrado exitosamente.')
   // async getTrips(@Param('id') id: string, @Res() res) {
-  async getTrips(@Param('id') id: string, @Res() res: Response) {
+  async getTrips(@Res() res: Response) {
     try {
-      const buffer = await this.clienteService.reportviajes();
+      const buffer: Buffer = await this.clienteService.reportviajes();
       // return this.clienteService.reportviajes();
-      console.log(Buffer.isBuffer(buffer));
       res.set({
         // pdf
         'Content-Type': 'application/pdf',
@@ -109,7 +109,14 @@ export class ClienteController {
         Expires: 0,
       });
       // res.end(buffer);
-      res.send(buffer);
+      console.log(buffer.toString('base64'));
+
+      // res.send(buffer.toString('base64'));
+      res.status(200).send({
+        content: buffer.toString('base64'),
+        filename: 'result.pdf',
+        mimeType: 'application/pdf',
+      });
       // return new StreamableFile(buffer);
       // res.headers.set('Content-Type', 'application/pdf');
     } catch (error) {

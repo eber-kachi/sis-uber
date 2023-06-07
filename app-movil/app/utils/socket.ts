@@ -1,17 +1,14 @@
-import { io } from "socket.io-client";
+import { io } from "socket.io-client"
+import { DEFAULT_API_CONFIG } from "../services/api"
 
-const socket = io("http://192.168.1.7:3001");
+const socket = io(DEFAULT_API_CONFIG.url)
 
 socket.on("connect", () => {
-  console.log("Connected to Socket.IO");
-});
-
-socket.on("message", (message: string) => {
-  console.log("Received message back: " + message);
-});
+  console.log("Connected to Socket.IO Utiliti")
+})
 
 socket.on("disconnect", () => {
-  console.log("Disconnected from Socket.IO");
-});
+  console.log("Disconnected from Socket.IO")
+})
 
-export default socket;
+export default socket

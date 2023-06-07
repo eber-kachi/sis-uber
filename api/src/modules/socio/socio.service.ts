@@ -5,6 +5,7 @@ import { SocioRepository } from './socio.repository';
 // import { UserRepository } from '../user/user.repository';
 import { UserService } from '../user/user.service';
 import { RoleType } from 'common/constants/role-type';
+import { In } from 'typeorm';
 
 @Injectable()
 export class SocioService {
@@ -91,6 +92,17 @@ export class SocioService {
     });
     return socios;
   }
+  async getAllWithStatus() {
+    // todo validar que tambien esten activos los socios
+    const socios = await this.socioRepository.find({
+      where: {
+        estado: In(['LIBRE', 'OCUPADO']),
+      },
+      order: { createdAt: 'DESC' },
+      relations: ['veiculo'],
+    });
+    return socios;
+  }
   // crear un metodo para activar o intivar un socio
   async enabled(id: string) {
     const socio = await this.socioRepository.findOneBy({ id });
@@ -100,8 +112,12 @@ export class SocioService {
     return this.socioRepository.save(socio);
   }
 
-  async changeState(socio_id: string, state: string) {
+  async changeState(socio_id: string, state: string, location?: any) {
     const socio = await this.socioRepository.findOneBy({ id: socio_id });
+    if (location) {
+      socio.latitude = parseFloat(location.latitude);
+      socio.longitude = parseFloat(location.longitude);
+    }
 
     socio.estado = state;
 

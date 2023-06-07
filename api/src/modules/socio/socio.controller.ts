@@ -38,14 +38,18 @@ export class SocioController {
   }
 
   @Post('change-state')
-  async changeState(@Body() createSocioDto: { socio_id: string; state: string }) {
+  async changeState(@Body() createSocioDto: { socio_id: string; state: string; location: any }) {
     try {
       const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
       if (createSocioDto.socio_id.match(validRegex)) {
         const user = await this.socioService.findByEmail(createSocioDto.socio_id);
         if (user.socio) {
-          return await this.socioService.changeState(user.socio.id, createSocioDto.state);
+          return await this.socioService.changeState(
+            user.socio.id,
+            createSocioDto.state,
+            createSocioDto.location,
+          );
         }
       }
       return await this.socioService.changeState(createSocioDto.socio_id, createSocioDto.state);
@@ -140,6 +144,26 @@ export class SocioController {
   findAllByState(@Param('status') status: string) {
     try {
       return this.socioService.findAllByState(status);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+  @Get('/get/all-with/status')
+  // @UseGuards(AuthGuard)
+  // @UseInterceptors(AuthUserInterceptor)
+  // @ApiBearerAuth()
+  @ResponseMessage('Fetched Stats Succesfully')
+  getAllWithStatus() {
+    try {
+      return this.socioService.getAllWithStatus();
     } catch (error) {
       console.log(error);
 

@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { Button, Icon, Screen, Text } from "app/components"
 import { ClientTabScreenProps } from "app/navigators"
 import { useNavigation, useRoute } from "@react-navigation/native"
-import MapView, { Circle, PROVIDER_GOOGLE, Marker } from "react-native-maps"
+import MapView, { Circle, PROVIDER_GOOGLE, Marker, MapMarker } from "react-native-maps"
 import MapViewDirections from "react-native-maps-directions"
 import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
 import { colors, spacing } from "../theme"
@@ -14,12 +14,11 @@ import ViajeService from "../services/api/viaje.service"
 import socket from "app/utils/socket"
 
 interface ClientConfirmationScreenProps
-  extends NativeStackScreenProps<ClientTabScreenProps<"ClientConfirmation">> {
-}
+  extends NativeStackScreenProps<ClientTabScreenProps<"ClientConfirmation">> {}
 
 export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = observer(
   function ClientConfirmationScreen(_props) {
-    const route = useRoute()
+    // const route = useRoute()
     // @ts-ignore
     const { origin, destination } = _props.route.params
     // @ts-ignore
@@ -33,8 +32,11 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
     // console.log("Destination=>", destination)
     // console.log("Props=>", _props.route.params)
     const [loadingBtn, setLoadingBtn] = useState(false)
+    const [confirmado, setConfirmado] = useState(false)
+    const [viajeIdConfirmado, setViajeidConfirmado] = useState<string | null>(null)
     // console.log("Prams=>", route.params)
     const mapRef = useRef<MapView>()
+    const carRef = useRef<MapMarker>()
     // Pull in one of our MST stores
     // const { someStore, anotherStore } = useStores()
 
@@ -60,38 +62,60 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           // edgePadding: DEFAULT_PADDING,
           animated: true,
         })
-
-
       }, 2000)
       // } else {
       // -17.394228156430533, -66.28467617356642
       // }
     }, [mapRef.current])
 
+    useEffect(() => {
+      socket.on("asignacion_event_socio", (res: { socio_id: string; data: any }) => {
+        console.log("viaje confirmado... ", res)
+        if (viajeIdConfirmado === res?.data?.id) {
+          console.log("quitamos loader  ")
+          // sacar socio data y mostrar en la pandatalla
+          setConfirmado(true)
+        }
+        if (viajeIdConfirmado === res?.data?.id && res.data.estado === "FINALIZADO") {
+          navigation.navigate("ClientEndOfTrip", { viaje_id: viajeIdConfirmado })
+        }
+      })
+      return () => {
+        socket.off("asignacion_event_socio")
+      }
+    }, [])
 
     function handlerClickSolicitarTaxiOperador(): void {
       setLoadingBtn(true)
 
-      viajeService.create({
-        start_latitude: origin.latitude,
-        start_longitude: origin.longitude,
+      viajeService
+        .create({
+          start_latitude: origin.latitude,
+          start_longitude: origin.longitude,
 
-        end_latitude: destination.latitude,
-        end_longitude: destination.longitude,
-        initial_address: viajeAddress.orgin,
-        final_address: viajeAddress.destination,
-        user_email: authEmail,
-        estado: "pendiente_confirmacion",
-      }).then(res => {
-        if (res.kind === "ok") {
-          console.log("handlerClickSolicitarTaxiOperador", res.data)
-          socket.emit("pendiente_confirmacion", res.data)
-
-        }
-      }).catch(error => {
-        setLoadingBtn(false)
-      })
+          end_latitude: destination.latitude,
+          end_longitude: destination.longitude,
+          initial_address: viajeAddress.orgin,
+          final_address: viajeAddress.destination,
+          user_email: authEmail,
+          estado: "pendiente_confirmacion",
+        })
+        .then((res) => {
+          if (res.kind === "ok") {
+            console.log("handlerClickSolicitarTaxiOperador", res.data)
+            setViajeidConfirmado(res.data?.id)
+            socket.emit("pendiente_confirmacion", res.data)
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          setLoadingBtn(false)
+        })
       console.log("Solocitando viaje....")
+    }
+
+    function handlerClickShowTaxiOperador(): void {
+      console.log("mostrar ubicacion del veiculo.")
     }
 
     return (
@@ -138,7 +162,6 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
             />
           )}
 
-
           <MapViewDirections
             origin={origin}
             destination={destination}
@@ -146,6 +169,17 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
             strokeColor="black"
             strokeWidth={5}
           />
+
+          {confirmado && (
+            <Marker
+              ref={carRef}
+              coordinate={{
+                latitude: origin.latitude,
+                longitude: origin.longitude,
+              }}
+              title="Card"
+            />
+          )}
 
           {/* <Circle */}
           {/*  center={region} */}
@@ -156,21 +190,39 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           {/* /> */}
         </MapView>
 
-        {origin && destination ? (
+        {confirmado === false && origin && destination ? (
           <View style={$buttonContainer}>
             <Button
-              LeftAccessory={(props) => (
-                loadingBtn &&
-                <Icon containerStyle={props.style} style={$iconStyle} icon="loading"/>
-              )}
-              testID="registera"
-              text={loadingBtn ? "Esperando..." : "Solicitar"}
+              LeftAccessory={(props) =>
+                loadingBtn && (
+                  <Icon containerStyle={props.style} style={$iconStyle} icon="loading" />
+                )
+              }
+              testID="registeras"
+              text={loadingBtn ? "Esperando..." : "Solicitar veiculo"}
               style={$tapButtonInitRoute}
               preset="reversed"
+              disabled={loadingBtn}
               onPress={handlerClickSolicitarTaxiOperador}
             />
           </View>
-        ) : null}
+        ) : (
+          <View style={$buttonContainer}>
+            <Button
+              LeftAccessory={(props) =>
+                loadingBtn && (
+                  <Icon containerStyle={props.style} style={$iconStyle} icon="loading" />
+                )
+              }
+              testID="registeras"
+              text={"Ver ubicacion del veiculo"}
+              style={$tapButtonInitRoute}
+              preset="reversed"
+              disabled={loadingBtn}
+              onPress={handlerClickShowTaxiOperador}
+            />
+          </View>
+        )}
       </Screen>
     )
   },

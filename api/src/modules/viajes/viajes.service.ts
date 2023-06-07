@@ -78,7 +78,17 @@ export class ViajesService {
       );
     }
 
-    const viaje = await this.viajeRepository.findOne(createViajeDto.viaje_id);
+    const viaje = await this.viajeRepository.findOne({ where: { id: createViajeDto.viaje_id } });
+    if (!viaje) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Viaje no encontrado',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     viaje.estado = EstadoViaje.PENDIENTECONFIRMACIONSOCIO;
     viaje.socio = socio;
     return await this.viajeRepository.save(viaje);

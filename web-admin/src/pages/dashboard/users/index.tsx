@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import UserService from "../../../services/api/User.service";
 import { IUser } from "src/services/models/user.model";
 import { AxiosError } from "axios";
+import Link from "next/link";
 
 const UserListPage: NextPage = ({ dataResponce }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
@@ -20,7 +21,14 @@ const UserListPage: NextPage = ({ dataResponce }) => {
 
   const getData = async () => {
     const responce: any = await clienteService.getAll();
-    setObjects(responce.data.data);
+    // filtamos solo para editar usuarios que acceden al web-admin
+    const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
+      if (["USER", "ADMIN"].includes(user.role)) {
+        return [...users, user];
+      }
+      return users;
+    }, []);
+    setObjects(usersfinaly);
   };
 
   const onClickDelete = (id: string) => {
@@ -51,9 +59,15 @@ const UserListPage: NextPage = ({ dataResponce }) => {
             <h3>Lista de Usuarios</h3>
           </div>
           <div>
-            {/*<Link className="btn btn-success" href={{ pathname: "/dashboard/socios/[id]", query: { id: "new" } }}>*/}
-            {/*  Crear Nuevo*/}
-            {/*</Link>*/}
+            <Link
+              className="btn btn-success"
+              href={{
+                pathname: "/dashboard/users/[id]",
+                query: { id: "new" },
+              }}
+            >
+              Crear Nuevo
+            </Link>
             {/*<Button variant="primary" onClick={() => setModalShow(true)}>*/}
             {/*  Crear Nuevo*/}
             {/*</Button>*/}
@@ -80,6 +94,15 @@ const UserListPage: NextPage = ({ dataResponce }) => {
                   <td>{object.role}</td>
                   <td>
                     <div className="">
+                      <Link
+                        className="btn btn-warning"
+                        href={{
+                          pathname: "/dashboard/users/[id]",
+                          query: { id: object.id },
+                        }}
+                      >
+                        Editar
+                      </Link>
                       <Button
                         variant="outline-danger"
                         onClick={() => onClickDelete(object.id)}

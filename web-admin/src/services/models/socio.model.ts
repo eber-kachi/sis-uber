@@ -7,14 +7,14 @@ export interface ISocio {
   ci: string;
   nacionalidad: string;
   foto: string;
-  estado: null;
+  estado: string;
   emision: string;
   vencimiento: string;
   nroLicencia: string;
   categoria: string;
   activo: boolean;
-  latitude: null;
-  longitude: null;
+  latitude: any;
+  longitude: any;
   veiculo?: IVeiculo | null;
 }
 

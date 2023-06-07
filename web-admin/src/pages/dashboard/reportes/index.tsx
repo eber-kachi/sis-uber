@@ -1,43 +1,25 @@
 import { NextPage } from "next";
-import { useAuthClient } from "@hooks/useAuthClient";
 import { AdminLayout } from "@layout/index";
 import React, { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
-import SocioService from "../../../services/api/Socio.service";
-import { object } from "prop-types";
-// import { Button } from "react-bootstrap"
 import Button from "react-bootstrap/Button";
-import CustomModal from "@components/Modal/CustomModal";
-import Link from "next/link";
 import { toast } from "react-toastify";
 import ClienteService from "../../../services/api/Cliente.service";
-import CustomSwitch from "../../../components/ui/CustomSwitch";
+import { Card } from "react-bootstrap";
 
 const ReporteListPage: NextPage = (a) => {
-  // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
-  // console.log("user value=>", userValue)
-  console.log("list=>", a);
   const clienteService = new ClienteService();
-  const [modalShow, setModalShow] = useState(false);
-  const [objects, setObjects] = useState([]);
-
-  const getData = async () => {
-    const responce: any[] = (await clienteService.getAll()) as any[];
-    // getLinks(responce.links);
-    setObjects(responce);
-  };
-
-  const onClickDelete = (id: string) => {
-    clienteService
-      .delete(id)
-      .then((res) => {
-        console.log(res);
-        toast("Eliminado con exito.");
-        getData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const handlerClient = () => {
+    console.log("asasdasdasd");
+    clienteService.getReport().then((resp: any) => {
+      const a = document.createElement("a");
+      a.href = "data:" + resp.mimeType + ";base64," + resp.content;
+      a.target = "_blank";
+      a.download = `${"assas"}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      console.log(resp);
+    });
   };
 
   useEffect(() => {}, []);
@@ -50,8 +32,22 @@ const ReporteListPage: NextPage = (a) => {
             <h3>Reportes</h3>
           </div>
         </div>
-        <div className="d-flex flex-row justify-content-center">
-          <div>Body</div>
+        {/* d-flex flex-row justify-content-center */}
+        <div className="row ">
+          <div className="col-4">
+            <Card style={{ width: "18rem" }}>
+              {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+              <Card.Body>
+                <Card.Title>Reporte de clientes viajes</Card.Title>
+                <Card.Text>
+                  Este reporte es para ver, a los clientes cuanto viajes tuvo.
+                </Card.Text>
+                <Button variant="primary" onClick={() => handlerClient()}>
+                  Descargar
+                </Button>
+              </Card.Body>
+            </Card>
+          </div>
         </div>
       </div>
     </AdminLayout>

@@ -19,7 +19,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
-    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError, setRole },
+    authenticationStore: { fetchUserByEmail, authEmail, setAuthEmail, setAuthToken, validationError, setRole, setListenLocation },
   } = useStores()
   const service = new AuthService()
 
@@ -53,6 +53,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
             setAuthEmail(res.data.user.email)
             setRole(res.data.user.role)
             setAuthToken(res.data.token.accessToken)
+            fetchUserByEmail();
+          }
+          if (res.data.user.role=='DRIVER') {
+            // setListenLocation()
           }
         }
 

@@ -11,6 +11,7 @@ import ViajeService from "src/services/api/Viaje.service";
 import { toast } from "react-toastify";
 import socket from "@lib/sockets/socket";
 import { Form, ListGroup } from "react-bootstrap";
+import { ISocio } from "src/services/models/socio.model";
 
 const CustomMarker = (props) => {
   // id=> socio id
@@ -40,11 +41,7 @@ const MapsPage = () => {
     longitude: number;
   } | null>(null);
 
-  const [veiculos, setVeiculos] = useState([
-    // { latitude: -17.39470732739393, longitude: -66.28102605202128 },
-    // { latitude: -17.39418792844535, longitude: -66.28356318651015 },
-    // { latitude: -17.39457571741809, longitude: -66.2861413204621 },
-  ]);
+  const [veiculos, setVeiculos] = useState<ISocio[]>([]);
 
   const [selectedViajeId, setSelectedViajeId] = useState<any>(null);
 
@@ -76,9 +73,10 @@ const MapsPage = () => {
     // socioService.getAllByStatus("LIBRE")
 
     const intervalId = setInterval(async () => {
-      const responce: any = await socioService.getAllByStatus("LIBRE");
-      console.log(responce);
-      setVeiculos(responce.data);
+      const responce: any = await socioService.getAllWithStatus();
+      // debugger;
+      console.log(responce.data);
+      setVeiculos([...responce.data]);
     }, 5000);
 
     return () => {
@@ -88,7 +86,7 @@ const MapsPage = () => {
 
   useEffect(() => {
     socket.on("pendiente_confirmacion", (viajes: any) => {
-      console.log(viajes);
+      console.log("pendiente_confirmacion", viajes);
       // debugger;
       setViajePendig(() => [...viajePending, viajes]);
     });
@@ -118,12 +116,12 @@ const MapsPage = () => {
   };
 
   // metodo para asignar  un socio con un veiculo
-  const handleMarkerClick = (id: string | number) => {
+  const handleMarkerClick = (socio_id: string | number) => {
     // console.log("EL id en el padre=> ", id);
     // console.log(selectedViajeId);
     if (selectedViajeId != null) {
       viajeService
-        .asignarViajeSocio(selectedViajeId, id)
+        .asignarViajeSocio(selectedViajeId, socio_id)
         .then((res: any) => {
           // socket.emit("asignacion", { id: selectedViajeId, evento: "" , data: res.data });
           socket.emit("asignacion_event", { id: selectedViajeId, evento: "" });
@@ -211,7 +209,7 @@ const MapsPage = () => {
             >
               {/* <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="https://picsum.photos/64" /> */}
               {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}
-              {memoizedMarkers.map((markerData, index) => (
+              {memoizedMarkers.map((markerData: ISocio, index: number) => (
                 <CustomMarker
                   id={markerData.id}
                   key={+index}
@@ -221,13 +219,17 @@ const MapsPage = () => {
                     lng: markerData.longitude,
                   }}
                   label={{
-                    text: "Richat",
-                    color: "black",
+                    text: "" + index,
+                    color: "#fff",
                     fontWeight: "bold",
                     className: "marker-label font-weight-bold -mt-30",
                   }}
                   icon={{
-                    url: "http://localhost:3000/assets/img/cars/car-red.svg",
+                    url: `http://localhost:3000/assets/img/cars/${
+                      markerData.estado === "LIBRE"
+                        ? "car-green.svg"
+                        : "car-red.svg"
+                    }`,
                     scale: 0.02,
                     scaledSize: new window.google.maps.Size(30, 30),
                     origin: new window.google.maps.Point(0, 0),

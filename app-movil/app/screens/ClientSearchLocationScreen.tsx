@@ -160,6 +160,10 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
       })
+      setDestinoLocationInitial({
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+      })
       mapRef.current.animateToRegion({
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
@@ -362,7 +366,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
             latitude: currentLocation ? currentLocation.latitude : 0,
             longitude: currentLocation ? currentLocation.longitude : 0,
             latitudeDelta: 0.0123,
-            longitudeDelta: 0.0023,
+            longitudeDelta: 0.00123,
           }}
           onPress={handleMapPress}
           // region={{
@@ -412,7 +416,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
           <View style={$buttonContainer}>
             <Button
               testID="register"
-              tx="registerScreen.tapToRegister"
+              text={'Confirmar destino'}
               style={$tapButtonInitRoute}
               preset="reversed"
               onPress={handlerClickInitaRoute}

@@ -7,10 +7,10 @@ export default class SocioService extends BaseAPIClass {
     this.baseUrl = "/api/socios";
   }
 
-  getAllByStatus(status: string) {
+  getAllWithStatus() {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${this.baseUrl}/get-by-status/${status}`)
+        .get(`${this.baseUrl}/get/all-with/status`)
         .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {

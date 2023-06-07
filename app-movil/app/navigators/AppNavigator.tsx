@@ -21,6 +21,7 @@ import { DemoNavigator, DemoTabParamList } from "./DemoNavigator" // @demo remov
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { ClientNavigator, ClientTabParamList } from "./ClientNavigator"
 import { ClientConfirmationScreen } from "../screens/ClientConfirmationScreen"
+import { DriverNavigator } from "./DriverNavigator"
 // import { ClientNavigator } from "./ClientNavigator"
 
 /**
@@ -39,12 +40,19 @@ import { ClientConfirmationScreen } from "../screens/ClientConfirmationScreen"
 export type AppStackParamList = {
   Register:undefined,
   Welcome: undefined,
-  ClientConfirmation: undefined,
   Login: undefined, // @demo remove-current-line
   Demo: NavigatorScreenParams<DemoTabParamList> // @demo remove-current-line
-  // 🔥 Your screens go here
+  //cliente screens
   Client: NavigatorScreenParams<ClientTabParamList>
+  ClientConfirmation: undefined,
+  ClientHistoryOfTrip: undefined,
+  ClientEndOfTrip: undefined,
+  //driver screens
+  Driver: NavigatorScreenParams<ClientTabParamList>
+  DriverRunTrip:undefined,
+  // 🔥 Your screens go here
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+
 }
 
 /**
@@ -74,7 +82,7 @@ const AppStack = observer(function AppStack() {
     }
 
     if (role==='DRIVER'){
-      return 'Welcome' // por el momento no hay ruta de DRIVER
+      return 'Driver' // por el momento no hay ruta de DRIVER
     }
     if (role==='CLIENT'){
       return 'Client' // por el momento no hay ruta de DRIVER
@@ -102,7 +110,9 @@ const AppStack = observer(function AppStack() {
         ) : (
           <>
             {/* // conductor role */}
+             <Stack.Screen name="Driver" component={DriverNavigator} />
             <Stack.Screen name="Welcome" component={Screens.WelcomeScreen}/>
+            <Stack.Screen name="DriverRunTrip" component={Screens.DriverRunTripScreen}/>
              <Stack.Screen name="Demo" component={DemoNavigator} />
           </>
         )
