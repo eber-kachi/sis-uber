@@ -20,6 +20,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformationInterceptor } from './interceptors/transform.interceptor';
 import { AllExceptionsFilter } from 'interceptors/all-exceptions.filter';
 import { MapTrakingGateway } from './gateways/map-traking.gateway';
+import { RolModule } from './modules/rol/rol.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { MapTrakingGateway } from './gateways/map-traking.gateway';
     VeiculoModule,
     ViajesModule,
     ClienteModule,
+    RolModule,
 
     // TypeOrmModule.forRoot({
     //   type: 'mysql',

@@ -38,6 +38,13 @@ export class UserController {
     return createUser.toDto();
   }
 
+  @Post('/register')
+  // @Auth(RoleType.ADMIN)
+  async createuser(@Body() createUserDto: any) {
+    const createUser = await this.userService.createUser(createUserDto, null);
+    return createUser.toDto();
+  }
+
   @Get('admin')
   // @Auth(RoleType.USER)
   @HttpCode(HttpStatus.OK)
@@ -76,7 +83,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @Auth(RoleType.USER)
+  // @Auth(RoleType.USER)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,

@@ -7,7 +7,9 @@ export abstract class BaseAPIClass {
     this.baseUrl = "";
   }
 
-  getAll(filterObject?) {
+  getAll(
+    filterObject?: any
+  ): Promise<{ data: any; message: string; statusCode: number }> {
     let queryString = "";
     if (filterObject) {
       const fitlerKeys = Object.keys(filterObject);
@@ -57,7 +59,7 @@ export abstract class BaseAPIClass {
     // return await fetch(`${serverBaseUrl}${this.baseUrl}`).then((resp) => resp.json())
   }
 
-  getAllNext(url) {
+  getAllNext(url: string) {
     return new Promise((resolve, reject) => {
       axios
         .get(url)
@@ -77,12 +79,14 @@ export abstract class BaseAPIClass {
     });
   }
 
-  async getById(id) {
+  async getById(
+    id: string | number
+  ): Promise<{ data: any; message: string; statusCode: number }> {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/${id}`)
         .then((response) => {
-          // console.log(response);
+          console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
           // } else {
@@ -99,7 +103,7 @@ export abstract class BaseAPIClass {
     // return await fetch(`${serverBaseUrl}${this.baseUrl}/${id}`).then((resp) => resp.json())
   }
 
-  async create(data) {
+  async create(data: any) {
     return new Promise((resolve, reject) => {
       axios
         .post(`${this.baseUrl}`, data)
@@ -156,7 +160,7 @@ export abstract class BaseAPIClass {
     // )
   }
 
-  async delete(id) {
+  async delete(id: string | number) {
     return new Promise((resolve, reject) => {
       axios
         .delete(`${this.baseUrl}/${id}`)
@@ -191,7 +195,7 @@ export abstract class BaseAPIClass {
     //   )
   }
 
-  async enabled(id) {
+  async enabled(id: string | number) {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/enabled/${id}`)
@@ -210,7 +214,7 @@ export abstract class BaseAPIClass {
     });
   }
 
-  async getBySlug(id) {
+  async getBySlug(id: string | number) {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/slug/${id}`)
@@ -232,7 +236,7 @@ export abstract class BaseAPIClass {
     // return await fetch(`${serverBaseUrl}${this.baseUrl}/${id}`).then((resp) => resp.json())
   }
 
-  getAllByDestiny(id) {
+  getAllByDestiny(id: string | number) {
     return new Promise((resolve, reject) => {
       axios
         .get(`${this.baseUrl}/destination/${id}`)
