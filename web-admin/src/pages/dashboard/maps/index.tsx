@@ -1,17 +1,20 @@
 import { AdminLayout } from "@layout/index";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import {
   CircleF,
   GoogleMap,
   MarkerF,
+  MarkerProps,
   useLoadScript,
 } from "@react-google-maps/api";
 import SocioService from "../../../services/api/Socio.service";
 import ViajeService from "src/services/api/Viaje.service";
 import { toast } from "react-toastify";
 import socket from "@lib/sockets/socket";
-import { Form, ListGroup } from "react-bootstrap";
+import { Form, FormLabel, ListGroup } from "react-bootstrap";
 import { ISocio } from "src/services/models/socio.model";
+
+const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || "http://localhost:3000";
 
 const CustomMarker = (props) => {
   // id=> socio id
@@ -26,16 +29,66 @@ const CustomMarker = (props) => {
 
 const MapsPage = () => {
   const libraries = useMemo(() => ["places"], []);
-  const mapRef = useRef(null);
-  const makerRef = useRef(null);
-  // -17.39470732739393, -66.28102605202128
-  //   -17.39418792844535, -66.28356318651015
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<google.maps.Marker>();
+
   const mapCenter = useMemo(
     () => ({ lat: -17.39470732739393, lng: -66.28102605202128 }),
     []
   );
-  // -17.39457571741809, -66.2861413204621
-  const [viajePending, setViajePendig] = useState<any[]>([]);
+
+  const [viajePending, setViajePendig] = useState<any[]>([
+    // {
+    //   estado: "pendiente_confirmacion",
+    //   initial_address: "JM3V+X84, RN 4, Quillacollo, Bolivia",
+    //   final_address: "",
+    //   start_latitude: -17.395390049804433,
+    //   start_longitude: -66.30298244555,
+    //   end_latitude: -17.4007804,
+    //   end_longitude: -66.1214404,
+    //   cliente: {
+    //     id: "ef451731-22ec-4cc4-94c3-77678c0f2eaa",
+    //     createdAt: "2023-06-05T01:04:50.538Z",
+    //     updatedAt: "2023-06-05T01:04:50.538Z",
+    //     nombres: "eber",
+    //     apellidos: "eber",
+    //     direccionMadre: null,
+    //   },
+    //   distancia_recorrida: 0,
+    //   fecha: null,
+    //   calificacion: null,
+    //   start_time: null,
+    //   end_time: null,
+    //   id: "2bd1e02a-afae-418c-be2f-052171c95719",
+    //   createdAt: "2023-06-14T18:38:34.593Z",
+    //   updatedAt: "2023-06-14T18:38:34.593Z",
+    // },
+    // {
+    //   estado: "pendiente_confirmacion",
+    //   initial_address: "JM3V+X84, RN 4, Quillacollo, Bolivia",
+    //   final_address: "",
+    //   start_latitude: -17.395514121197564,
+    //   start_longitude: -66.306858882308,
+    //   end_latitude: -17.4007804,
+    //   end_longitude: -66.1214404,
+    //   cliente: {
+    //     id: "ef451731-22ec-4cc4-94c3-77678c0f2eaaaa",
+    //     createdAt: "2023-06-05T01:04:50.538Z",
+    //     updatedAt: "2023-06-05T01:04:50.538Z",
+    //     nombres: "Natali",
+    //     apellidos: "Salvatierra",
+    //     direccionMadre: null,
+    //   },
+    //   distancia_recorrida: 0,
+    //   fecha: null,
+    //   calificacion: null,
+    //   start_time: null,
+    //   end_time: null,
+    //   id: "2bd1e02a-afae-418c-be2f-052171c9571as",
+    //   createdAt: "2023-06-14T18:38:34.593Z",
+    //   updatedAt: "2023-06-14T18:38:34.593Z",
+    // },
+  ]);
   const [currenLocationSelect, setCurrenLocationSelect] = useState<{
     latitude: number;
     longitude: number;
@@ -44,6 +97,7 @@ const MapsPage = () => {
   const [veiculos, setVeiculos] = useState<ISocio[]>([]);
 
   const [selectedViajeId, setSelectedViajeId] = useState<any>(null);
+  const [zoom, setZoom] = useState<number>(14);
 
   const socioService = new SocioService();
   const viajeService = new ViajeService();
@@ -55,6 +109,7 @@ const MapsPage = () => {
       disableDefaultUI: true,
       clickableIcons: true,
       draggable: true,
+      // zoom: 15,
       // scrollwheel: false,
     }),
     []
@@ -77,7 +132,7 @@ const MapsPage = () => {
       // debugger;
       console.log(responce.data);
       setVeiculos([...responce.data]);
-    }, 5000);
+    }, 10000);
 
     return () => {
       clearInterval(intervalId);
@@ -94,6 +149,10 @@ const MapsPage = () => {
       socket.off("pendiente_confirmacion");
     };
   }, []);
+
+  useEffect(() => {
+    console.log("cambios en el selct ", currenLocationSelect);
+  }, [currenLocationSelect]);
 
   const socketInitializer = async () => {
     // We just call it because we don't need anything else out of it
@@ -124,7 +183,7 @@ const MapsPage = () => {
         .asignarViajeSocio(selectedViajeId, socio_id)
         .then((res: any) => {
           // socket.emit("asignacion", { id: selectedViajeId, evento: "" , data: res.data });
-          socket.emit("asignacion_event", { id: selectedViajeId, evento: "" });
+          // socket.emit("asignacion_event", { id: selectedViajeId, evento: "" });
           socket.emit("asignacion_event_socio", {
             socio_id: res.data.socio.id,
             data: res.data,
@@ -154,12 +213,28 @@ const MapsPage = () => {
   };
 
   // metodo para cuando seleciona al cliente
-  const handlerSelectViaje = (viaje_id: string) => {
+  const handlerSelectViaje = (e: any) => {
+    // debugger;
+    console.log({ name: e.target.name, value: e.target.value });
+    const viaje_id = e.target.value;
+    // console.log("click => ", viaje_id);
     setSelectedViajeId(viaje_id);
-    // todo marcar donde esta el usuario
-    // mapRef.current.
-    const viaje = viajePending.find((v) => (v.id = viaje_id));
-    // setCurrenLocationSelect({latitude:viaje.start, longitude})
+    const viaje = viajePending.find((v) => v.id === viaje_id);
+    setZoom(17);
+    setCurrenLocationSelect({
+      latitude: viaje.start_latitude,
+      longitude: viaje.start_longitude,
+    });
+    // debugger;
+    // if (mapRef.current) {
+    //   const map = new google.maps.Map(mapRef.current);
+    // mapRef.current.animateToRegion({
+    //   latitude: viaje.start_latitude,
+    //   longitude: viaje.start_longitude,
+    // });
+    // } else {
+    //   console.log("mapRef.current is not a GoogleMap object");
+    // }
   };
 
   if (!isLoaded) {
@@ -170,42 +245,67 @@ const MapsPage = () => {
     <AdminLayout>
       <div className="row ">
         <div
-          className="col col-2"
+          className="col col-12 col-sm-12 col-md-2"
           style={{ overflowY: "scroll", height: "75vh" }}
         >
-          <h5>Nuevos viajes</h5>
-          <Form>
-            <ListGroup>
-              {viajePending &&
-                viajePending.map((viaje: any, index) => (
-                  <ListGroup.Item
-                    key={viaje.id}
-                    onChange={() => handlerSelectViaje(viaje.id)}
-                  >
+          <h5 className="text-center">Nuevos viajes</h5>
+          {/* <Form> */}
+          <ListGroup>
+            {viajePending &&
+              viajePending.map((viaje: any, index) => (
+                <ListGroup.Item
+                  key={viaje.id + index}
+                  // onClick={() => handlerSelectViaje(viaje.id)}
+                >
+                  {/* <FormLabel className="d-flex gap-1 ">
                     <Form.Check
                       key={viaje.id}
                       value={viaje.id}
                       type={"radio"}
                       name="viajes"
-                      label={`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
+                      // label={`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
                       checked={selectedViajeId === viaje.id}
-                      onChange={() => {}}
+                      // onChange={() => {}}
+                      onChange={handlerSelectViaje}
                     />
-                  </ListGroup.Item>
-                ))}
-            </ListGroup>
-          </Form>
+                    {`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
+                  </FormLabel> */}
+                  <label className="d-flex gap-1  form-label">
+                    <input
+                      className="form-check-input"
+                      id={viaje.id}
+                      value={viaje.id}
+                      name="viajes"
+                      type="radio"
+                      aria-label={`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
+                      onChange={handlerSelectViaje}
+                    />
+                    {`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
+                  </label>
+                </ListGroup.Item>
+              ))}
+          </ListGroup>
+          {/* </Form> */}
         </div>
-        <div className="col col-10">
+        <div className="col col-12 col-md-10 col-sm-12">
           <div style={{ display: "flex", height: "80vh" }}>
             <GoogleMap
-              ref={mapRef}
+              // ref={mapRef}
               options={mapOptions}
-              zoom={14}
-              center={mapCenter}
+              zoom={zoom}
+              center={{
+                lat: currenLocationSelect
+                  ? currenLocationSelect.latitude
+                  : -17.39470732739393,
+                lng: currenLocationSelect
+                  ? currenLocationSelect.longitude
+                  : -66.28102605202128,
+              }}
               mapTypeId={google.maps.MapTypeId.ROADMAP}
               mapContainerStyle={{ width: "100%", height: "100%" }}
               onLoad={() => console.log("Map Component Loaded...")}
+              // mapContainerRef={mapRef}
+              // center={currentLocation}
             >
               {/* <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="https://picsum.photos/64" /> */}
               {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}
@@ -225,7 +325,7 @@ const MapsPage = () => {
                     className: "marker-label font-weight-bold -mt-30",
                   }}
                   icon={{
-                    url: `http://localhost:3000/assets/img/cars/${
+                    url: `${urlfornt}/assets/img/cars/${
                       markerData.estado === "LIBRE"
                         ? "car-green.svg"
                         : "car-red.svg"
@@ -271,7 +371,7 @@ const MapsPage = () => {
                 // />
               ))}
 
-              {makerRef.current && (
+              {currenLocationSelect && (
                 <MarkerF
                   position={{
                     lat: currenLocationSelect
@@ -282,7 +382,14 @@ const MapsPage = () => {
                       : 0,
                   }}
                   onLoad={() => console.log("Marker Loaded")}
-                  icon="https://picsum.photos/64"
+                  icon={{
+                    // url: `http://localhost:3000/assets/img/location-user.png`,
+                    url: `${urlfornt}/assets/img/location.gif`,
+                    scale: 0.02,
+                    scaledSize: new window.google.maps.Size(30, 30),
+                    origin: new window.google.maps.Point(0, 0),
+                    anchor: new window.google.maps.Point(25, 25),
+                  }}
                 />
               )}
               {/* {[1000, 2500].map((radius, idx) => { */}
