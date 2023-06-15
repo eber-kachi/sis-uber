@@ -59,7 +59,7 @@ const VeiculoEditPage = ({ isnew, data }) => {
       nro_licencia: data?.nroLicencia ? data.nroLicencia : "",
       categoria: data?.categoria ? data.categoria : "Profesional (B)",
       user_id: data?.user ? data.user.id : "",
-      username: data?.username ? data.username : "",
+      // username: data?.username ? data.username : "",
       email: data?.user ? data.user.email : "",
       // resetPassword: false,
       // veiculo_id: data?.veiculo_id ? data.veiculo_id : "",
@@ -137,7 +137,7 @@ const VeiculoEditPage = ({ isnew, data }) => {
             <Row>
               <Col xs={12} md={6}>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>Cedula Identidad</Form.Label>
+                  <Form.Label>Cédula Identidad</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder=""
@@ -150,7 +150,7 @@ const VeiculoEditPage = ({ isnew, data }) => {
               </Col>
               <Col xs={12} md={6}>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>Nacionanlidad</Form.Label>
+                  <Form.Label>Nacionalidad</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder=""
@@ -253,7 +253,7 @@ const VeiculoEditPage = ({ isnew, data }) => {
               </Col>
             </Row>
             <Row>
-              <Col xs={6} md={4}>
+              {/* <Col xs={6} md={4}>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                   <Form.Label>Nombre Usuario</Form.Label>
                   <Form.Control
@@ -265,7 +265,7 @@ const VeiculoEditPage = ({ isnew, data }) => {
                     <span>{errors.username?.message} </span>
                   )}
                 </Form.Group>
-              </Col>
+              </Col> */}
               <Col xs={6} md={4}>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                   <Form.Label>Correo Electronico</Form.Label>

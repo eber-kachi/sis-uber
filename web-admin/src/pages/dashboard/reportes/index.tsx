@@ -5,20 +5,32 @@ import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 import ClienteService from "../../../services/api/Cliente.service";
 import { Card } from "react-bootstrap";
+import { current } from "@reduxjs/toolkit";
 
 const ReporteListPage: NextPage = (a) => {
+  const [loading, setLoading] = useState(false);
   const clienteService = new ClienteService();
   const handlerClient = () => {
+    setLoading(true);
     console.log("asasdasdasd");
+    toast("Descargado...", { delay: 100 });
+    // hora dia mes año en texto Date
+    let currentTime = new Date();
+    const textTime =
+      currentTime.getHours() +
+      "" +
+      currentTime.getMonth() +
+      currentTime.getFullYear();
     clienteService.getReport().then((resp: any) => {
       const a = document.createElement("a");
       a.href = "data:" + resp.mimeType + ";base64," + resp.content;
       a.target = "_blank";
-      a.download = `${"assas"}.pdf`;
+      a.download = `cliente-viajes-${textTime}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       console.log(resp);
+      setLoading(false);
     });
   };
 
@@ -42,7 +54,11 @@ const ReporteListPage: NextPage = (a) => {
                 <Card.Text>
                   Este reporte es para ver, a los clientes cuanto viajes tuvo.
                 </Card.Text>
-                <Button variant="primary" onClick={() => handlerClient()}>
+                <Button
+                  variant="primary"
+                  disabled={loading}
+                  onClick={() => handlerClient()}
+                >
                   Descargar
                 </Button>
               </Card.Body>

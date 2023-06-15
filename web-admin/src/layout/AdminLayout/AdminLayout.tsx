@@ -64,8 +64,8 @@ export default function AdminLayout({ children }: PropsWithChildren) {
           toggleSidebarMd={toggleIsShowSidebarMd}
         />
         <div className="body flex-grow-1 px-sm-2 mb-4">
-          {/* <Container fluid="xxl">{children}</Container> */}
-          {children}
+          <Container fluid="xxl">{children}</Container>
+          {/* {children} */}
         </div>
         <Footer />
       </div>

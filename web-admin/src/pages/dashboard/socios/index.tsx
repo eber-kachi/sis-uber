@@ -134,6 +134,11 @@ const SocioListPage: NextPage = ({ dataResponce }) => {
                       {/* <Button variant="outline-warning" > */}
                       <Link
                         className="btn btn-outline-warning"
+                        title={
+                          object?.veiculo == null
+                            ? "Crear vehiculo"
+                            : "Ver vehiculo"
+                        }
                         href={{
                           pathname:
                             "/dashboard/socios/[id]/veiculo/[veiculo_id]",

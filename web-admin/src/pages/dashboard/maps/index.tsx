@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import socket from "@lib/sockets/socket";
 import { Form, FormLabel, ListGroup } from "react-bootstrap";
 import { ISocio } from "src/services/models/socio.model";
+import { log } from "console";
+import { right } from "@popperjs/core";
 
 const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || "http://localhost:3000";
 
@@ -122,57 +124,42 @@ const MapsPage = () => {
   });
 
   // sockets
-  React.useEffect(() => {
-    // socketInitializer();
+  // React.useEffect(() => {
+  //   // socketInitializer();
 
-    // socioService.getAllByStatus("LIBRE")
+  //   // socioService.getAllByStatus("LIBRE")
 
-    const intervalId = setInterval(async () => {
-      const responce: any = await socioService.getAllWithStatus();
-      // debugger;
-      console.log(responce.data);
-      setVeiculos([...responce.data]);
-    }, 10000);
+  //   const intervalId = setInterval(async () => {
+  //     const responce: any = await socioService.getAllWithStatus();
+  //     // debugger;
+  //     console.log(responce.data);
+  //     setVeiculos([...responce.data]);
+  //   }, 10000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
 
   useEffect(() => {
+    // escuchamos a los eventos de los clientes pendientes para asignar un vehiculo
     socket.on("pendiente_confirmacion", (viajes: any) => {
       console.log("pendiente_confirmacion", viajes);
       // debugger;
       setViajePendig(() => [...viajePending, viajes]);
     });
+    socket.emit("socios_conectados");
+    // escuchar la lista de socios conectados al sockets
+    socket.on("socios_conectados", (datas: any[]) => {
+      console.log("vehiculos_conectados", datas);
+      setVeiculos([...datas]);
+    });
+
     return () => {
       socket.off("pendiente_confirmacion");
+      socket.off("socios_conectados");
     };
   }, []);
-
-  useEffect(() => {
-    console.log("cambios en el selct ", currenLocationSelect);
-  }, [currenLocationSelect]);
-
-  const socketInitializer = async () => {
-    // We just call it because we don't need anything else out of it
-    // await fetch("/api/socket");
-    //
-    // socket = io();
-    //
-    // socket.on("newIncomingMessage", (msg) => {
-    //   setMessages((currentMsg) => [
-    //     ...currentMsg,
-    //     { author: msg.author, message: msg.message },
-    //   ]);
-    //   console.log(messages);
-    // });
-    // await fetch('http://localhost:3001')
-    // socket = io({host:"http://localhost:3001"})
-    // socket.on("message", (message: any) => {
-    //   console.log(message);
-    // });
-  };
 
   // metodo para asignar  un socio con un veiculo
   const handleMarkerClick = (socio_id: string | number) => {
@@ -249,14 +236,11 @@ const MapsPage = () => {
           style={{ overflowY: "scroll", height: "75vh" }}
         >
           <h5 className="text-center">Nuevos viajes</h5>
-          {/* <Form> */}
+
           <ListGroup>
             {viajePending &&
               viajePending.map((viaje: any, index) => (
-                <ListGroup.Item
-                  key={viaje.id + index}
-                  // onClick={() => handlerSelectViaje(viaje.id)}
-                >
+                <ListGroup.Item key={viaje.id + index}>
                   {/* <FormLabel className="d-flex gap-1 ">
                     <Form.Check
                       key={viaje.id}
@@ -285,12 +269,24 @@ const MapsPage = () => {
                 </ListGroup.Item>
               ))}
           </ListGroup>
-          {/* </Form> */}
         </div>
         <div className="col col-12 col-md-10 col-sm-12">
           <div style={{ display: "flex", height: "80vh" }}>
+            <div
+              style={{
+                position: "fixed",
+                right: "5rem",
+                top: "6rem",
+                zIndex: 1,
+                backgroundColor: "green",
+                padding: "5px",
+                color: "white",
+                borderRadius: "5px",
+              }}
+            >
+              <strong className="">{veiculos.length}</strong> Socios conectados
+            </div>
             <GoogleMap
-              // ref={mapRef}
               options={mapOptions}
               zoom={zoom}
               center={{
@@ -304,8 +300,6 @@ const MapsPage = () => {
               mapTypeId={google.maps.MapTypeId.ROADMAP}
               mapContainerStyle={{ width: "100%", height: "100%" }}
               onLoad={() => console.log("Map Component Loaded...")}
-              // mapContainerRef={mapRef}
-              // center={currentLocation}
             >
               {/* <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="https://picsum.photos/64" /> */}
               {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}

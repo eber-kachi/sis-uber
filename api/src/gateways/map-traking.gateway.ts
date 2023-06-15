@@ -21,7 +21,9 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   // private asignacionSocio = new Object();
   private static asignacionSocio: Map<string, any> = new Map();
 
-  constructor(private readonly sociosService: SocioService) {} // private readonly  ticketSrvice: TicketService,
+  constructor(
+    private readonly sociosService: SocioService, // private readonly sociosService: SocioService,
+  ) {} // private readonly  ticketSrvice: TicketService,
 
   @WebSocketServer() server: Server;
 
@@ -100,7 +102,22 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
       throw new Error('Paso un erro no hay viaje');
     }
   }
+  @SubscribeMessage('socios_conectados')
+  async handler_socio_conect(client: Socket, payload: { socio_id: string; location: any }) {
+    if (payload !== undefined) {
+      // const socio = await this.sociosService.findOne(payload.socio_id);
+      // if (socio.estado == 'LIBRE') {
+      //   await this.sociosService.changeState(payload.socio_id, 'OCUPADO', payload.location);
+      // }
+      // if (socio.estado == 'OCUPADO') {
+      //   await this.sociosService.changeState(payload.socio_id, 'LIBRE', payload.location);
+      // }
+    }
 
+    const socios = await this.sociosService.getAllWithStatus();
+    // client.emit('socios_conectados', socios);
+    this.server.emit('socios_conectados', socios);
+  }
   /**
    * se encarga de unir
    * @param client
