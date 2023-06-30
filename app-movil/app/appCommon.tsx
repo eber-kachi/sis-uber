@@ -4,11 +4,10 @@ import * as Location from "expo-location"
 import { useState, useEffect, useRef } from "react"
 import { useStores } from "app/models"
 import { observer } from "mobx-react-lite"
-import socket from "./utils/socket"
 
 interface ILocation {
-  lat: number | string;
-  lng: number | string;
+  lat: number | string
+  lng: number | string
 }
 
 interface IGps {
@@ -21,9 +20,8 @@ interface IGpsData {
 
 const LOCATION_TASK_NAME = "background-location-task"
 
-
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }: any) => {
-  console.log('TaskManager=> ', LOCATION_TASK_NAME)
+  console.log("TaskManager=> ", LOCATION_TASK_NAME)
   if (error) {
     console.log(error)
     return
@@ -40,11 +38,9 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }: any)
       //   }
       // });
       console.log("LOCATION_TASK_NAME", location.coords)
-
     }
   }
 })
-
 
 const AppCommon = observer(function AppCommon({ children }: any) {
   const {
@@ -124,27 +120,33 @@ const AppCommon = observer(function AppCommon({ children }: any) {
   const GetOneTimeLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync()
     if (status === "granted") {
-
       try {
-        const tempWatcher = await Location.watchPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        }, location => {
-          console.log("GetOneTimeLocation =>", location.coords.latitude, location.coords.longitude)
-          setGps({
-            location: {
-              lat: location.coords.latitude,
-              lng: location.coords.longitude,
-            },
-          })
-          // store.dispatch({
-          //   type: 'UPDATE_GPS_LOCATION',
-          //   payload: {
-          //     lat: location.coords.latitude,
-          //     lng: location.coords.longitude
-          //   }
-          // });
-          tempWatcher.remove()
-        })
+        const tempWatcher = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.Balanced,
+          },
+          (location) => {
+            console.log(
+              "GetOneTimeLocation =>",
+              location.coords.latitude,
+              location.coords.longitude,
+            )
+            setGps({
+              location: {
+                lat: location.coords.latitude,
+                lng: location.coords.longitude,
+              },
+            })
+            // store.dispatch({
+            //   type: 'UPDATE_GPS_LOCATION',
+            //   payload: {
+            //     lat: location.coords.latitude,
+            //     lng: location.coords.longitude
+            //   }
+            // });
+            tempWatcher.remove()
+          },
+        )
       } catch (error) {
         // store.dispatch({
         //   type: 'UPDATE_GPS_LOCATION',
@@ -170,33 +172,36 @@ const AppCommon = observer(function AppCommon({ children }: any) {
   const StartBackgroundLocation = async () => {
     const permResp = await Location.requestForegroundPermissionsAsync()
     console.log("Permisos", permResp)
-    const tempWatcher = await Location.watchPositionAsync({
-      accuracy: Location.Accuracy.Balanced,
-    }, location => {
-      setGps({
-        location: {
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        },
-      })
-      // store.dispatch({
-      //   type: 'UPDATE_GPS_LOCATION',
-      //   payload: {
-      //     lat: location.coords.latitude,
-      //     lng: location.coords.longitude
-      //   }
-      // });
-      setGps({
-        location: {
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        },
-      })
+    const tempWatcher = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.Balanced,
+      },
+      (location) => {
+        setGps({
+          location: {
+            lat: location.coords.latitude,
+            lng: location.coords.longitude,
+          },
+        })
+        // store.dispatch({
+        //   type: 'UPDATE_GPS_LOCATION',
+        //   payload: {
+        //     lat: location.coords.latitude,
+        //     lng: location.coords.longitude
+        //   }
+        // });
+        setGps({
+          location: {
+            lat: location.coords.latitude,
+            lng: location.coords.longitude,
+          },
+        })
 
-      console.log("Location=>>>>", location)
+        console.log("Location=>>>>", location)
 
-      tempWatcher.remove()
-    })
+        tempWatcher.remove()
+      },
+    )
 
     if (permResp.status === "granted") {
       try {
@@ -216,7 +221,6 @@ const AppCommon = observer(function AppCommon({ children }: any) {
           if (__DEV__) {
             StartForegroundGeolocation()
           } else {
-
             // store.dispatch({
             //   type: 'UPDATE_GPS_LOCATION',
             //   payload: {
@@ -251,35 +255,42 @@ const AppCommon = observer(function AppCommon({ children }: any) {
   }
   // Iniciarando geolocalización en primer plano
   const StartForegroundGeolocation = async () => {
-    watcher.current = await Location.watchPositionAsync({
-      accuracy: Location.Accuracy.High,
-      activityType: Location.ActivityType.AutomotiveNavigation,
-    }, location => {
-      // mandar la actualizacion
+    watcher.current = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.High,
+        // activityType: Location.ActivityType.AutomotiveNavigation,
+      },
+      (location) => {
+        // mandar la actualizacion
 
-      // setGps({
-      //   location: {
-      //     lat: location.coords.latitude,
-      //     lng: location.coords.longitude,
-      //   },
-      // })
-      setGps((value) => {
-        return {
-          location: {
-            lat: location.coords.latitude,
-            lng: location.coords.longitude,
-          },
-        }
-      })
-      console.log("StartForegroundGeolocation=>", location.coords.latitude, location.coords.longitude)
-      // store.dispatch({
-      //   type: 'UPDATE_GPS_LOCATION',
-      //   payload: {
-      //     lat: location.coords.latitude,
-      //     lng: location.coords.longitude
-      //   }
-      // });
-    })
+        // setGps({
+        //   location: {
+        //     lat: location.coords.latitude,
+        //     lng: location.coords.longitude,
+        //   },
+        // })
+        setGps((value) => {
+          return {
+            location: {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            },
+          }
+        })
+        console.log(
+          "StartForegroundGeolocation=>",
+          location.coords.latitude,
+          location.coords.longitude,
+        )
+        // store.dispatch({
+        //   type: 'UPDATE_GPS_LOCATION',
+        //   payload: {
+        //     lat: location.coords.latitude,
+        //     lng: location.coords.longitude
+        //   }
+        // });
+      },
+    )
   }
   // Detener ubicación de segundo plano
   const StopBackgroundLocation = async () => {
@@ -303,7 +314,6 @@ const AppCommon = observer(function AppCommon({ children }: any) {
       console.log(error)
     }
   }
-
 
   return children
 })

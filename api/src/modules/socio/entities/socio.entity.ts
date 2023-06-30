@@ -1,9 +1,10 @@
-import { Column, Entity, JoinColumn, OneToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, OneToMany, ManyToOne } from 'typeorm';
 import { AbstractEntity } from '../../../common/abstract.entity';
 import { SocioDto } from '../dto/create-socio.dto';
 import { UserEntity } from '../../user/user.entity';
 import { ViajeEntity } from '../../viajes/entities/viaje.entity';
 import { VeiculoEntity } from '../../veiculo/entities/veiculo.entity';
+import { GrupotrabajoEntity } from 'modules/grupotrabajo/entities/grupotrabajo.entity';
 
 @Entity({ name: 'socios' })
 export class SocioEntity extends AbstractEntity<SocioDto> {
@@ -33,7 +34,7 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
   vencimiento: Date;
 
   @Column({ nullable: false })
-  nroLicencia: string;
+  nro_licencia: string;
 
   @Column({ nullable: false })
   categoria: string;
@@ -63,6 +64,13 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
   @OneToOne(() => VeiculoEntity, { nullable: true })
   @JoinColumn()
   veiculo?: VeiculoEntity | null;
+
+  @Column({ nullable: true, type: 'varchar' })
+  grupotrabajo_id: string;
+
+  // relacion con grupotrabajo
+  @ManyToOne(() => GrupotrabajoEntity, (data) => data.socios, { nullable: true })
+  grupotrabajo?: GrupotrabajoEntity;
 
   dtoClass = SocioDto;
 }

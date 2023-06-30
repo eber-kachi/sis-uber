@@ -1,8 +1,6 @@
 import { api } from "./api"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import { EpisodeSnapshotIn } from "../../models/Episode"
 import { ApiResponse } from "apisauce"
-
 
 export class AuthService {
   baseUrl: string
@@ -13,6 +11,7 @@ export class AuthService {
 
   async login(data: any): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
     const response: ApiResponse<any> = await api.apisauce.post<any>(`${this.baseUrl}/login`, data)
+    console.log("AuthService=>", response.data)
 
     if (!response.ok) {
       // console.log("AuthService=>", response.data)
@@ -33,7 +32,9 @@ export class AuthService {
     }
   }
 
-  async registerClient(data: any): Promise<{ kind: "ok";message:string; data: any } | GeneralApiProblem> {
+  async registerClient(
+    data: any,
+  ): Promise<{ kind: "ok"; message: string; data: any } | GeneralApiProblem> {
     const response: ApiResponse<any> = await api.apisauce.post<any>(`api/clientes`, data)
     if (!response.ok) {
       const problem = getGeneralApiProblem(response)

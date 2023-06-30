@@ -1,26 +1,9 @@
-// ---
-// patches:
-// - path: "app/screens/index.ts"
-//   append: "export * from \"./ClientSearchLocationScreen\"\n"
-//   skip:
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-//   insert: "ClientSearchLocation: undefined\n\t// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   insert: "<Stack.Screen name=\"ClientSearchLocation\" component={Screens.ClientSearchLocationScreen} />\n\t\t\t{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   skip:
-// ---
-import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react"
+import React, { FC, useEffect, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import {
   View,
-  TouchableNativeFeedback,
   TextInput,
-  Image,
   PermissionsAndroid,
-  StyleSheet,
-  ActivityIndicator,
   ToastAndroid,
   Platform,
   ViewStyle,
@@ -43,6 +26,7 @@ import {
 import { colors, spacing, typography } from "../theme"
 import { getcoords, IResponseGeocoord } from "../services/googleMapsApi"
 import { useNavigation } from "@react-navigation/native"
+import { log } from "react-native-reanimated"
 
 Geocoder.init("AIzaSyDL11CwUA9M76UsmwAMOEf3UsXR2sWnSRk")
 
@@ -86,6 +70,12 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
       if (Platform.OS === "android" && Platform.Version <= 28) {
         return true
       }
+      //
+      const { status: estado } = await Location.requestForegroundPermissionsAsync()
+      if (estado !== "granted") {
+        alert("Permission denied")
+        return false
+      }
 
       const hasPermission = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -108,15 +98,24 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
     }
 
     const geolocation = async () => {
-      if (hasLocationPermission()) {
+      if (await hasLocationPermission()) {
         // console.log("aquiiiii click")
+        const respon: Location.LocationObject = await Location.getCurrentPositionAsync()
+        console.log("getCurrentPositionAsync=> ", respon.coords)
+        // const respon: Location.LocationObject = await Location.()
+        // console.log("getCurrentPositionAsync=> ", respon.coords)
+
         const tempWatcher = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Balanced,
           },
           (position) => {
-            console.log("geolocation")
-            console.log(position.coords.latitude, position.coords.longitude)
+            // console.log("geolocation")
+            console.log(
+              "watchPositionAsync=> ",
+              position.coords.latitude,
+              position.coords.longitude,
+            )
 
             // setInitialRegion({...initialRegion,
             //   latitude: position.coords.latitude,
@@ -146,7 +145,6 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
                 })
                 .catch((error) => console.warn(error))
             }, 150)
-
             tempWatcher.remove()
           },
         )
@@ -156,6 +154,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
     const handleMapPress = (event) => {
       const { coordinate } = event.nativeEvent
       console.log("handleMapPress", coordinate)
+
       setCurrentLocation({
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
@@ -275,12 +274,12 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
       //   },
       // })
       navigation.navigate("ClientConfirmation", {
-          origin: destinoLocationInitial,
-          destination: destinoLocationFinal,
-          viaje: {
-            orgin:addressInitial,
-            destination: ''
-          }
+        origin: destinoLocationInitial,
+        destination: destinoLocationFinal,
+        viaje: {
+          orgin: addressInitial,
+          destination: "",
+        },
       })
 
       // navigation.navigate("ClientConfirmation", {
@@ -318,7 +317,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
                 color={colors.palette.neutral800}
                 containerStyle={{}}
                 size={30}
-                onPress={() => geolocation()}
+                onPress={geolocation}
               />
             </View>
           </View>
@@ -416,7 +415,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
           <View style={$buttonContainer}>
             <Button
               testID="register"
-              text={'Confirmar destino'}
+              text={"Confirmar destino"}
               style={$tapButtonInitRoute}
               preset="reversed"
               onPress={handlerClickInitaRoute}

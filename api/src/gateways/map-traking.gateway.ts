@@ -25,7 +25,8 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
     private readonly sociosService: SocioService, // private readonly sociosService: SocioService,
   ) {} // private readonly  ticketSrvice: TicketService,
 
-  @WebSocketServer() server: Server;
+  @WebSocketServer()
+  server: Server;
 
   afterInit(server: any) {
     console.log('Esto se ejecuta cuando inicia');
@@ -35,8 +36,8 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
     console.log('Hola alguien se conecto al socket 👌👌👌 => ', client.id);
   }
 
-  handleDisconnect(client: any) {
-    console.log('ALguien se fue! chao chao');
+  handleDisconnect(client: Socket) {
+    console.log('ALguien se fue! chao chao' + client.id);
   }
 
   @SubscribeMessage('message')
@@ -64,21 +65,43 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   }
 
   @SubscribeMessage('asignacion_event_socio')
-  handleasignacion_event_socio(client: any, payload: { socio_id: string; data: any }) {
+  handleasignacion_event_socio(client: Socket, payload: { socio_id: string; data: any }) {
     // buscamos si el soco tiene asignaciones en asignacionSocio
-    if (MapTrakingGateway.asignacionSocio.has(payload.socio_id)) {
-      // cuando el socio acepta el viaje notificamos al cliente que su viaje fua aceptado y que va un veiculo a recogerle
-      if (payload.data.estado === 'CONFIRMADO') {
-        this.server.emit('asignacion_event_socio', payload);
+    console.log('handleasignacion_event_socio: viaje_id=> ', payload.data.id);
+    try {
+      if (
+        MapTrakingGateway.asignacionSocio.has(payload.data.id) &&
+        payload.data.estado === 'CONFIRMADO'
+      ) {
+        // cuando el socio acepta el viaje notificamos al cliente que su viaje fua aceptado y que va un veiculo a recogerle
+        if (payload.data.estado === 'CONFIRMADO') {
+          this.server.emit('socio-events-change', payload);
+        }
+        // notificar al cliente que termino el viaje
+        // this.server.emit('asignacion_event_socio', payload);
+      } else {
+        if (MapTrakingGateway.asignacionSocio.has(payload.data.id)) {
+          MapTrakingGateway.asignacionSocio.delete(payload.data.id);
+          this.handlePendienteConfirmation(null, payload.data);
+        }
+        const rooms = this.server.sockets.adapter.rooms;
+
+        const clients = rooms['my-room'];
+
+        console.log('The list of clients connected to the room my-room:');
+        // clients.forEach((client) => {
+        //   console.log(client);
+        // });
+
+        MapTrakingGateway.asignacionSocio.set(payload.data.id, payload.data);
+
+        // this.server.emit('asignacion_event_socio' + payload.socio_id, payload);
+        // this.handler_socio_conect(null, null);
+        // this.server.
+        this.server.to(`socio_events_${payload.socio_id}`).emit('socio_events_change', payload);
       }
-      // notificar al cliente que termino el viaje
-      // this.server.emit('asignacion_event_socio', payload);
-    } else {
-      MapTrakingGateway.asignacionSocio.set(payload.socio_id, payload.data);
-      // this.server.emit('asignacion_event_socio' + payload.socio_id, payload);
-      this.server
-        .to('socio_events_' + payload.socio_id)
-        .emit('socio_events_' + payload.socio_id, payload);
+    } catch (error) {
+      client.emit(EstadoViaje.PENDIENTECONFIRMACION, payload.data);
     }
   }
 

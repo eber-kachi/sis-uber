@@ -11,15 +11,32 @@ import {
   HttpException,
   UseInterceptors,
   UseGuards,
+  Req,
+  UploadedFile,
 } from '@nestjs/common';
 import { SocioService } from './socio.service';
 import { SocioDto } from './dto/create-socio.dto';
 import { UpdateSocioDto } from './dto/update-socio.dto';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
 import { ResponseMessage } from 'decorators/response_message.decorator';
 import { AuthUserInterceptor } from 'interceptors/auth-user-interceptor.service';
 // import { AuthGuard } from 'guards/auth.guard';
 // import { AuthGuard } from '../../guards/auth.guard';
+import { ApiFile } from '../../decorators/swagger.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { IFile } from 'interfaces/IFile';
+import { diskStorage } from 'multer';
+import { multerOptions } from '../../providers/multerOptions ';
+import {
+  differenceInHours,
+  differenceInMinutes,
+  format,
+  isAfter,
+  isBefore,
+  isValid,
+  parse,
+  parseISO,
+} from 'date-fns';
 
 @Controller('socios')
 @ApiTags('socios')
@@ -27,7 +44,8 @@ export class SocioController {
   constructor(private socioService: SocioService) {}
 
   @Post()
-  async create(@Body() createSocioDto: any) {
+  @ApiConsumes('multipart/form-data')
+  async create(@Body() createSocioDto: any): Promise<any> {
     const createSocio = await this.socioService.create(createSocioDto);
     return createSocio.toDto();
   }
@@ -42,13 +60,90 @@ export class SocioController {
     try {
       const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
+      // aqui buscar  al socio y ver en que  grupo
+      // de trabajo se encuentra y segun eso ver
+      // si podemos actualizarle o mandarle un mensaje
+
       if (createSocioDto.socio_id.match(validRegex)) {
         const user = await this.socioService.findByEmail(createSocioDto.socio_id);
-        if (user.socio) {
+        if (!user.socio.activo) {
+          throw new HttpException(
+            {
+              status: HttpStatus.FORBIDDEN,
+              message: 'Usuario no activo. consulte al administrador.',
+            },
+            HttpStatus.FORBIDDEN,
+          );
+        }
+
+        if (user.socio && createSocioDto.state === 'SINSERVICO') {
           return await this.socioService.changeState(
             user.socio.id,
             createSocioDto.state,
             createSocioDto.location,
+          );
+        }
+
+        if (user.socio) {
+          const socio = await this.socioService.findOne(user.socio.id);
+          const fechaActual = new Date();
+          const fechaActualString = format(fechaActual, 'yyyy-MM-dd HH:mm:ss');
+
+          if (socio.grupotrabajo) {
+            const fechaActualStringIn =
+              format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_inicio;
+            const fechaActualStringFin =
+              format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_fin;
+
+            const esHorariovalidoParaTrabajar = this.isWorkingHours(
+              fechaActualStringIn,
+              fechaActualStringFin,
+              fechaActualString,
+            );
+            console.log(esHorariovalidoParaTrabajar);
+            if (!esHorariovalidoParaTrabajar) {
+              throw new HttpException(
+                {
+                  status: HttpStatus.FORBIDDEN,
+                  message: 'No es tu horario de trabajo.',
+                },
+                HttpStatus.FORBIDDEN,
+              );
+            }
+          }
+
+          return await this.socioService.changeState(
+            user.socio.id,
+            createSocioDto.state,
+            createSocioDto.location,
+          );
+        }
+      }
+
+      const socio = await this.socioService.findOne(createSocioDto.socio_id);
+      const fechaActual = new Date();
+      const fechaActualString = format(fechaActual, 'yyyy-MM-dd HH:mm:ss');
+
+      console.log(fechaActualString);
+      if (socio.grupotrabajo) {
+        const fechaActualStringIn =
+          format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_inicio;
+        const fechaActualStringFin =
+          format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_fin;
+
+        const esHorariovalidoParaTrabajar = this.isWorkingHours(
+          fechaActualStringIn,
+          fechaActualStringFin,
+          fechaActualString,
+        );
+        console.log(esHorariovalidoParaTrabajar);
+        if (!esHorariovalidoParaTrabajar) {
+          throw new HttpException(
+            {
+              status: HttpStatus.FORBIDDEN,
+              message: 'No es tu horario de trabajo.',
+            },
+            HttpStatus.FORBIDDEN,
           );
         }
       }
@@ -59,7 +154,7 @@ export class SocioController {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          message: 'Ocurrio un problema al procesar la informacion.',
+          message: error.message || 'Ocurrio un problema al procesar la informacion.',
         },
         HttpStatus.FORBIDDEN,
       );
@@ -107,7 +202,22 @@ export class SocioController {
     description: 'Get users list',
     type: SocioDto,
   })
-  update(@Param('id') id: string, @Body() updateSocioDto: UpdateSocioDto) {
+  @HttpCode(HttpStatus.OK)
+  // @ApiOkResponse({ type: UserDto, description: 'Successfully Registered' })
+  @ApiConsumes('multipart/form-data')
+  @ApiFile([{ name: 'foto' }])
+  @UseInterceptors(FileInterceptor('foto', multerOptions))
+  update(
+    @Param('id') id: string,
+    @Body() updateSocioDto: UpdateSocioDto,
+    @UploadedFile() file: IFile,
+  ) {
+    console.log(file);
+    if (file) {
+      //borrar la otra foto que habia
+      return this.socioService.update(id, { ...updateSocioDto, foto: file.filename });
+    }
+
     return this.socioService.update(id, updateSocioDto);
   }
 
@@ -175,5 +285,31 @@ export class SocioController {
         HttpStatus.FORBIDDEN,
       );
     }
+  }
+
+  isWorkingHours(startTime: string, endTime: string, currentHour: string): boolean {
+    // Convert the start time, end time, and current hour to numbers.
+    // const startTimeNumber = Number(startTime);
+    // const endTimeNumber = Number(endTime);
+    // const currentHourNumber = Number(currentHour);
+    const vaidation =
+      isValid(parseISO(startTime)) && isValid(parseISO(endTime)) && isValid(parseISO(currentHour));
+    if (vaidation) {
+      const startTimeDate = parse(startTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+      const endTimeDate = parse(endTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+      const currentHourDate = parse(currentHour, 'yyyy-MM-dd HH:mm:ss', new Date());
+
+      const isafter = isAfter(new Date(), startTimeDate);
+      const isbefore = isBefore(new Date(), endTimeDate);
+      const isvalidate = isafter && isbefore;
+      // return isAfter(currentHourDate, startTimeDate) && isBefore(currentHourDate, endTimeDate);
+      return isvalidate;
+    }
+
+    // Check if the current hour is between the start time and end time.
+    // return isBetween(currentHourDate, startTimeDate, endTimeDate);
+
+    // return isAfter(currentHour, startTime) && isBefore(currentHour, endTime);
+    // return isAfter(currentHourDate, startTimeDate) && isBefore(currentHourDate, endTimeDate);
   }
 }

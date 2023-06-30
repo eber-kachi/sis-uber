@@ -2,9 +2,9 @@ import React, { FC, useEffect, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { Dimensions, ImageStyle, View, ViewStyle } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
-import { Button, Icon, Screen, Text } from "app/components"
+import { Button, Icon, Screen } from "app/components"
 import { ClientTabScreenProps } from "app/navigators"
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { useNavigation } from "@react-navigation/native"
 import MapView, { Circle, PROVIDER_GOOGLE, Marker, MapMarker } from "react-native-maps"
 import MapViewDirections from "react-native-maps-directions"
 import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
@@ -42,7 +42,7 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
 
     // Pull in navigation via hook
     const navigation = useNavigation()
-
+    // const { navigation } = _props
     useEffect(() => {
       // setDestinoLocationInitial(null)
       // setDestinoLocationFinal(null)
@@ -69,19 +69,28 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
     }, [mapRef.current])
 
     useEffect(() => {
-      socket.on("asignacion_event_socio", (res: { socio_id: string; data: any }) => {
-        console.log("viaje confirmado... ", res)
+      socket.on("socio-events-change", (res: { socio_id: string; data: any }) => {
+        console.log("viaje confirmado... ", res?.data)
+        console.log(viajeIdConfirmado, res?.data?.id)
+
         if (viajeIdConfirmado === res?.data?.id) {
           console.log("quitamos loader  ")
           // sacar socio data y mostrar en la pandatalla
+          // sacar en pantalla datos del socio que acepto el viaje
+
           setConfirmado(true)
+          setLoadingBtn(false)
         }
         if (viajeIdConfirmado === res?.data?.id && res.data.estado === "FINALIZADO") {
-          navigation.navigate("ClientEndOfTrip", { viaje_id: viajeIdConfirmado })
+          // navigation.navigate("ClientEndOfTrip", { viaje_id: viajeIdConfirmado })
+          navigation.navigate("Client", {
+            screen: "ClientEndOfTrip",
+            params: { viaje_id: viajeIdConfirmado },
+          })
         }
       })
       return () => {
-        socket.off("asignacion_event_socio")
+        // socket.off("asignacion_event_socio")
       }
     }, [])
 
@@ -199,7 +208,7 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
                 )
               }
               testID="registeras"
-              text={loadingBtn ? "Esperando..." : "Solicitar veiculo"}
+              text={loadingBtn ? "Esperando..." : "Solicitar vehiculo"}
               style={$tapButtonInitRoute}
               preset="reversed"
               disabled={loadingBtn}

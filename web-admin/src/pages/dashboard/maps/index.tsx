@@ -1,28 +1,28 @@
-import { AdminLayout } from "@layout/index";
-import React, { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { AdminLayout } from '@layout/index';
+import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CircleF,
   GoogleMap,
   MarkerF,
   MarkerProps,
   useLoadScript,
-} from "@react-google-maps/api";
-import SocioService from "../../../services/api/Socio.service";
-import ViajeService from "src/services/api/Viaje.service";
-import { toast } from "react-toastify";
-import socket from "@lib/sockets/socket";
-import { Form, FormLabel, ListGroup } from "react-bootstrap";
-import { ISocio } from "src/services/models/socio.model";
-import { log } from "console";
-import { right } from "@popperjs/core";
+} from '@react-google-maps/api';
+import ViajeService from 'src/services/api/Viaje.service';
+import { toast } from 'react-toastify';
+import socket from '@lib/sockets/socket';
+import { Form, FormLabel, ListGroup } from 'react-bootstrap';
+import { ISocio } from 'src/services/models/socio.model';
+import { log } from 'console';
+import { right } from '@popperjs/core';
+import SocioService from '../../../services/api/Socio.service';
 
-const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || "http://localhost:3000";
+const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || 'http://localhost:3000';
 
-const CustomMarker = (props) => {
+const CustomMarker = (props: any) => {
   // id=> socio id
   const { id, onMarkerClick } = props;
 
-  const handleClick = (evt) => {
+  const handleClick = () => {
     onMarkerClick(id);
   };
 
@@ -30,7 +30,7 @@ const CustomMarker = (props) => {
 };
 
 const MapsPage = () => {
-  const libraries = useMemo(() => ["places"], []);
+  const libraries = useMemo(() => ['places'], []);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<google.maps.Marker>();
 
@@ -120,7 +120,7 @@ const MapsPage = () => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
     libraries: libraries as any,
-    language: "es_ES",
+    language: 'es_ES',
   });
 
   // sockets
@@ -143,21 +143,21 @@ const MapsPage = () => {
 
   useEffect(() => {
     // escuchamos a los eventos de los clientes pendientes para asignar un vehiculo
-    socket.on("pendiente_confirmacion", (viajes: any) => {
-      console.log("pendiente_confirmacion", viajes);
+    socket.on('pendiente_confirmacion', (viajes: any) => {
+      console.log('pendiente_confirmacion', viajes);
       // debugger;
       setViajePendig(() => [...viajePending, viajes]);
     });
-    socket.emit("socios_conectados");
+    socket.emit('socios_conectados');
     // escuchar la lista de socios conectados al sockets
-    socket.on("socios_conectados", (datas: any[]) => {
-      console.log("vehiculos_conectados", datas);
+    socket.on('socios_conectados', (datas: any[]) => {
+      console.log('vehiculos_conectados', datas);
       setVeiculos([...datas]);
     });
 
     return () => {
-      socket.off("pendiente_confirmacion");
-      socket.off("socios_conectados");
+      socket.off('pendiente_confirmacion');
+      socket.off('socios_conectados');
     };
   }, []);
 
@@ -171,12 +171,12 @@ const MapsPage = () => {
         .then((res: any) => {
           // socket.emit("asignacion", { id: selectedViajeId, evento: "" , data: res.data });
           // socket.emit("asignacion_event", { id: selectedViajeId, evento: "" });
-          socket.emit("asignacion_event_socio", {
+          socket.emit('asignacion_event_socio', {
             socio_id: res.data.socio.id,
             data: res.data,
           });
 
-          toast("Asignado con exito.");
+          toast('Asignado con exito.');
 
           // const newviajes = viajePending.map((v) => {
           //   if (v.id != selectedViajeId) {
@@ -194,7 +194,7 @@ const MapsPage = () => {
         })
         .catch((error) => {
           console.log(error);
-          toast("Error al Asignado.", {});
+          toast('Error al Asignado.', {});
         });
     }
   };
@@ -202,26 +202,39 @@ const MapsPage = () => {
   // metodo para cuando seleciona al cliente
   const handlerSelectViaje = (e: any) => {
     // debugger;
-    console.log({ name: e.target.name, value: e.target.value });
+    // console.log({ name: e.target.name, value: e.target.value });
     const viaje_id = e.target.value;
     // console.log("click => ", viaje_id);
     setSelectedViajeId(viaje_id);
     const viaje = viajePending.find((v) => v.id === viaje_id);
-    setZoom(17);
-    setCurrenLocationSelect({
-      latitude: viaje.start_latitude,
-      longitude: viaje.start_longitude,
-    });
-    // debugger;
-    // if (mapRef.current) {
-    //   const map = new google.maps.Map(mapRef.current);
-    // mapRef.current.animateToRegion({
+    // setZoom(17);
+    // setCurrenLocationSelect({
     //   latitude: viaje.start_latitude,
     //   longitude: viaje.start_longitude,
     // });
-    // } else {
-    //   console.log("mapRef.current is not a GoogleMap object");
-    // }
+    moveToCoordinate({
+      latitude: viaje.start_latitude,
+      longitude: viaje.start_longitude,
+    });
+  };
+  // mover el mapa donde se hizo click
+  const handlerSelectSocio = (socio: any) => {
+    console.log(socio);
+    moveToCoordinate({
+      latitude: socio?.latitude,
+      longitude: socio?.longitude,
+    });
+  };
+
+  const moveToCoordinate = (
+    { latitude, longitude }: { latitude: number; longitude: number },
+    zoom = 17
+  ) => {
+    setZoom(zoom);
+    setCurrenLocationSelect({
+      latitude,
+      longitude,
+    });
   };
 
   if (!isLoaded) {
@@ -230,62 +243,37 @@ const MapsPage = () => {
 
   return (
     <AdminLayout>
-      <div className="row ">
+      <div className='row '>
         <div
-          className="col col-12 col-sm-12 col-md-2"
-          style={{ overflowY: "scroll", height: "75vh" }}
+          className='col col-12 col-sm-12 col-md-2'
+          style={{ overflowY: 'scroll', height: '75vh' }}
         >
-          <h5 className="text-center">Nuevos viajes</h5>
+          <h5 className='text-center'>Nuevos viajes</h5>
 
           <ListGroup>
             {viajePending &&
               viajePending.map((viaje: any, index) => (
                 <ListGroup.Item key={viaje.id + index}>
-                  {/* <FormLabel className="d-flex gap-1 ">
-                    <Form.Check
-                      key={viaje.id}
-                      value={viaje.id}
-                      type={"radio"}
-                      name="viajes"
-                      // label={`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
-                      checked={selectedViajeId === viaje.id}
-                      // onChange={() => {}}
-                      onChange={handlerSelectViaje}
-                    />
-                    {`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
-                  </FormLabel> */}
-                  <label className="d-flex gap-1  form-label">
+                  <label className='d-flex gap-1  form-label'>
                     <input
-                      className="form-check-input"
+                      className='form-check-input'
                       id={viaje.id}
                       value={viaje.id}
-                      name="viajes"
-                      type="radio"
-                      aria-label={`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
-                      onChange={handlerSelectViaje}
+                      name='viajes'
+                      type='radio'
+                      aria-label={`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
+                      onChange={() => {}}
+                      // onChange={handlerSelectViaje}
+                      onClick={handlerSelectViaje}
                     />
-                    {`${viaje.cliente.nombres} ${viaje.cliente.apellidos}`}
+                    {`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
                   </label>
                 </ListGroup.Item>
               ))}
           </ListGroup>
         </div>
-        <div className="col col-12 col-md-10 col-sm-12">
-          <div style={{ display: "flex", height: "80vh" }}>
-            <div
-              style={{
-                position: "fixed",
-                right: "5rem",
-                top: "6rem",
-                zIndex: 1,
-                backgroundColor: "green",
-                padding: "5px",
-                color: "white",
-                borderRadius: "5px",
-              }}
-            >
-              <strong className="">{veiculos.length}</strong> Socios conectados
-            </div>
+        <div className='col col-12 col-md-8 col-sm-12'>
+          <div style={{ display: 'flex', height: '80vh' }}>
             <GoogleMap
               options={mapOptions}
               zoom={zoom}
@@ -298,8 +286,8 @@ const MapsPage = () => {
                   : -66.28102605202128,
               }}
               mapTypeId={google.maps.MapTypeId.ROADMAP}
-              mapContainerStyle={{ width: "100%", height: "100%" }}
-              onLoad={() => console.log("Map Component Loaded...")}
+              mapContainerStyle={{ width: '100%', height: '100%' }}
+              onLoad={() => console.log('Map Component Loaded...')}
             >
               {/* <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="https://picsum.photos/64" /> */}
               {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}
@@ -313,16 +301,16 @@ const MapsPage = () => {
                     lng: markerData.longitude,
                   }}
                   label={{
-                    text: "" + index,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    className: "marker-label font-weight-bold -mt-30",
+                    text: `${index}`,
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    className: 'marker-label font-weight-bold -mt-30',
                   }}
                   icon={{
                     url: `${urlfornt}/assets/img/cars/${
-                      markerData.estado === "LIBRE"
-                        ? "car-green.svg"
-                        : "car-red.svg"
+                      markerData.estado === 'LIBRE'
+                        ? 'car-green.svg'
+                        : 'car-red.svg'
                     }`,
                     scale: 0.02,
                     scaledSize: new window.google.maps.Size(30, 30),
@@ -375,7 +363,7 @@ const MapsPage = () => {
                       ? currenLocationSelect.longitude
                       : 0,
                   }}
-                  onLoad={() => console.log("Marker Loaded")}
+                  onLoad={() => console.log('Marker Loaded')}
                   icon={{
                     // url: `http://localhost:3000/assets/img/location-user.png`,
                     url: `${urlfornt}/assets/img/location.gif`,
@@ -400,6 +388,23 @@ const MapsPage = () => {
               {/*      }} */}
               {/*    />)})} */}
             </GoogleMap>
+          </div>
+        </div>
+        <div className='col col-12 col-md-2 col-sm-12'>
+          <div className='container-fluid'>
+            <h5 className='text-center'>Socios conectados {veiculos.length}</h5>
+            <ListGroup>
+              {veiculos &&
+                veiculos.map((socio: any, index) => (
+                  <ListGroup.Item
+                    key={socio.id + index}
+                    onClick={() => handlerSelectSocio(socio)}
+                  >
+                    🚗 {socio?.veiculo?.n_movil} - {socio.nombres}{' '}
+                    {socio.apellidos}
+                  </ListGroup.Item>
+                ))}
+            </ListGroup>
           </div>
         </div>
       </div>

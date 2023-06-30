@@ -86,18 +86,32 @@ export class ViajesController {
   @Post('change-status-by-id')
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Fetched Stats Succesfully')
-  async changeStatusViajeById(@Body() createViajeDto: any) {
+  async changeStatusViajeById(@Body() createViajeDto: { viaje_id: string; estado: any }) {
     try {
-      return await this.viajesService.changeStatusViajeById(
-        createViajeDto.viaje_id,
-        createViajeDto.estado,
-      );
+      return await this.viajesService.changeStatusViajeById(createViajeDto);
     } catch (error) {
       console.log(error);
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
           message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+  @Post('change-rating')
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('calificado.')
+  async setRating(@Body() create: { viaje_id: string; calificacion: number | string }) {
+    try {
+      return await this.viajesService.setRating(create);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: error.message || 'Ocurrio un problema al procesar la informacion.',
         },
         HttpStatus.FORBIDDEN,
       );

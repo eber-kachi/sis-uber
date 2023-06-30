@@ -1,44 +1,44 @@
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import SocioService from "../../../../services/api/Socio.service";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { AdminLayout } from "@layout/index";
-import { Button, Col, Form, Row, Badge } from "react-bootstrap";
-import VeiculoService from "../../../../services/api/Veiculo.service";
-import { NextPage } from "next";
-import Link from "next/link";
-import Table from "react-bootstrap/Table";
-import ViajeService from "../../../../services/api/Viaje.service";
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import { AdminLayout } from '@layout/index'
+import { Button, Col, Form, Row, Badge } from 'react-bootstrap'
+import { NextPage } from 'next'
+import Link from 'next/link'
+import Table from 'react-bootstrap/Table'
+import VeiculoService from '../../../../services/api/Veiculo.service'
+import SocioService from '../../../../services/api/Socio.service'
+import ViajeService from '../../../../services/api/Viaje.service'
 
-const ViajesListPage: NextPage = ({ dataResponce }) => {
+const ViajesListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
   // console.log("user value=>", userValue)
-  console.log("list=>", dataResponce);
-  const socioService = new SocioService();
-  const [modalShow, setModalShow] = useState(false);
-  const [objects, setObjects] = useState(dataResponce ? dataResponce : []);
+  console.log('list=>', dataResponce)
+  const socioService = new SocioService()
+  const [modalShow, setModalShow] = useState(false)
+  const [objects, setObjects] = useState(dataResponce || [])
 
   const getData = async () => {
-    const responce: any[] = (await socioService.getAll()) as any[];
+    const responce = await socioService.getAll()
     // getLinks(responce.links);
-    setObjects(responce);
-  };
+    setObjects(responce.data)
+  }
 
   const onClickDelete = (id: string) => {
     socioService
       .delete(id)
       .then((res) => {
-        console.log(res);
-        toast("Eliminado con exito.");
-        getData();
+        console.log(res)
+        toast('Eliminado con exito.')
+        getData()
       })
       .catch((error) => {
-        console.log(error);
-      });
-  };
+        console.log(error)
+      })
+  }
 
-  useEffect(() => {}, []);
+  useEffect(() => {}, [])
 
   return (
     <AdminLayout>
@@ -48,12 +48,12 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
             <h3>Lista de viajes </h3>
           </div>
           <div>
-            {/*<Link className="btn btn-success" href={{ pathname: "/dashboard/socios/[id]", query: { id: "new" } }}>*/}
-            {/*  Crear Nuevo*/}
-            {/*</Link>*/}
-            {/*<Button variant="primary" onClick={() => setModalShow(true)}>*/}
-            {/*  Crear Nuevo*/}
-            {/*</Button>*/}
+            {/* <Link className="btn btn-success" href={{ pathname: "/dashboard/socios/[id]", query: { id: "new" } }}> */}
+            {/*  Crear Nuevo */}
+            {/* </Link> */}
+            {/* <Button variant="primary" onClick={() => setModalShow(true)}> */}
+            {/*  Crear Nuevo */}
+            {/* </Button> */}
           </div>
         </div>
 
@@ -62,9 +62,9 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
             <tr>
               <th>#</th>
               {/* <th>Foto</th> */}
-              {/*<th>Nombre completo</th>*/}
+              {/* <th>Nombre completo</th> */}
               <th>Estado</th>
-              {/*<th>Licencia</th>*/}
+              {/* <th>Licencia</th> */}
               {/* <th>Acciones</th> */}
             </tr>
           </thead>
@@ -79,23 +79,23 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
                   </td>
                   {/* <td> */}
                   {/* <div className=""> */}
-                  {/*<Button variant="outline-warning" >*/}
-                  {/*<Link className="btn btn-outline-warning"*/}
-                  {/*      href={{*/}
-                  {/*        pathname: "/dashboard/socios/[id]/veiculo/[veiculo_id]",*/}
-                  {/*        query: { id: object.id , veiculo_id: (object?.veiculo==null)? 'new': object?.veiculo?.id },*/}
-                  {/*      }}>*/}
-                  {/*  Veiculo*/}
-                  {/*</Link>*/}
-                  {/*<Link className="btn btn-outline-warning"*/}
-                  {/*      href={{*/}
-                  {/*        pathname: "/dashboard/socios/[id]",*/}
-                  {/*        query: { id: object.id },*/}
-                  {/*      }}>*/}
-                  {/*  Editar*/}
-                  {/*</Link>*/}
-                  {/*</Button>*/}
-                  {/*<Button variant="outline-danger" onClick={() => onClickDelete(object.id)}>Eliminar</Button>*/}
+                  {/* <Button variant="outline-warning" > */}
+                  {/* <Link className="btn btn-outline-warning" */}
+                  {/*      href={{ */}
+                  {/*        pathname: "/dashboard/socios/[id]/veiculo/[veiculo_id]", */}
+                  {/*        query: { id: object.id , veiculo_id: (object?.veiculo==null)? 'new': object?.veiculo?.id }, */}
+                  {/*      }}> */}
+                  {/*  Veiculo */}
+                  {/* </Link> */}
+                  {/* <Link className="btn btn-outline-warning" */}
+                  {/*      href={{ */}
+                  {/*        pathname: "/dashboard/socios/[id]", */}
+                  {/*        query: { id: object.id }, */}
+                  {/*      }}> */}
+                  {/*  Editar */}
+                  {/* </Link> */}
+                  {/* </Button> */}
+                  {/* <Button variant="outline-danger" onClick={() => onClickDelete(object.id)}>Eliminar</Button> */}
                   {/* </div> */}
                   {/* </td> */}
                 </tr>
@@ -103,31 +103,31 @@ const ViajesListPage: NextPage = ({ dataResponce }) => {
           </tbody>
         </Table>
       </div>
-      {/*onSave={()=> {}}*/}
-      {/*<CustomModal*/}
-      {/*  show={modalShow}*/}
-      {/*  onHide={() => setModalShow(false)}*/}
+      {/* onSave={()=> {}} */}
+      {/* <CustomModal */}
+      {/*  show={modalShow} */}
+      {/*  onHide={() => setModalShow(false)} */}
 
-      {/*  title={"Alerta"}*/}
-      {/*  size="sm"*/}
-      {/*>*/}
-      {/*  <h1>Hola como estas desde la lista </h1>*/}
-      {/*</CustomModal>*/}
+      {/*  title={"Alerta"} */}
+      {/*  size="sm" */}
+      {/* > */}
+      {/*  <h1>Hola como estas desde la lista </h1> */}
+      {/* </CustomModal> */}
     </AdminLayout>
-  );
-};
+  )
+}
 
-export async function getServerSideProps(context) {
-  console.log("vaijes=> ", context.params.id);
+export async function getServerSideProps(context: any) {
+  console.log('vaijes=> ', context.params.id)
 
-  const service = new ViajeService();
-  const responce = await service.getByclienteoId(context.params.id);
+  const service = new ViajeService()
+  const responce = await service.getByclienteoId(context.params.id)
   // console.log(responce);
   return {
     props: {
-      dataResponce: responce.data,
+      dataResponce: responce.data || [],
     },
-  };
+  }
 }
 
-export default ViajesListPage;
+export default ViajesListPage

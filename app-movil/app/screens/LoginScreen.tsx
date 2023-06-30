@@ -1,14 +1,13 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
+import { ImageStyle, TextInput, TextStyle, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 import { AuthService } from "../services/api"
 
-interface LoginScreenProps extends AppStackScreenProps<"Login"> {
-}
+interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_props) {
   const authPasswordInput = useRef<TextInput>()
@@ -19,7 +18,15 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
-    authenticationStore: { fetchUserByEmail, authEmail, setAuthEmail, setAuthToken, validationError, setRole, setListenLocation },
+    authenticationStore: {
+      fetchUserByEmail,
+      authEmail,
+      setAuthEmail,
+      setAuthToken,
+      validationError,
+      setRole,
+      setListenLocation,
+    },
   } = useStores()
   const service = new AuthService()
 
@@ -36,39 +43,41 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
     if (validationError) return
+    console.log("login click...")
 
     // Make a request to your server to get an authentication token.
-    service.login({ email: authEmail, password: authPassword })
+    service
+      .login({ email: authEmail, password: authPassword })
       .then((res: any) => {
-        // console.log("todo bien =>>>>", res)
+        console.log("todo bien =>>>>", res)
         // If successful, reset the fields and set the token.
-
+        setIsSubmitted(false)
         // // We'll mock this with a fake token.
         if (res.kind === "ok") {
           if (res.data.user && res.data.token) {
-
-            setIsSubmitted(false)
+            // setIsSubmitted(false)
             setAuthPassword("")
             // console.log("todo bien =>>>>", res.data.user)
             setAuthEmail(res.data.user.email)
             setRole(res.data.user.role)
             setAuthToken(res.data.token.accessToken)
-            fetchUserByEmail();
+            fetchUserByEmail()
           }
-          if (res.data.user.role=='DRIVER') {
+          if (res.data.user.role === "DRIVER") {
             // setListenLocation()
           }
         }
-
       })
-      .catch(error => {
+      .catch((error) => {
         console.log("aqui error ", error)
+      })
+      .finally(() => {
+        setIsSubmitted(false)
       })
   }
 
   function handlerClikToRegister() {
     navigation.navigate("Register")
-
   }
 
   const PasswordRightAccessory = useMemo(
@@ -100,10 +109,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn}/>
+      <Text testID="login-heading" tx="loginScreen.signIn" preset="heading" style={$signIn} />
       {/* <Text tx="loginScreen.enterDetails" preset="subheading" style={$enterDetails}/> */}
-      <Text tx="loginScreen.enterDetails2" preset="subheading" style={$enterDetails}/>
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint}/>}
+      <Text tx="loginScreen.enterDetails2" preset="subheading" style={$enterDetails} />
+      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
 
       <TextField
         value={authEmail}
@@ -141,6 +150,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         style={$tapButton}
         preset="reversed"
         onPress={login}
+        disabled={isSubmitted}
+        LeftAccessory={(props) =>
+          isSubmitted && <Icon containerStyle={props.style} style={$iconStyle} icon="loading" />
+        }
       />
       <Button
         testID="login-register"
@@ -180,7 +193,8 @@ const $tapButton: ViewStyle = {
 }
 const $tapButtonRegister: ViewStyle = {
   marginTop: spacing.extraSmall,
-  backgroundColor: colors.palette.accent500
+  backgroundColor: colors.palette.accent500,
 }
 
+const $iconStyle: ImageStyle = { width: 30, height: 30 }
 // @demo remove-file

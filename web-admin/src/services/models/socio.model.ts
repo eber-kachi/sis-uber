@@ -10,7 +10,7 @@ export interface ISocio {
   estado: string;
   emision: string;
   vencimiento: string;
-  nroLicencia: string;
+  nro_licencia: string;
   categoria: string;
   activo: boolean;
   latitude: any;
@@ -20,4 +20,5 @@ export interface ISocio {
 
 export interface IVeiculo {
   id: string;
+  n_movil: string;
 }

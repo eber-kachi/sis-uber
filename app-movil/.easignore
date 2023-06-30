@@ -1,0 +1,7 @@
+*.debug/
+*.test/
+*.node_modules/
+.idea/*
+.maestro/*
+bin/*
+ignite/*

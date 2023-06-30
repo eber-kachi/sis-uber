@@ -6,6 +6,8 @@ import { CreateViajeClient } from './dto/create-viaje-client';
 import { RoleType } from 'common/constants/role-type';
 import { SocioService } from '../socio/socio.service';
 import { EstadoViaje } from '../../common/constants/estado-viaje';
+import { format } from 'date-fns';
+import { log } from 'console';
 
 @Injectable()
 export class ViajesService {
@@ -103,7 +105,7 @@ export class ViajesService {
   async getLastTrip(socio_id = null, cliente_id = null) {
     if (socio_id != null) {
       const viajes = await this.viajeRepository.find({
-        where: { socio: socio_id },
+        where: { socio: { id: socio_id } },
         relations: ['cliente'],
         take: 5,
       });
@@ -118,9 +120,39 @@ export class ViajesService {
     return viajes;
   }
 
-  async changeStatusViajeById(viajeid: string, status: EstadoViaje) {
-    const viaje = await this.viajeRepository.findOneBy({ id: viajeid });
-    viaje.estado = status;
+  async changeStatusViajeById(createViajeDto) {
+    console.log('changeStatusViajeById: viaje_id=> ', createViajeDto.viaje_id);
+
+    const viaje = await this.viajeRepository.findOne({
+      where: { id: createViajeDto.viaje_id },
+      relations: ['cliente'],
+    });
+    viaje.estado = createViajeDto.estado;
+    const currentDateTime = new Date();
+    // 2023-06-29 09:08:48
+    if (createViajeDto.status === EstadoViaje.INICIANDOVIAJE) {
+      viaje.start_time = createViajeDto.start_time;
+      viaje.fecha = format(currentDateTime, 'yyy-MM-dd HH:mm:ss');
+    }
+
+    if (createViajeDto.status === EstadoViaje.FINALIZADO) {
+      viaje.estado = createViajeDto.estado;
+      //location
+      viaje.end_latitude = createViajeDto.latitude;
+      viaje.end_longitude = createViajeDto.longitude;
+      viaje.distancia_recorrida = createViajeDto?.distancia_recorrida || 0;
+      viaje.end_time = format(currentDateTime, 'yyy-MM-dd HH:mm:ss');
+    }
+
+    return await this.viajeRepository.save(viaje);
+  }
+
+  async setRating(create: { viaje_id: string; calificacion: string | number }) {
+    const viaje = await this.viajeRepository.findOne({
+      where: { id: create.viaje_id },
+      relations: ['cliente'],
+    });
+    viaje.calificacion = Number(create.calificacion);
     return await this.viajeRepository.save(viaje);
   }
 }

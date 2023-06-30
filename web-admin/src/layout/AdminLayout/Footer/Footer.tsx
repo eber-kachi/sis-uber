@@ -1,5 +1,5 @@
-import React from "react";
-import { Container } from "react-bootstrap";
+import React from 'react'
+import { Container } from 'react-bootstrap'
 
 export default function Footer() {
   return (
@@ -13,7 +13,7 @@ export default function Footer() {
           <a className="text-decoration-none" href="https://coreui.io">
             Bootstrap Admin
             Template
-          </a> */}{" "}
+          </a> */}{' '}
           © 2023 Taxi
         </div>
         <div className="ms-md-auto">
@@ -27,5 +27,5 @@ export default function Footer() {
         </div>
       </Container>
     </footer>
-  );
+  )
 }

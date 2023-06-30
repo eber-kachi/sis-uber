@@ -1,76 +1,72 @@
-import { NextPage } from "next";
-import { AdminLayout } from "@layout/index";
-import React, { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
-import { toast } from "react-toastify";
-import UserService from "../../../services/api/User.service";
-import { IUser } from "src/services/models/user.model";
-import { AxiosError } from "axios";
-import Link from "next/link";
+import { AdminLayout } from '@layout/index'
+import React, { useEffect, useState } from 'react'
+import Table from 'react-bootstrap/Table'
+import Button from 'react-bootstrap/Button'
+import { toast } from 'react-toastify'
+import { IUser } from 'src/services/models/user.model'
+import { AxiosError } from 'axios'
+import Link from 'next/link'
+import UserService from '../../../services/api/User.service'
 
-const UserListPage: NextPage = ({ dataResponce }) => {
+const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
   // console.log("user value=>", userValue)
-  console.log("list=>", dataResponce);
-  const clienteService = new UserService();
-  const [modalShow, setModalShow] = useState(false);
+  console.log('list=>', dataResponce)
+  const clienteService = new UserService()
+  const [modalShow, setModalShow] = useState(false)
   const [objects, setObjects] = useState<IUser[]>(
-    dataResponce ? dataResponce : []
-  );
+    dataResponce || [],
+  )
 
   const getData = async () => {
-    const responce: any = await clienteService.getAll();
+    const responce: any = await clienteService.getAll()
     // filtamos solo para editar usuarios que acceden al web-admin
     const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
-      if (["USER", "ADMIN"].includes(user.role)) {
-        return [...users, user];
+      if (['USER', 'ADMIN'].includes(user.role)) {
+        return [...users, user]
       }
-      return users;
-    }, []);
-    setObjects(usersfinaly);
-  };
+      return users
+    }, [])
+    setObjects(usersfinaly)
+  }
 
   const onClickDelete = (id: string) => {
     clienteService
       .delete(id)
       .then((res) => {
-        console.log(res);
-        toast("Eliminado con exito.");
-        getData();
+        console.log(res)
+        toast('Eliminado con exito.')
+        getData()
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error)
         if (error instanceof AxiosError) {
-          toast.error(error.message);
+          toast.error(error.message)
         }
-      });
-  };
+      })
+  }
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData()
+  }, [])
 
   return (
     <AdminLayout>
       <div className="row">
         <div className="m-2 d-flex flex flex-row justify-content-between">
           <div>
-            <h3>Lista de Usuarios</h3>
+            <h3>Lista de usuarios</h3>
           </div>
           <div>
             <Link
               className="btn btn-success"
               href={{
-                pathname: "/dashboard/users/[id]",
-                query: { id: "new" },
+                pathname: '/dashboard/users/[id]',
+                query: { id: 'new' },
               }}
             >
-              Crear Nuevo
+              Crear nuevo
             </Link>
-            {/*<Button variant="primary" onClick={() => setModalShow(true)}>*/}
-            {/*  Crear Nuevo*/}
-            {/*</Button>*/}
           </div>
         </div>
 
@@ -78,9 +74,9 @@ const UserListPage: NextPage = ({ dataResponce }) => {
           <thead>
             <tr>
               <th>#</th>
-              <th>Correo</th>
+              <th>Correo electrónico</th>
               <th>Rol</th>
-              {/*<th>Licencia</th>*/}
+              {/* <th>Licencia</th> */}
               <th>Acciones</th>
             </tr>
           </thead>
@@ -95,15 +91,17 @@ const UserListPage: NextPage = ({ dataResponce }) => {
                   <td>
                     <div className="">
                       <Link
+                        title="Editar"
                         className="btn btn-warning"
                         href={{
-                          pathname: "/dashboard/users/[id]",
+                          pathname: '/dashboard/users/[id]',
                           query: { id: object.id },
                         }}
                       >
                         Editar
                       </Link>
                       <Button
+                        title="Eliminar"
                         variant="outline-danger"
                         onClick={() => onClickDelete(object.id)}
                       >
@@ -116,19 +114,19 @@ const UserListPage: NextPage = ({ dataResponce }) => {
           </tbody>
         </Table>
       </div>
-      {/*onSave={()=> {}}*/}
-      {/*<CustomModal*/}
-      {/*  show={modalShow}*/}
-      {/*  onHide={() => setModalShow(false)}*/}
+      {/* onSave={()=> {}} */}
+      {/* <CustomModal */}
+      {/*  show={modalShow} */}
+      {/*  onHide={() => setModalShow(false)} */}
 
-      {/*  title={"Alerta"}*/}
-      {/*  size="sm"*/}
-      {/*>*/}
-      {/*  <h1>Hola como estas desde la lista </h1>*/}
-      {/*</CustomModal>*/}
+      {/*  title={"Alerta"} */}
+      {/*  size="sm" */}
+      {/* > */}
+      {/*  <h1>Hola como estas desde la lista </h1> */}
+      {/* </CustomModal> */}
     </AdminLayout>
-  );
-};
+  )
+}
 
 // export async function getServerSideProps(context) {
 //   const service = new UserService();
@@ -141,4 +139,4 @@ const UserListPage: NextPage = ({ dataResponce }) => {
 //   };
 // }
 
-export default UserListPage;
+export default UserListPage

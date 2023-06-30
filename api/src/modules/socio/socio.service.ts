@@ -6,6 +6,7 @@ import { SocioRepository } from './socio.repository';
 import { UserService } from '../user/user.service';
 import { RoleType } from 'common/constants/role-type';
 import { In } from 'typeorm';
+import { GrupotrabajoService } from 'modules/grupotrabajo/grupotrabajo.service';
 
 @Injectable()
 export class SocioService {
@@ -13,6 +14,7 @@ export class SocioService {
     public readonly socioRepository: SocioRepository,
     // public readonly userRepository: UserRepository,
     public readonly userService: UserService,
+    public readonly grupoTrabajo: GrupotrabajoService,
   ) {}
 
   async create(createSocioDto: SocioDto) {
@@ -25,6 +27,7 @@ export class SocioService {
     );
     const socio = await this.socioRepository.create(createSocioDto);
     socio.user = user;
+    socio.grupotrabajo_id = createSocioDto.grupotrabajo_id;
 
     return this.socioRepository.save(socio);
   }
@@ -41,13 +44,16 @@ export class SocioService {
   async findAll() {
     const socios = await this.socioRepository.find({
       order: { createdAt: 'DESC' },
-      relations: ['veiculo'],
+      relations: ['veiculo', 'grupotrabajo'],
     });
     return socios;
   }
 
   async findOne(id: string) {
-    return await this.socioRepository.findOneOrFail({ where: { id: id }, relations: ['user'] });
+    return await this.socioRepository.findOneOrFail({
+      where: { id: id },
+      relations: ['user', 'grupotrabajo'],
+    });
     // {
     // where: findData,
     // relations: ['medico'],
@@ -71,6 +77,11 @@ export class SocioService {
     await this.userService.update(socioUpdate.user.id, { email: updateSocioDto.email });
     // quitamos un valor del objeto
     delete updateSocioDto.email;
+    // delete updateSocioDto?.user_id;
+    if (updateSocioDto.grupotrabajo_id) {
+      const grupo = await this.grupoTrabajo.findOne(updateSocioDto.grupotrabajo_id);
+      socioUpdate.grupotrabajo = grupo;
+    }
     await this.socioRepository.update(id, { ...updateSocioDto });
     return await this.socioRepository.findOneBy({ id });
   }

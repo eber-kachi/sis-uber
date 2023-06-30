@@ -1,11 +1,11 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAddressCard,
   faBell,
   faFileLines,
   faStar,
   IconDefinition,
-} from "@fortawesome/free-regular-svg-icons";
+} from '@fortawesome/free-regular-svg-icons'
 import {
   faBug,
   faCalculator,
@@ -26,13 +26,14 @@ import {
   faUsers,
   faUserCircle,
   faBookAtlas,
-} from "@fortawesome/free-solid-svg-icons";
+  faGroupArrowsRotate,
+} from '@fortawesome/free-solid-svg-icons'
 import React, {
   PropsWithChildren,
   useContext,
   useEffect,
   useState,
-} from "react";
+} from 'react'
 import {
   Accordion,
   AccordionContext,
@@ -40,17 +41,17 @@ import {
   Button,
   Nav,
   useAccordionButton,
-} from "react-bootstrap";
-import classNames from "classnames";
-import Link from "next/link";
+} from 'react-bootstrap'
+import classNames from 'classnames'
+import Link from 'next/link'
 
 type SidebarNavItemProps = {
   href: string;
   icon?: IconDefinition;
-} & PropsWithChildren;
+} & PropsWithChildren
 
 const SidebarNavItem = (props: SidebarNavItemProps) => {
-  const { icon, children, href } = props;
+  const { icon, children, href } = props
 
   return (
     <Nav.Item>
@@ -65,47 +66,47 @@ const SidebarNavItem = (props: SidebarNavItemProps) => {
         </Nav.Link>
       </Link>
     </Nav.Item>
-  );
-};
+  )
+}
 
 const SidebarNavTitle = (props: PropsWithChildren) => {
-  const { children } = props;
+  const { children } = props
 
   return (
     <li className="nav-title px-3 py-2 mt-3 text-uppercase fw-bold">
       {children}
     </li>
-  );
-};
+  )
+}
 
 type SidebarNavGroupToggleProps = {
   eventKey: string;
   icon: IconDefinition;
   setIsShow: (isShow: boolean) => void;
-} & PropsWithChildren;
+} & PropsWithChildren
 
 const SidebarNavGroupToggle = (props: SidebarNavGroupToggleProps) => {
   // https://react-bootstrap.github.io/components/accordion/#custom-toggle-with-expansion-awareness
-  const { activeEventKey } = useContext(AccordionContext);
-  const { eventKey, icon, children, setIsShow } = props;
+  const { activeEventKey } = useContext(AccordionContext)
+  const { eventKey, icon, children, setIsShow } = props
 
-  const decoratedOnClick = useAccordionButton(eventKey);
+  const decoratedOnClick = useAccordionButton(eventKey)
 
-  const isCurrentEventKey = activeEventKey === eventKey;
+  const isCurrentEventKey = activeEventKey === eventKey
 
   useEffect(() => {
-    setIsShow(activeEventKey === eventKey);
-  }, [activeEventKey, eventKey, setIsShow]);
+    setIsShow(activeEventKey === eventKey)
+  }, [activeEventKey, eventKey, setIsShow])
 
   return (
     <Button
       variant="link"
       type="button"
       className={classNames(
-        "rounded-0 nav-link px-3 py-2 d-flex align-items-center flex-fill w-100 shadow-none",
+        'rounded-0 nav-link px-3 py-2 d-flex align-items-center flex-fill w-100 shadow-none',
         {
           collapsed: !isCurrentEventKey,
-        }
+        },
       )}
       onClick={decoratedOnClick}
     >
@@ -115,18 +116,18 @@ const SidebarNavGroupToggle = (props: SidebarNavGroupToggleProps) => {
         <FontAwesomeIcon size="xs" icon={faChevronUp} />
       </div>
     </Button>
-  );
-};
+  )
+}
 
 type SidebarNavGroupProps = {
   toggleIcon: IconDefinition;
   toggleText: string;
-} & PropsWithChildren;
+} & PropsWithChildren
 
 const SidebarNavGroup = (props: SidebarNavGroupProps) => {
-  const { toggleIcon, toggleText, children } = props;
+  const { toggleIcon, toggleText, children } = props
 
-  const [isShow, setIsShow] = useState(false);
+  const [isShow, setIsShow] = useState(false)
 
   return (
     <Accordion
@@ -145,8 +146,8 @@ const SidebarNavGroup = (props: SidebarNavGroupProps) => {
         <ul className="nav-group-items list-unstyled">{children}</ul>
       </Accordion.Collapse>
     </Accordion>
-  );
-};
+  )
+}
 
 export default function SidebarNav() {
   return (
@@ -157,6 +158,10 @@ export default function SidebarNav() {
       </SidebarNavItem> */}
       <SidebarNavItem icon={faUserCircle} href="/dashboard/users">
         Usuarios
+        {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+      </SidebarNavItem>
+      <SidebarNavItem icon={faGroupArrowsRotate} href="/dashboard/grupotrabajo">
+        Grupo trabajo
         {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
       </SidebarNavItem>
       <SidebarNavItem icon={faUsers} href="/dashboard/socios">
@@ -246,5 +251,5 @@ export default function SidebarNav() {
       {/* <SidebarNavItem icon={faFileLines} href="docs.html">Docs</SidebarNavItem>
       <SidebarNavItem icon={faLayerGroup} href="https://coreui.io/pro/">Try CoreUI PRO</SidebarNavItem> */}
     </ul>
-  );
+  )
 }

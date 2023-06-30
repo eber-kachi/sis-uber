@@ -38,11 +38,11 @@ export type GeneralApiProblem =
    * The data we received is not in the expected format.
    */
   | { kind: "bad-data" }
-  /**
-   * indica que el servidor no puede o no quiere procesar
-   * la solicitud debido a algo que se percibe como un error del cliente
-   */
-  // | { kind: "bad-request" }
+/**
+ * indica que el servidor no puede o no quiere procesar
+ * la solicitud debido a algo que se percibe como un error del cliente
+ */
+// | { kind: "bad-request" }
 
 /**
  * Attempts to get a common cause of problems from an api response.
@@ -63,14 +63,15 @@ export function getGeneralApiProblem(response: ApiResponse<any>): GeneralApiProb
       return { kind: "unknown", temporary: true }
     case "CLIENT_ERROR":
       switch (response?.status) {
-        case 400: //nest no proceso la solisitud
-          return  { kind: "bad-data" }
+        case 400: // nest no proceso la solisitud
+          return { kind: "bad-data" }
         case 401:
           return { kind: "unauthorized" }
         case 403:
+          ToastAndroid.show(response?.data?.message, ToastAndroid.SHORT)
           return { kind: "forbidden" }
         case 404:
-          ToastAndroid.show(response?.data?.message || 'Recurso no encotrado', ToastAndroid.SHORT);
+          ToastAndroid.show(response?.data?.message || "Recurso no encotrado", ToastAndroid.SHORT)
           return { kind: "not-found" }
         default:
           return { kind: "rejected" }
@@ -78,6 +79,4 @@ export function getGeneralApiProblem(response: ApiResponse<any>): GeneralApiProb
     case "CANCEL_ERROR":
       return null
   }
-
-  return null
 }

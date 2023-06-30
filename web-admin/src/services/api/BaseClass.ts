@@ -1,20 +1,20 @@
-import axios from "@lib/axios";
+import axios from '@lib/axios';
 
 export abstract class BaseAPIClass {
   baseUrl: string;
 
   constructor() {
-    this.baseUrl = "";
+    this.baseUrl = '';
   }
 
   getAll(
     filterObject?: any
   ): Promise<{ data: any; message: string; statusCode: number }> {
-    let queryString = "";
+    let queryString = '';
     if (filterObject) {
       const fitlerKeys = Object.keys(filterObject);
       if (fitlerKeys.length > 0) {
-        queryString = "?";
+        queryString = '?';
       }
       fitlerKeys.forEach((key, index) => {
         if (filterObject[key] !== undefined && filterObject[key] !== null) {
@@ -25,7 +25,7 @@ export abstract class BaseAPIClass {
       });
       if (
         fitlerKeys.length > 0 &&
-        queryString[queryString.length - 1] === "&"
+        queryString[queryString.length - 1] === '&'
       ) {
         queryString = queryString.slice(0, -1);
       }
@@ -35,17 +35,12 @@ export abstract class BaseAPIClass {
       axios
         .get(`${this.baseUrl}${queryString}`)
         .then((response) => {
-          console.log(response);
-          // if (response.statusText === 'OK') {
           resolve(response.data);
           // } else {
           // 	reject(response.data);
           // }
         })
         .catch((error) => {
-          // console.error('Promise', error);
-          // console.info('Promise', error.message);
-          // todo mostrar al usuario que paso  un error
           reject(error);
         });
     });
@@ -72,8 +67,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           reject(error);
         });
     });
@@ -94,8 +89,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -116,8 +111,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -129,6 +124,23 @@ export abstract class BaseAPIClass {
       axios
         .patch(`${this.baseUrl}/${id}`, data)
         .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.error('Promise', error);
+          console.info('Promise', error.message);
+          reject(error);
+        });
+    });
+  }
+
+  async updateFormData(data: any, id: string | number) {
+    return new Promise((resolve, reject) => {
+      axios
+        .patch(`${this.baseUrl}/${id}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
           resolve(response.data);
@@ -137,8 +149,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -173,8 +185,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -207,8 +219,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           reject(error);
         });
     });
@@ -227,8 +239,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
           reject(error);
         });
@@ -248,8 +260,8 @@ export abstract class BaseAPIClass {
           // }
         })
         .catch((error) => {
-          console.error("Promise", error);
-          console.info("Promise", error.message);
+          console.error('Promise', error);
+          console.info('Promise', error.message);
           reject(error);
         });
     });

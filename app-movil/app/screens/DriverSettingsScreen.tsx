@@ -1,16 +1,3 @@
-// ---
-// patches:
-// - path: "app/screens/index.ts"
-//   append: "export * from \"./DriverSettingsScreen\"\n"
-//   skip:
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-//   insert: "DriverSettings: undefined\n\t// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   insert: "<Stack.Screen name=\"DriverSettings\" component={Screens.DriverSettingsScreen} />\n\t\t\t{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   skip:
-// ---
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
@@ -27,8 +14,9 @@ import socket from "app/utils/socket"
 // import { useStores } from "app/models"
 
 function ControlledToggle(props: ToggleProps) {
-  const [value, setValue] = React.useState(props.value || false)
-  return <Toggle {...props} value={value} onPress={() => setValue(!value)} />
+  // const [value, setValue] = React.useState(props.value ? props.value : false)
+  // return <Toggle {...props} value={value} />
+  return <Toggle {...props} value={props.value ? props.value : false} />
 }
 
 interface DriverSettingsScreenProps
@@ -48,22 +36,44 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
       // console.log(listenLocationUser)
 
       // if  (status){
-      const res = await socioService.changeStatus({
-        state: status ? "LIBRE" : "SINSERVICO",
-        socio_id: authEmail,
-        location,
-      })
+      await socioService
+        .changeStatus({
+          state: status ? "LIBRE" : "SINSERVICO",
+          socio_id: authEmail,
+          location,
+        })
+        .then((res) => {
+          // console.log("success =>>>>>", res)
+
+          if (res.kind === "ok") {
+            socket.emit("socios_conectados", { socio_id: socioId, location })
+
+            setListenLocation(status)
+          } else {
+            setListenLocation(false)
+          }
+        })
+        .catch((error) => {
+          console.log("error =>>>>", error)
+          setListenLocation(false)
+        })
+      // .finally()
       // const res =  await socioService.changeStatus({ state: status ? "LIBRE" : "SINSERVICO", socio_id: 'ffe981d1-1a0d-4cf2-8849-842bf9039dd4' })
       // }
-      if (res.kind === "ok") {
-        setListenLocation(status)
-      } else {
-        setListenLocation(false)
+    }
+    const findSocio = async () => {
+      const socioresponse = await socioService.getById(socioId)
+      console.log({ socioresponse })
+      if (socioresponse.kind === "ok") {
+        console.log(socioresponse.data.estado)
+        if (socioresponse.data.estado === "LIBRE") {
+          setListenLocation(true)
+        }
       }
     }
 
     useEffect(() => {
-      console.log("listo para unirce")
+      console.log("listo para unirce", listenLocationUser)
 
       if (listenLocationUser) {
         console.log("socio_join", socioId)
@@ -85,6 +95,7 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
           setLocation({ latitude: res.location.latitude, longitude: res.location.longitude })
         }
       })()
+      findSocio()
     }, [])
 
     return (

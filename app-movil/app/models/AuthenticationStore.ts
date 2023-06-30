@@ -2,7 +2,7 @@ import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import UserService from "../services/api/user.service"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-const userservice= new  UserService();
+const userservice = new UserService()
 
 export const AuthenticationStoreModel = types
   .model("AuthenticationStore")
@@ -11,8 +11,8 @@ export const AuthenticationStoreModel = types
     authEmail: "",
     authRole: "",
     listenLocationUser: false,
-    socioId:'',
-    clientId:''
+    socioId: "",
+    clientId: "",
   })
   .views((store) => ({
     get isAuthenticated() {
@@ -25,22 +25,21 @@ export const AuthenticationStoreModel = types
         return "must be a valid email address"
       return ""
     },
-    get email(){
+    get email() {
       return store.authEmail
     },
-    get role(){
+    get role() {
       return store.authRole
     },
-    get listenLocation(){
-      return store.listenLocationUser;
+    get listenLocation() {
+      return store.listenLocationUser
     },
-    get socio_id(){
+    get socio_id() {
       return store.socioId
     },
-    get client_id(){
+    get client_id() {
       return store.clientId
-    }
-
+    },
   }))
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -48,37 +47,37 @@ export const AuthenticationStoreModel = types
       store.authToken = value
     },
     setAuthEmail(value: string) {
-      console.log('Emaial Store=>', value)
+      console.log("Emaial Store=>", value)
       store.authEmail = value.replace(/ /g, "")
     },
     logout() {
       store.authToken = undefined
       store.authRole = undefined
-      store.authEmail = "",
-        store.clientId='',
-        store.socioId=''
+      store.authEmail = ""
+      store.clientId = ""
+      store.socioId = ""
     },
-    setRole(value: string){
-      store.authRole=value
+    setRole(value: string) {
+      store.authRole = value
     },
-    setSocioId(value: string){
-      store.socioId=value
+    setSocioId(value: string) {
+      store.socioId = value
     },
-    setClientId(value: string){
-      store.clientId=value
+    setClientId(value: string) {
+      store.clientId = value
     },
-    setListenLocation(value:boolean){
-      store.listenLocationUser=value
-    }
+    setListenLocation(value: boolean) {
+      store.listenLocationUser = value
+    },
   }))
-  .actions((store)=>({
+  .actions((store) => ({
     async fetchUserByEmail() {
       const response = await userservice.getUserByEmail(store.authEmail)
       if (response.kind === "ok") {
-        console.log('AuthenticationStoreModel=>', response.data)
-        if(store.authRole=='DRIVER'){
+        console.log("AuthenticationStoreModel=>", response.data)
+        if (store.authRole === "DRIVER") {
           store.setProp("socioId", response.data.socio.id)
-        }else{
+        } else {
           store.setProp("clientId", response.data.cliente.id)
         }
       } else {

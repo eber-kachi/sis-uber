@@ -1,9 +1,9 @@
-import { BaseAPIClass } from "./BaseClass"
+import { BaseAPIClass } from './BaseClass'
 
 
-export default class VeiculoService extends BaseAPIClass{
+export default class VeiculoService extends BaseAPIClass {
   constructor() {
-    super();
-    this.baseUrl = '/api/veiculos';
+    super()
+    this.baseUrl = '/api/veiculos'
   }
 }

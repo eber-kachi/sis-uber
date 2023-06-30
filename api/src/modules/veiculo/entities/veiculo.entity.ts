@@ -21,5 +21,8 @@ export class VeiculoEntity extends AbstractEntity<VeiculoDto> {
   @Column({ nullable: true })
   anio: string;
 
+  @Column({ nullable: true, type: 'varchar', length: '50' })
+  n_movil: string;
+
   dtoClass = VeiculoDto;
 }

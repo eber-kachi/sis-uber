@@ -3,14 +3,19 @@ import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
 import { ApiResponse } from "apisauce"
 import { api } from "./api"
 
-export default class ViajeService extends BaseApiClass{
+export default class ViajeService extends BaseApiClass {
   constructor() {
-    super();
-    this.baseUrl = '/api/viajes';
+    super()
+    this.baseUrl = "/api/viajes"
   }
 
-  async getLast(socio_id=null, client_id=null): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    const response: ApiResponse<any> = await api.apisauce.get<any>(`${this.baseUrl}/get-last/trip-by?socio_id=${socio_id}&cliente_id=${client_id}`)
+  async getLast(
+    socio_id = null,
+    client_id = null,
+  ): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await api.apisauce.get<any>(
+      `${this.baseUrl}/get-last/trip-by?socio_id=${socio_id}&cliente_id=${client_id}`,
+    )
     if (!response.ok) {
       // console.log("AuthService=>", response.data)
       const problem = getGeneralApiProblem(response)
@@ -29,8 +34,15 @@ export default class ViajeService extends BaseApiClass{
     }
   }
 
- async changeStatusViajeById(param: { estado: string; viaje_id: string }): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    const response: ApiResponse<any> = await api.apisauce.post<any>(`${this.baseUrl}/change-status-by-id`, param)
+  async changeStatusViajeById(param: {
+    estado: string
+    viaje_id: string
+  }): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    console.log("changeStatusViajeById: viaje_id=> ", param.viaje_id)
+    const response: ApiResponse<any> = await api.apisauce.post<any>(
+      `${this.baseUrl}/change-status-by-id`,
+      param,
+    )
     if (!response.ok) {
       // console.log("AuthService=>", response.data)
       const problem = getGeneralApiProblem(response)

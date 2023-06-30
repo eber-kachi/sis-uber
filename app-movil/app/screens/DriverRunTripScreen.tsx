@@ -1,23 +1,9 @@
-// ---
-// patches:
-// - path: "app/screens/index.ts"
-//   append: "export * from \"./DriverRunTripScreen\"\n"
-//   skip:
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-//   insert: "DriverRunTrip: undefined\n\t// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   insert: "<Stack.Screen name=\"DriverRunTrip\" component={Screens.DriverRunTripScreen} />\n\t\t\t{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   skip:
-// ---
 import React, { FC, useEffect, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { Dimensions, View, ViewStyle } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { AppStackScreenProps } from "app/navigators"
-import { Button, Screen, Text } from "app/components"
-import { useNavigation } from "@react-navigation/native"
+import { Button, Screen } from "app/components"
 import { IViaje, useStores } from "app/models"
 import ViajeService from "../services/api/viaje.service"
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps/lib"
@@ -27,7 +13,6 @@ import socket from "../utils/socket"
 import MapViewDirections from "react-native-maps-directions"
 import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
 import * as Location from "expo-location"
-import { log } from "react-native-reanimated"
 
 const carImage = require("../../assets/images/app/car.png")
 const locationClient = require("../../assets/images/app/location-user.png")
@@ -38,6 +23,7 @@ interface DriverRunTripScreenProps
 export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
   function DriverRunTripScreen(_props) {
     // @ts-ignore
+    // eslint-disable-next-line camelcase
     const { viaje_id } = _props.route.params
     const viajeService = new ViajeService()
     const [viaje, setViaje] = useState<IViaje>(null)
@@ -67,27 +53,19 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
         }
 
         const res = await viajeService.getById(viaje_id)
-        //   .then((res: any) => {
-        // console.log(res.kind)
+
         if (res.kind === "ok") {
           console.log(res.data)
           setViaje(res.data)
           setLoading(false)
         }
-
-        //   }).catch(error => {
-        //
-        // })
-        //   console.log(viaje?.start_latitude, viaje?.start_longitude)
-        // (async ()=>{
-
-        // })()
       })()
 
       // return () => {
       //
       // }
     }, [])
+
     // seguimiento del carro
     useEffect(() => {
       async function getlocationcurees() {
@@ -123,6 +101,8 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       getlocationcurees().then()
 
       // conectar a sockets
+
+      // eslint-disable-next-line camelcase
       socket.emit("viaje_join", { viaje_id, socio_id: socioId })
 
       socket.on("viaje_change_event" + socioId, (res) => {
@@ -130,12 +110,13 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       })
 
       return () => {
+        // eslint-disable-next-line camelcase
         socket.emit("viaje_leave", { viaje_id })
         socket.off("viaje_change_event" + socioId)
       }
     }, [])
 
-    async function handlerClickInitaRoute(): void {
+    async function handlerClickInitaRoute(): Promise<void> {
       // notificar llegada  o comenzar viaje
       if (goOrigin) {
         console.log("Notificar llegada")
@@ -149,12 +130,12 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       } else {
         // finalizado
         console.log("llegamos ")
-
+        // eslint-disable-next-line camelcase
         const res = await viajeService.changeStatusViajeById({ estado: "FINALIZADO", viaje_id })
         //   .then((res: any) => {
         // console.log(res.kind)
         if (res.kind === "ok") {
-          socket.emit("", "llegue al lugar ")
+          socket.emit("", res.data)
           console.log(res.data)
           setViaje(res.data)
           setLoading(false)

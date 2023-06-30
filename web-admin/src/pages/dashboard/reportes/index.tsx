@@ -1,40 +1,39 @@
-import { NextPage } from "next";
-import { AdminLayout } from "@layout/index";
-import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
-import { toast } from "react-toastify";
-import ClienteService from "../../../services/api/Cliente.service";
-import { Card } from "react-bootstrap";
-import { current } from "@reduxjs/toolkit";
+import { NextPage } from 'next'
+import { AdminLayout } from '@layout/index'
+import React, { useEffect, useState } from 'react'
+import Button from 'react-bootstrap/Button'
+import { toast } from 'react-toastify'
+import { Card } from 'react-bootstrap'
+import ClienteService from '../../../services/api/Cliente.service'
 
 const ReporteListPage: NextPage = (a) => {
-  const [loading, setLoading] = useState(false);
-  const clienteService = new ClienteService();
+  const [loading, setLoading] = useState(false)
+  const clienteService = new ClienteService()
   const handlerClient = () => {
-    setLoading(true);
-    console.log("asasdasdasd");
-    toast("Descargado...", { delay: 100 });
+    setLoading(true)
+    console.log('asasdasdasd')
+    toast('Descargado...', { delay: 100 })
     // hora dia mes año en texto Date
-    let currentTime = new Date();
+    const currentTime = new Date()
     const textTime =
-      currentTime.getHours() +
-      "" +
-      currentTime.getMonth() +
-      currentTime.getFullYear();
+      `${currentTime.getHours() 
+      }${ 
+        currentTime.getMonth() 
+      }${currentTime.getFullYear()}`
     clienteService.getReport().then((resp: any) => {
-      const a = document.createElement("a");
-      a.href = "data:" + resp.mimeType + ";base64," + resp.content;
-      a.target = "_blank";
-      a.download = `cliente-viajes-${textTime}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      console.log(resp);
-      setLoading(false);
-    });
-  };
+      const a = document.createElement('a')
+      a.href = `data:${  resp.mimeType  };base64,${  resp.content}`
+      a.target = '_blank'
+      a.download = `cliente-viajes-${textTime}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      console.log(resp)
+      setLoading(false)
+    })
+  }
 
-  useEffect(() => {}, []);
+  useEffect(() => {}, [])
 
   return (
     <AdminLayout>
@@ -47,12 +46,12 @@ const ReporteListPage: NextPage = (a) => {
         {/* d-flex flex-row justify-content-center */}
         <div className="row ">
           <div className="col-4">
-            <Card style={{ width: "18rem" }}>
+            <Card style={{ width: '18rem' }}>
               {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
               <Card.Body>
                 <Card.Title>Reporte de clientes viajes</Card.Title>
                 <Card.Text>
-                  Este reporte es para ver, a los clientes cuanto viajes tuvo.
+                  Este reporte es para ver, a los clientes cuantos viajes tuvo.
                 </Card.Text>
                 <Button
                   variant="primary"
@@ -67,7 +66,7 @@ const ReporteListPage: NextPage = (a) => {
         </div>
       </div>
     </AdminLayout>
-  );
-};
+  )
+}
 
-export default ReporteListPage;
+export default ReporteListPage

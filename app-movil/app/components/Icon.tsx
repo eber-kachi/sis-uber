@@ -112,6 +112,7 @@ export const iconRegistry = {
   home2: require("../../assets/icons/home-2.png"),
   carService: require("../../assets/icons/car-service.png"),
   locationUser: require("../../assets/icons/location-user.png"),
+  checkedSuccess: require("../../assets/icons/checked-success.png"),
 }
 
 const $imageStyle: ImageStyle = {

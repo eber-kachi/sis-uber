@@ -35,3 +35,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 .development.env
 deploy.sh
+#files  upload 
+./socios-files/*

@@ -10,8 +10,6 @@ import { AppService } from './app.service';
 import { ConfigService } from './shared/services/config.service';
 // import { ModulesModule } from './modules/modules.module';
 
-import { NotificationModule } from './modules/notification/notification.module';
-import { SchedulesModule } from './modules/schedules/schedules.module';
 import { SocioModule } from './modules/socio/socio.module';
 import { VeiculoModule } from './modules/veiculo/veiculo.module';
 import { ViajesModule } from './modules/viajes/viajes.module';
@@ -21,6 +19,8 @@ import { TransformationInterceptor } from './interceptors/transform.interceptor'
 import { AllExceptionsFilter } from 'interceptors/all-exceptions.filter';
 import { MapTrakingGateway } from './gateways/map-traking.gateway';
 import { RolModule } from './modules/rol/rol.module';
+import { GrupotrabajoModule } from './modules/grupotrabajo/grupotrabajo.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { RolModule } from './modules/rol/rol.module';
     AuthModule,
     UserModule,
 
-    NotificationModule,
+    // NotificationModule,
     // SchedulesModule,
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],
@@ -41,6 +41,8 @@ import { RolModule } from './modules/rol/rol.module';
     ViajesModule,
     ClienteModule,
     RolModule,
+    GrupotrabajoModule,
+    FileModule,
 
     // TypeOrmModule.forRoot({
     //   type: 'mysql',

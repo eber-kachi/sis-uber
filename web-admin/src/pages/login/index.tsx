@@ -1,70 +1,72 @@
-import { NextPage } from "next"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faUser } from "@fortawesome/free-regular-svg-icons"
-import { faLock } from "@fortawesome/free-solid-svg-icons"
-import {
-  Button, Col, Container, Form, InputGroup, Row,
-} from "react-bootstrap"
-import Link from "next/link"
-import { SyntheticEvent, useState, useEffect } from "react"
-import { useRouter } from "next/router"
-import axios from "axios"
-import { deleteCookie, getCookie } from "cookies-next"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { AuthService } from "../../services/api/Auth.service"
-import TokenStorageService from "@lib/tokenStoraje"
+import { NextPage } from 'next'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-regular-svg-icons'
+import { faLock } from '@fortawesome/free-solid-svg-icons'
+import { Button, Col, Container, Form, InputGroup, Row } from 'react-bootstrap'
+import Link from 'next/link'
+import { SyntheticEvent, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import axios from 'axios'
+import { deleteCookie, getCookie } from 'cookies-next'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import TokenStorageService from '@lib/tokenStoraje'
+import { AuthService } from '../../services/api/Auth.service'
 
 type Inputs = {
-  email: string,
-  password: string,
-};
+  email: string;
+  password: string;
+}
 
 const Index: NextPage = () => {
   const router = useRouter()
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
   const [submitting, setSubmitting] = useState(false)
-  const [tokenValue, setTokenValue] = useState("")
+  const [tokenValue, setTokenValue] = useState('')
 
-  let authService = new AuthService()
-  let token = new TokenStorageService()
+  const authService = new AuthService()
+  const token = new TokenStorageService()
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data)
-    authService.login(data).then(res => {
-      console.log('login',res)
-      setTokenValue(res?.data?.token?.accessToken)
-      router.push("/dashboard")
-
-    }).catch(errors => {
-      console.log(errors)
-      setTokenValue("")
-    })
-
+    authService
+      .login(data)
+      .then((res) => {
+        console.log('login', res)
+        setTokenValue(res?.data?.token?.accessToken)
+        router.push('/dashboard')
+      })
+      .catch((errors) => {
+        console.log(errors)
+        setTokenValue('')
+      })
   }
 
   const getRedirect = () => {
-    const redirect = getCookie("redirect")
+    const redirect = getCookie('redirect')
     if (redirect) {
-      deleteCookie("redirect")
+      deleteCookie('redirect')
       return redirect.toString()
     }
 
-    return "/"
+    return '/'
   }
   useEffect(() => {
-
-    let a = token.getToken()
+    const a = token.getToken()
     if (a && a.length > 0) {
-      router.push("/dashboard")
+      router.push('/dashboard')
     }
   })
-
 
   useEffect(() => {
     try {
       // const valueToStore = value instanceof Function ? value(storedValue) : value;
       // setStoredValue(valueToStore);
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         // window.localStorage.setItem(key, JSON.stringify(storedValue));
         token.saveToken(tokenValue)
         // window.localStorage.setItem('tokensss', tokenValue);
@@ -74,7 +76,7 @@ const Index: NextPage = () => {
     }
   }, [tokenValue])
 
-  console.log("error", errors)
+  console.log('error', errors)
 
   const login = async (e: SyntheticEvent) => {
     e.stopPropagation()
@@ -82,7 +84,7 @@ const Index: NextPage = () => {
 
     setSubmitting(true)
 
-    const res = await axios.post("api/mock/login")
+    const res = await axios.post('api/mock/login')
     if (res.status === 200) {
       router.push(getRedirect())
     }
@@ -103,49 +105,51 @@ const Index: NextPage = () => {
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <InputGroup className="mb-3 ">
                       <InputGroup.Text>
-                        <FontAwesomeIcon
-                          icon={faUser}
-                          fixedWidth
-                        />
+                        <FontAwesomeIcon icon={faUser} fixedWidth />
                       </InputGroup.Text>
                       <Form.Control
                         type="text"
                         disabled={submitting}
                         placeholder="Usuario"
                         aria-label="Username"
-                        {...register("email", { required: "true" })}
+                        {...register('email', { required: 'true' })}
                       />
-                      {errors.email?.type === "required" && <span>{errors.email?.message} </span>}
-
+                      {errors.email?.type === 'required' && (
+                        <span>{errors.email?.message} </span>
+                      )}
                     </InputGroup>
 
                     <InputGroup className="mb-3">
                       <InputGroup.Text>
-                        <FontAwesomeIcon
-                          icon={faLock}
-                          fixedWidth
-                        />
+                        <FontAwesomeIcon icon={faLock} fixedWidth />
                       </InputGroup.Text>
                       <Form.Control
                         type="password"
-                        name="password"
                         required
                         disabled={submitting}
                         placeholder="Password"
                         aria-label="Password"
-                        {...register("password", { required: "true" })}
+                        {...register('password', { required: 'true' })}
                       />
-                      {errors.password?.type === "required" && <span>{errors.password?.message} </span>}
+                      {errors.password?.type === 'required' && (
+                        <span>{errors.password?.message} </span>
+                      )}
                     </InputGroup>
 
                     <Row>
                       <Col xs={6}>
-                        <Button className="px-4" variant="primary" type="submit" disabled={submitting}>Login</Button>
+                        <Button
+                          className="px-4"
+                          variant="primary"
+                          type="submit"
+                          disabled={submitting}
+                        >
+                          Login
+                        </Button>
                       </Col>
                       <Col xs={6} className="text-end">
                         <Button className="px-0" variant="link" type="submit">
-                          Forgot
-                          password?
+                          Forgot password?
                         </Button>
                       </Col>
                     </Row>
@@ -159,11 +163,15 @@ const Index: NextPage = () => {
                 <div className="text-center">
                   <h2>Sign up</h2>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua.
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                    sed do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
                   </p>
                   <Link href="/register">
-                    <button className="btn btn-lg btn-outline-light mt-3" type="button">
+                    <button
+                      className="btn btn-lg btn-outline-light mt-3"
+                      type="button"
+                    >
                       Register Now!
                     </button>
                   </Link>

@@ -7,7 +7,7 @@ export interface IUser {
 }
 
 export enum IRole {
-  Client = "CLIENT",
-  Driver = "DRIVER",
-  User = "USER",
+  Client = 'CLIENT',
+  Driver = 'DRIVER',
+  User = 'USER',
 }

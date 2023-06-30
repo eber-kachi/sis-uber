@@ -71,7 +71,8 @@ export class ConfigService {
       database: this.get('DB_DATABASE'),
       subscribers: [UserSubscriber],
       migrationsRun: false,
-      logging: this.nodeEnv === 'development',
+      // logging: this.nodeEnv === 'development',//muestra las querys en la consola
+      logging: false,
       namingStrategy: new SnakeNamingStrategy(),
       // synchronize: true,
       autoLoadEntities: true,

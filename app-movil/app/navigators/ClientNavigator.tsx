@@ -7,7 +7,7 @@ import { TextStyle, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "../theme"
 import { Icon } from "../components"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { ClientHomeScreen } from "../screens/ClientHomeScreen"
+// import { ClientHomeScreen } from "../screens/ClientHomeScreen"
 import { ClientSettingsScreen } from "../screens/ClientSettingsScreen"
 import { ClientSearchLocationScreen } from "../screens/ClientSearchLocationScreen"
 
@@ -16,6 +16,7 @@ export type ClientTabParamList = {
   ClientSettings: undefined
   ClientSearchLocation: undefined
   ClientConfirmation: undefined
+  ClientEndOfTrip: undefined
 }
 
 export type ClientTabScreenProps<T extends keyof ClientTabParamList> = CompositeScreenProps<
@@ -31,6 +32,7 @@ export const ClientNavigator = () => {
   const { bottom } = useSafeAreaInsets()
   return (
     <Tab.Navigator
+      initialRouteName="ClientSearchLocation"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -51,7 +53,7 @@ export const ClientNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="ClientHome"
         component={ClientHomeScreen}
         options={{
@@ -60,7 +62,7 @@ export const ClientNavigator = () => {
             <Icon icon="BrandgoogleMaps" color={focused && colors.tint} size={30} />
           ),
         }}
-      />
+      /> */}
 
       <Tab.Screen
         name="ClientSettings"

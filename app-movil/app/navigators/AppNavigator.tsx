@@ -38,21 +38,20 @@ import { DriverNavigator } from "./DriverNavigator"
  *   https://reactnavigation.org/docs/typescript/#organizing-types
  */
 export type AppStackParamList = {
-  Register:undefined,
-  Welcome: undefined,
-  Login: undefined, // @demo remove-current-line
+  Register: undefined
+  Welcome: undefined
+  Login: undefined // @demo remove-current-line
   Demo: NavigatorScreenParams<DemoTabParamList> // @demo remove-current-line
-  //cliente screens
+  // cliente screens
   Client: NavigatorScreenParams<ClientTabParamList>
-  ClientConfirmation: undefined,
-  ClientHistoryOfTrip: undefined,
-  ClientEndOfTrip: undefined,
-  //driver screens
+  ClientConfirmation: undefined
+  ClientHistoryOfTrip: undefined
+  ClientEndOfTrip: undefined
+  // driver screens
   Driver: NavigatorScreenParams<ClientTabParamList>
-  DriverRunTrip:undefined,
+  DriverRunTrip: undefined
   // 🔥 Your screens go here
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
-
 }
 
 /**
@@ -61,8 +60,10 @@ export type AppStackParamList = {
  */
 const exitRoutes = Config.exitRoutes
 
-export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<AppStackParamList,
-  T>
+export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<
+  AppStackParamList,
+  T
+>
 
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createNativeStackNavigator<AppStackParamList>()
@@ -77,17 +78,16 @@ const AppStack = observer(function AppStack() {
 
   // @ts-ignore
   const initialRoute = () => {
-    if (!isAuthenticated){
-      return 'Login'
+    if (!isAuthenticated) {
+      return "Login"
     }
 
-    if (role==='DRIVER'){
-      return 'Driver' // por el momento no hay ruta de DRIVER
+    if (role === "DRIVER") {
+      return "Driver" // por el momento no hay ruta de DRIVER
     }
-    if (role==='CLIENT'){
-      return 'Client' // por el momento no hay ruta de DRIVER
+    if (role === "CLIENT") {
+      return "Client" // por el momento no hay ruta de DRIVER
     }
-
   }
 
   return (
@@ -97,30 +97,28 @@ const AppStack = observer(function AppStack() {
     >
       {/* @demo remove-block-start */}
       {isAuthenticated ? (
-        (role === "CLIENT") ? (
+        role === "CLIENT" ? (
           <>
             {/* @demo remove-block-end */}
             {/* <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
             {/* @demo remove-block-start */}
-            <Stack.Screen name="Client" component={ClientNavigator}/>
-            <Stack.Screen name="Demo" component={DemoNavigator}/>
-            <Stack.Screen name="ClientConfirmation" component={ClientConfirmationScreen}/>
-
+            <Stack.Screen name="Client" component={ClientNavigator} />
+            <Stack.Screen name="Demo" component={DemoNavigator} />
+            <Stack.Screen name="ClientConfirmation" component={ClientConfirmationScreen} />
           </>
         ) : (
           <>
             {/* // conductor role */}
-             <Stack.Screen name="Driver" component={DriverNavigator} />
-            <Stack.Screen name="Welcome" component={Screens.WelcomeScreen}/>
-            <Stack.Screen name="DriverRunTrip" component={Screens.DriverRunTripScreen}/>
-             <Stack.Screen name="Demo" component={DemoNavigator} />
+            <Stack.Screen name="Driver" component={DriverNavigator} />
+            <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
+            <Stack.Screen name="DriverRunTrip" component={Screens.DriverRunTripScreen} />
+            <Stack.Screen name="Demo" component={DemoNavigator} />
           </>
         )
-
       ) : (
         <>
-          <Stack.Screen name="Login" component={Screens.LoginScreen}/>
-          <Stack.Screen name="Register" component={Screens.RegisterScreen}/>
+          <Stack.Screen name="Login" component={Screens.LoginScreen} />
+          <Stack.Screen name="Register" component={Screens.RegisterScreen} />
         </>
       )}
       {/* @demo remove-block-end */}
@@ -131,8 +129,7 @@ const AppStack = observer(function AppStack() {
 })
 
 export interface NavigationProps
-  extends Partial<React.ComponentProps<typeof NavigationContainer>> {
-}
+  extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = observer(function AppNavigator(props: NavigationProps) {
   const colorScheme = useColorScheme()
@@ -145,8 +142,7 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       {...props}
     >
-
-      <AppStack/>
+      <AppStack />
     </NavigationContainer>
   )
 })

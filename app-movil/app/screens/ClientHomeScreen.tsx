@@ -7,26 +7,24 @@ import { Screen, Text } from "app/components"
 import { useStores } from "../models"
 import { spacing } from "../theme"
 import * as Location from "expo-location"
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps"
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps"
 import { useNavigation } from "@react-navigation/native"
 import SelectRideType from "app/components/Client/SelectRideType"
 import WhereTo from "../components/Client/WhereTo"
 import MapViewDirections from "react-native-maps-directions"
-import { Polyline } from "react-native-maps/lib"
 
 const carImage = require("../../assets/images/app/car.png")
 
 const GOOGLE_MAPS_KEY = "AIzaSyDL11CwUA9M76UsmwAMOEf3UsXR2sWnSRk"
 
-interface ClientHomeScreenProps extends NativeStackScreenProps<ClientTabScreenProps<"ClientHome">> {
-}
+interface ClientHomeScreenProps
+  extends NativeStackScreenProps<ClientTabScreenProps<"ClientHome">> {}
 
 export const ClientHomeScreen: FC<ClientHomeScreenProps> = observer(function ClientHomeScreen() {
   // Pull in one of our MST stores
   const {
     authenticationStore: { email, authToken, role },
   } = useStores()
-
 
   const latitudeDelta = 0.0922
   const longitudeDelta = 0.0421
@@ -85,7 +83,6 @@ export const ClientHomeScreen: FC<ClientHomeScreenProps> = observer(function Cli
   }, [gps.location])
 
   useEffect(() => {
-
     if (!locationRejected) {
       setTimeout(() => {
         // poner de la base de datos
@@ -105,19 +102,16 @@ export const ClientHomeScreen: FC<ClientHomeScreenProps> = observer(function Cli
         longitudeDelta,
       })
     }
-
-
   }, [mapRef.current])
-
 
   const onRegionChangeComplete = (newregion, gesture) => {
     if (gesture && gesture.isGesture) {
       console.log("onRegionChangeComplete => ", newregion)
       const current = {
         latitude: newregion.latitude,
-        longitude: newregion.longitude
+        longitude: newregion.longitude,
       }
-      setOrigin(current);
+      setOrigin(current)
 
       // setGps({
       //   location: {
@@ -135,25 +129,28 @@ export const ClientHomeScreen: FC<ClientHomeScreenProps> = observer(function Cli
 
   const locateUser = async () => {
     // if (tripdata.selected == 'pickup') {
-    const tempWatcher = await Location.watchPositionAsync({
-      accuracy: Location.Accuracy.Balanced,
-    }, location => {
-      console.log("locateUser", location)
-      setGps({
-        location: {
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        },
-      })
-      // dispatch({
-      //   type: 'UPDATE_GPS_LOCATION',
-      //   payload: {
-      //     lat: location.coords.latitude,
-      //     lng: location.coords.longitude
-      //   }
-      // });
-      tempWatcher.remove()
-    })
+    const tempWatcher = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.Balanced,
+      },
+      (location) => {
+        console.log("locateUser", location)
+        setGps({
+          location: {
+            lat: location.coords.latitude,
+            lng: location.coords.longitude,
+          },
+        })
+        // dispatch({
+        //   type: 'UPDATE_GPS_LOCATION',
+        //   payload: {
+        //     lat: location.coords.latitude,
+        //     lng: location.coords.longitude
+        //   }
+        // });
+        tempWatcher.remove()
+      },
+    )
     // }
   }
   // -17.394004950618324, -66.28099618280778 //quilla
@@ -172,17 +169,17 @@ export const ClientHomeScreen: FC<ClientHomeScreenProps> = observer(function Cli
   }, [])
 
   async function getLocationPermission() {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if(status !== 'granted') {
-      alert('Permission denied');
-      return;
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== "granted") {
+      alert("Permission denied")
+      return
     }
-    let location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({})
     const current = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude
+      longitude: location.coords.longitude,
     }
-    setOrigin(current);
+    setOrigin(current)
   }
 
   // const onChangeMap = (newregion, gesture) => {
@@ -197,77 +194,74 @@ export const ClientHomeScreen: FC<ClientHomeScreenProps> = observer(function Cli
   //   }
   // }
 
-    return (
-      <View style={styles.container}>
-        {/*<Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>*/}
-        {/*<View style={$mapcontainer}>*/}
-        {/*  <MapView*/}
-        {/*    ref={mapRef}*/}
-        {/*    provider={PROVIDER_GOOGLE}*/}
-        {/*    showsUserLocation={true}*/}
-        {/*    loadingEnabled*/}
-        {/*    style={$mapViewStyle}*/}
-        {/*    showsMyLocationButton={false}*/}
-        {/*    // initialRegion={region}*/}
-        {/*    initialRegion={region}*/}
-        {/*    onRegionChangeComplete={onRegionChangeComplete}*/}
-        {/*    onPanDrag={() => setDragging(30)}*/}
-        {/*    minZoomLevel={13}*/}
-        {/*  >*/}
+  return (
+    <View style={styles.container}>
+      {/* <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}> */}
+      {/* <View style={$mapcontainer}> */}
+      {/*  <MapView */}
+      {/*    ref={mapRef} */}
+      {/*    provider={PROVIDER_GOOGLE} */}
+      {/*    showsUserLocation={true} */}
+      {/*    loadingEnabled */}
+      {/*    style={$mapViewStyle} */}
+      {/*    showsMyLocationButton={false} */}
+      {/*    // initialRegion={region} */}
+      {/*    initialRegion={region} */}
+      {/*    onRegionChangeComplete={onRegionChangeComplete} */}
+      {/*    onPanDrag={() => setDragging(30)} */}
+      {/*    minZoomLevel={13} */}
+      {/*  > */}
 
-        {/*  </MapView>*/}
-        {/*</View>*/}
+      {/*  </MapView> */}
+      {/* </View> */}
 
-        {/*<SelectRideType*/}
-        {/*  data={{}}*/}
-        {/*  onClose={toggleTypeModal}*/}
-        {/*  onSelect={(selectedType) => console.log("Select=>", selectedType)}*/}
-        {/*  visible={selectType}*/}
-        {/*/>*/}
+      {/* <SelectRideType */}
+      {/*  data={{}} */}
+      {/*  onClose={toggleTypeModal} */}
+      {/*  onSelect={(selectedType) => console.log("Select=>", selectedType)} */}
+      {/*  visible={selectType} */}
+      {/* /> */}
 
-        {/*<WhereTo/>*/}
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: origin.latitude,
-            longitude: origin.longitude,
-            latitudeDelta: latitudeDelta,
-            longitudeDelta: longitudeDelta,
-          }}
-          onRegionChangeComplete={onRegionChangeComplete}
-        >
-          <Marker
-            draggable
-            coordinate={origin}
-            image={carImage}
-            onDragEnd={(direction) => setOrigin(direction.nativeEvent.coordinate)}
-          />
-          <Marker
-            draggable
-            coordinate={destination}
-            onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
-          />
-          <MapViewDirections
-            origin={origin}
-            destination={destination}
-            apikey={GOOGLE_MAPS_KEY}
-            strokeColor="black"
-            strokeWidth={5}
-          />
-          {/* <Polyline*/}
-          {/*  coordinates={[ origin, destination ]}*/}
-          {/*  strokeColor="pink"*/}
-          {/*  strokeWidth={8}*/}
-          {/*/> */}
-        </MapView>
+      {/* <WhereTo/> */}
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: origin.latitude,
+          longitude: origin.longitude,
+          latitudeDelta,
+          longitudeDelta,
+        }}
+        onRegionChangeComplete={onRegionChangeComplete}
+      >
+        <Marker
+          draggable
+          coordinate={origin}
+          image={carImage}
+          onDragEnd={(direction) => setOrigin(direction.nativeEvent.coordinate)}
+        />
+        <Marker
+          draggable
+          coordinate={destination}
+          onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
+        />
+        <MapViewDirections
+          origin={origin}
+          destination={destination}
+          apikey={GOOGLE_MAPS_KEY}
+          strokeColor="black"
+          strokeWidth={5}
+        />
+        {/* <Polyline */}
+        {/*  coordinates={[ origin, destination ]} */}
+        {/*  strokeColor="pink" */}
+        {/*  strokeWidth={8} */}
+        {/* /> */}
+      </MapView>
 
-
-        {/*</Screen>*/}
-      </View>
-    )
-  }
-)
-
+      {/* </Screen> */}
+    </View>
+  )
+})
 
 const $container: ViewStyle = {
   // paddingTop: spacing.large + spacing.extraLarge,
@@ -290,13 +284,13 @@ const $mapViewStyle: ViewStyle = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
+    backgroundColor: "#fff",
+    flex: 1,
     justifyContent: "center",
   },
   map: {
-    width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
   },
 })

@@ -9,7 +9,7 @@ export class ViajeDto extends AbstractDto {
   @ApiPropertyOptional()
   distancia_recorrida: string;
   @ApiPropertyOptional()
-  fecha: Date;
+  fecha: string;
   @ApiPropertyOptional()
   estado: string;
   @ApiPropertyOptional()

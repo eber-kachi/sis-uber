@@ -18,10 +18,11 @@ export class ViajeEntity extends AbstractEntity<ViajeDto> {
   //   nombres: string;
   //   @Column({ nullable: true })
   //   nombres: string;
+
   @Column({ nullable: true, type: 'float', default: 0 })
   distancia_recorrida: string;
   @Column({ nullable: true, type: 'datetime' })
-  fecha: Date;
+  fecha: string;
   @Column({ nullable: true })
   estado: string;
   @Column({ nullable: true, type: 'int' })
@@ -34,10 +35,10 @@ export class ViajeEntity extends AbstractEntity<ViajeDto> {
   final_address: string;
 
   @Column({ nullable: true, type: 'datetime' })
-  start_time: Date;
+  start_time: string;
 
   @Column({ nullable: true, type: 'datetime' })
-  end_time: Date;
+  end_time: string;
   //posicion  inicial
   @Column({ nullable: true, type: 'double precision' })
   start_latitude: number;

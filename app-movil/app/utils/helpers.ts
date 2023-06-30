@@ -4,8 +4,8 @@ import { Alert } from "react-native"
 export const getCurrentLocatiton = async (): Promise<{
   status: boolean
   location: {
-    latitude: Float32Array
-    longitude: Float32Array
+    latitude: number
+    longitude: number
     latitudeDelta: number
     longitudeDelta: number
   }
@@ -22,8 +22,8 @@ export const getCurrentLocatiton = async (): Promise<{
   const location = {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude,
-    latitudeDelta: 0.0123,
-    longitudeDelta: 0.0123,
+    latitudeDelta: new Float32Array(0.0123),
+    longitudeDelta: new Float32Array(0.0123),
   }
   resposnse.status = true
   resposnse.location = location

@@ -27,10 +27,13 @@ export class SocioDto extends AbstractDto {
   vencimiento: Date;
 
   @ApiPropertyOptional()
-  nroLicencia: string;
+  nro_licencia: string;
 
   @ApiPropertyOptional()
   categoria: string;
+
+  @ApiPropertyOptional()
+  grupotrabajo_id: string;
 
   constructor(entity: SocioEntity) {
     super(entity);
@@ -42,7 +45,7 @@ export class SocioDto extends AbstractDto {
     this.estado = entity.estado;
     this.emision = entity.emision;
     this.vencimiento = entity.vencimiento;
-    this.nroLicencia = entity.nroLicencia;
+    this.nro_licencia = entity.nro_licencia;
     this.categoria = entity.categoria;
   }
 }

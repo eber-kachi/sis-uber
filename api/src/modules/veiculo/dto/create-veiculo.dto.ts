@@ -21,6 +21,8 @@ export class VeiculoDto extends AbstractDto {
   caracteristicas: string;
   @ApiPropertyOptional()
   anio: string;
+  @ApiPropertyOptional()
+  n_movil: string;
 
   constructor(entity: VeiculoEntity) {
     super(entity);
@@ -32,5 +34,6 @@ export class VeiculoDto extends AbstractDto {
     this.capacidad = entity.capacidad;
     this.caracteristicas = entity.caracteristicas;
     this.anio = entity.anio;
+    this.n_movil = entity.n_movil;
   }
 }

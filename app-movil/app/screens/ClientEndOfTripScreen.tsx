@@ -1,41 +1,20 @@
-// ---
-// patches:
-// - path: "app/screens/index.ts"
-//   append: "export * from \"./ClientEndOfTripScreen\"\n"
-//   skip:
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-//   insert: "ClientEndOfTrip: undefined\n\t// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST"
-// - path: "app/navigators/AppNavigator.tsx"
-//   replace: "{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   insert: "<Stack.Screen name=\"ClientEndOfTrip\" component={Screens.ClientEndOfTripScreen} />\n\t\t\t{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}"
-//   skip:
-// ---
+/* eslint-disable camelcase */
+
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import {
-  Alert,
-  TextInput,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-  StyleSheet,
-} from "react-native"
+import { Alert, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { AppStackScreenProps } from "app/navigators"
 import { Screen, Text } from "app/components"
 import { spacing } from "../theme"
 import ViajeService from "app/services/api/viaje.service"
-import { get } from "mobx"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
 
 interface ClientEndOfTripScreenProps
   extends NativeStackScreenProps<AppStackScreenProps<"ClientEndOfTrip">> {}
 
 export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
   function ClientEndOfTripScreen(_props) {
+    // @ts-ignore
     const { viaje_id } = _props.route.params
 
     const viajeService = new ViajeService()

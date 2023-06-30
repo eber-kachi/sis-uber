@@ -1,62 +1,56 @@
-import { useRouter } from "next/router"
-import TokenStorageService from "@lib/tokenStoraje"
-import { useEffect, useState } from "react"
-import axios from "@lib/axios"
-import { object } from "prop-types"
+import { useRouter } from 'next/router'
+import TokenStorageService from '@lib/tokenStoraje'
+import { useEffect, useState } from 'react'
+import axios from '@lib/axios'
+import { object } from 'prop-types'
 
-
-export function useAuthClient({ redirectIfAuthenticated } = {}) {
-  const router = useRouter();
-  const token = new TokenStorageService();
+export function useAuthClient() {
+  const router = useRouter()
+  const token = new TokenStorageService()
 
   const [tokenValue, setTokenValue] = useState(() => {
     if (typeof window === 'undefined') {
-      return null;
+      return null
     }
     try {
-      const item = token.getToken();
+      const item = token.getToken()
       // return item ? JSON.parse(item) : initialValue;
       console.log(item)
-      return item=='null'? null: item;
+      return item == 'null' ? null : item
     } catch (error) {
-      console.error(error);
-      return null;
+      console.error(error)
+      return null
     }
-  });
+  })
 
   const [userValue, setUserValue] = useState(() => {
     if (typeof window === 'undefined') {
-      return null;
+      return null
     }
     try {
-      const item = token.getUser();
+      const item = token.getUser()
       // return item ? JSON.parse(item) : initialValue;
-      return item;
+      return item
     } catch (error) {
-      console.error(error);
-      return null;
+      console.error(error)
+      return null
     }
-  });
+  })
 
-
-
-  let me =()=>{
+  const me = () => {
     axios
       .get('/api/auth/me')
-      .then(res => {
-
+      .then((res) => {
         console.log(res.data)
-        token.saveUser(res.data);
-        setUserValue(res.data);
+        token.saveUser(res.data)
+        setUserValue(res.data)
       })
-      .catch(error => {
-
+      .catch((error) => {
         if (error.response.status == 401) {
-          token.signOut();
-          router.push('/login');
+          token.signOut()
+          router.push('/login')
         }
-        if (error.response.status !== 409) throw error;
-
+        if (error.response.status !== 409) throw error
       })
   }
 
@@ -66,33 +60,31 @@ export function useAuthClient({ redirectIfAuthenticated } = {}) {
       // setStoredValue(valueToStore);
       if (typeof window !== 'undefined') {
         // window.localStorage.setItem(key, JSON.stringify(storedValue));
-        token.saveToken(tokenValue);
+        token.saveToken(tokenValue)
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  }, [tokenValue]);
+  }, [tokenValue])
 
   const logout = async () => {
     // if (!error) {
     // await axios.post('/logout').then(() => mutate());
     // }
-    setTokenValue(null);
+    setTokenValue(null)
 
-    window.location.pathname = '/login';
-  };
+    window.location.pathname = '/login'
+  }
 
   useEffect(() => {
     // debugger;
-    const condition = (tokenValue==null )|| (JSON.stringify(userValue) === '{}');
-    console.log("===============>" , condition);
+    const condition = tokenValue == null || JSON.stringify(userValue) === '{}'
+    console.log('===============>', condition)
     if (condition) {
-      me();
+      me()
     }
     // if (middleware === 'auth' && error) logout();
-  }, [userValue,tokenValue]);
+  }, [userValue, tokenValue])
 
-
-
-  return { userValue , tokenValue ,  logout};
+  return { userValue, tokenValue, logout }
 }

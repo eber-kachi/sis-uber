@@ -5,13 +5,16 @@ import { ConfigService } from './shared/services/config.service';
 import { SharedModule } from './shared/shared.module';
 import { setupSwagger } from './setup-swagger';
 import { TransformationInterceptor } from './interceptors/transform.interceptor';
+import express from 'express';
+import { join } from 'path';
 
 async function bootstrap() {
   const loger = new Logger();
   const app = await NestFactory.create(AppModule);
-
+  app.use('/public', express.static(join(__dirname, '..', 'public'))); // para public
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
   // app.useGlobalInterceptors(new ClassSerializerInterceptor(
   //   app.get(Reflector))
   // );
@@ -28,6 +31,7 @@ async function bootstrap() {
 
   // app.
   loger.log(`app Run port: ${port}`);
+  console.log(join(__dirname, '..', 'public'));
 }
 
 bootstrap();

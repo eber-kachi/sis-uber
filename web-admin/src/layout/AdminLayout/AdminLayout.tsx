@@ -3,48 +3,48 @@ import React, {
   useCallback,
   useEffect,
   useState,
-} from "react";
-import { useResizeDetector } from "react-resize-detector";
-import Head from "next/head";
-import Sidebar, { SidebarOverlay } from "@layout/AdminLayout/Sidebar/Sidebar";
-import Header from "@layout/AdminLayout/Header/Header";
-import Footer from "@layout/AdminLayout/Footer/Footer";
-import { Container } from "react-bootstrap";
+} from 'react'
+import { useResizeDetector } from 'react-resize-detector'
+import Head from 'next/head'
+import Sidebar, { SidebarOverlay } from '@layout/AdminLayout/Sidebar/Sidebar'
+import Header from '@layout/AdminLayout/Header/Header'
+import Footer from '@layout/AdminLayout/Footer/Footer'
+import { Container } from 'react-bootstrap'
 
 export default function AdminLayout({ children }: PropsWithChildren) {
   // Show status for xs screen
-  const [isShowSidebar, setIsShowSidebar] = useState(false);
+  const [isShowSidebar, setIsShowSidebar] = useState(false)
 
   // Show status for md screen and above
-  const [isShowSidebarMd, setIsShowSidebarMd] = useState(true);
+  const [isShowSidebarMd, setIsShowSidebarMd] = useState(true)
 
   const toggleIsShowSidebar = () => {
-    setIsShowSidebar(!isShowSidebar);
-  };
+    setIsShowSidebar(!isShowSidebar)
+  }
 
   const toggleIsShowSidebarMd = () => {
-    const newValue = !isShowSidebarMd;
-    localStorage.setItem("isShowSidebarMd", newValue ? "true" : "false");
-    setIsShowSidebarMd(newValue);
-  };
+    const newValue = !isShowSidebarMd
+    localStorage.setItem('isShowSidebarMd', newValue ? 'true' : 'false')
+    setIsShowSidebarMd(newValue)
+  }
 
   // Clear and reset sidebar
   const resetIsShowSidebar = () => {
-    setIsShowSidebar(false);
-  };
+    setIsShowSidebar(false)
+  }
 
   const onResize = useCallback(() => {
-    resetIsShowSidebar();
-  }, []);
+    resetIsShowSidebar()
+  }, [])
 
-  const { ref } = useResizeDetector({ onResize });
+  const { ref } = useResizeDetector({ onResize })
 
   // On first time load only
   useEffect(() => {
-    if (localStorage.getItem("isShowSidebarMd")) {
-      setIsShowSidebarMd(localStorage.getItem("isShowSidebarMd") === "true");
+    if (localStorage.getItem('isShowSidebarMd')) {
+      setIsShowSidebarMd(localStorage.getItem('isShowSidebarMd') === 'true')
     }
-  }, [setIsShowSidebarMd]);
+  }, [setIsShowSidebarMd])
 
   return (
     <>
@@ -75,5 +75,5 @@ export default function AdminLayout({ children }: PropsWithChildren) {
         toggleSidebar={toggleIsShowSidebar}
       />
     </>
-  );
+  )
 }
