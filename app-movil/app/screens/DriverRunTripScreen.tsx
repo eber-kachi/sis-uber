@@ -9,10 +9,11 @@ import ViajeService from "../services/api/viaje.service"
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps/lib"
 import { colors, spacing } from "../theme"
 import { getCurrentLocatiton } from "../utils/helpers"
-import socket from "../utils/socket"
+// import socket from "../utils/socket"
 import MapViewDirections from "react-native-maps-directions"
 import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
 import * as Location from "expo-location"
+import { useSocket } from "app/context/socketContext"
 
 const carImage = require("../../assets/images/app/car.png")
 const locationClient = require("../../assets/images/app/location-user.png")
@@ -32,7 +33,7 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
     const [goDestination, setGoDestination] = useState(false)
     const mapRef = useRef<MapView>()
     const [currentLocation, setCurrentLocation] = useState(null)
-
+    const { socket } = useSocket()
     const {
       authenticationStore: { socioId },
     } = useStores()

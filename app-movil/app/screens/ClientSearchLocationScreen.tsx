@@ -26,7 +26,7 @@ import {
 import { colors, spacing, typography } from "../theme"
 import { getcoords, IResponseGeocoord } from "../services/googleMapsApi"
 import { useNavigation } from "@react-navigation/native"
-import { log } from "react-native-reanimated"
+import { useSocket } from "app/context/socketContext"
 
 Geocoder.init("AIzaSyDL11CwUA9M76UsmwAMOEf3UsXR2sWnSRk")
 
@@ -45,6 +45,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
 
     // Pull in navigation via hook
     const navigation = useNavigation()
+    const { socket } = useSocket()
 
     const [initialRegion, setInitialRegion] = useState({
       latitude: -17.394228156430533,

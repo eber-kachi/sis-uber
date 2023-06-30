@@ -9,12 +9,13 @@ import {
 } from '@react-google-maps/api';
 import ViajeService from 'src/services/api/Viaje.service';
 import { toast } from 'react-toastify';
-import socket from '@lib/sockets/socket';
+// import socket from '@lib/sockets/socket';
 import { Form, FormLabel, ListGroup } from 'react-bootstrap';
 import { ISocio } from 'src/services/models/socio.model';
 import { log } from 'console';
 import { right } from '@popperjs/core';
 import SocioService from '../../../services/api/Socio.service';
+import { useSocket } from '@hooks/socketContext';
 
 const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || 'http://localhost:3000';
 
@@ -30,6 +31,7 @@ const CustomMarker = (props: any) => {
 };
 
 const MapsPage = () => {
+  const { socket } = useSocket();
   const libraries = useMemo(() => ['places'], []);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<google.maps.Marker>();
@@ -142,24 +144,27 @@ const MapsPage = () => {
   // }, []);
 
   useEffect(() => {
-    // escuchamos a los eventos de los clientes pendientes para asignar un vehiculo
-    socket.on('pendiente_confirmacion', (viajes: any) => {
-      console.log('pendiente_confirmacion', viajes);
-      // debugger;
-      setViajePendig(() => [...viajePending, viajes]);
-    });
-    socket.emit('socios_conectados');
-    // escuchar la lista de socios conectados al sockets
-    socket.on('socios_conectados', (datas: any[]) => {
-      console.log('vehiculos_conectados', datas);
-      setVeiculos([...datas]);
-    });
-
+    if (socket) {
+      // escuchamos a los eventos de los clientes pendientes para asignar un vehiculo
+      socket.on('pendiente_confirmacion', (viajes: any) => {
+        console.log('pendiente_confirmacion', viajes);
+        // debugger;
+        setViajePendig(() => [...viajePending, viajes]);
+      });
+      socket.emit('socios_conectados');
+      // escuchar la lista de socios conectados al sockets
+      socket.on('socios_conectados', (datas: any[]) => {
+        console.log('vehiculos_conectados', datas);
+        setVeiculos([...datas]);
+      });
+    }
     return () => {
-      socket.off('pendiente_confirmacion');
-      socket.off('socios_conectados');
+      if (socket) {
+        socket.off('pendiente_confirmacion');
+        socket.off('socios_conectados');
+      }
     };
-  }, []);
+  }, [socket]);
 
   // metodo para asignar  un socio con un veiculo
   const handleMarkerClick = (socio_id: string | number) => {

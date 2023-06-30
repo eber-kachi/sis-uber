@@ -5,11 +5,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { DriverTabScreenProps } from "app/navigators"
 import { Button, Screen, Text, Toggle, ToggleProps } from "app/components"
 import { useStores } from "../models"
-import { useNavigation } from "@react-navigation/core"
 import { spacing } from "../theme"
 import SocioService from "../services/api/socio.service"
 import { getCurrentLocatiton } from "app/utils/helpers"
-import socket from "app/utils/socket"
+// import socket from "app/utils/socket"
+import { useSocket } from "app/context/socketContext"
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
 
@@ -28,9 +28,10 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
       authenticationStore: { logout, listenLocationUser, authEmail, setListenLocation, socioId },
     } = useStores()
     // Pull in navigation via hook
-    const navigation = useNavigation()
+    // const navigation = useNavigation()
     const socioService = new SocioService()
     const [location, setLocation] = useState(null)
+    const { socket } = useSocket()
 
     async function handlerState(status: boolean) {
       // console.log(listenLocationUser)
@@ -61,6 +62,7 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
       // const res =  await socioService.changeStatus({ state: status ? "LIBRE" : "SINSERVICO", socio_id: 'ffe981d1-1a0d-4cf2-8849-842bf9039dd4' })
       // }
     }
+
     const findSocio = async () => {
       const socioresponse = await socioService.getById(socioId)
       console.log({ socioresponse })

@@ -17,11 +17,12 @@ import { Icon, ListItem, Screen, Text } from "app/components"
 import { colors, spacing, typography } from "../theme"
 import { IViaje, useStores } from "../models"
 import ViajeService from "../services/api/viaje.service"
-import socket from "../utils/socket"
+// import socket from "../utils/socket"
 import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
 import { useNavigation } from "@react-navigation/native"
 
 // import { useStores } from "app/models"
+import { useSocket } from "app/context/socketContext"
 
 interface DriverHomeScreenProps
   extends NativeStackScreenProps<DriverTabScreenProps<"DriverHome">> {}
@@ -33,7 +34,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
 
   // Pull in navigation via hook
   const navigation = useNavigation()
-
+  const { socket } = useSocket()
   const [viajes, setViajes] = useState<IViaje[]>([])
   const [newViajeActive, setNewViajeActive] = useState<IViaje[]>([])
   const [loading, setLoading] = useState(false)
@@ -65,7 +66,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
     return () => {
       // socket.off("socio_events_" + socioId)
     }
-  }, [socioId, socket])
+  }, [socioId])
   // }, [socioId])
 
   useEffect(() => {

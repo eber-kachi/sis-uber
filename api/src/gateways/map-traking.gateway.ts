@@ -20,7 +20,7 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   private asignacions = new Object();
   // private asignacionSocio = new Object();
   private static asignacionSocio: Map<string, any> = new Map();
-
+  clients: any[] = [];
   constructor(
     private readonly sociosService: SocioService, // private readonly sociosService: SocioService,
   ) {} // private readonly  ticketSrvice: TicketService,
@@ -33,10 +33,13 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   }
 
   handleConnection(client: Socket, ...args: any[]) {
+    this.clients.push(client.id);
     console.log('Hola alguien se conecto al socket 👌👌👌 => ', client.id);
   }
 
   handleDisconnect(client: Socket) {
+    // this.clients= this.clients.reduce((array,c)=>  ,[]);
+    this.clients.splice(this.clients.indexOf(client.id), 1);
     console.log('ALguien se fue! chao chao' + client.id);
   }
 

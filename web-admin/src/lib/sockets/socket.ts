@@ -1,13 +1,13 @@
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
 
-const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL as string)
+// const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL as string)
 
-socket.on('connect', () => {
-  console.log('Connected to Socket.IO webs')
-})
+// socket.on('connect', () => {
+//   console.log('Connected to Socket.IO webs')
+// })
 
-socket.on('disconnect', () => {
-  console.log('Disconnected from Socket.IO')
-})
+// socket.on('disconnect', () => {
+//   console.log('Disconnected from Socket.IO')
+// })
 
-export default socket
+// export default socket

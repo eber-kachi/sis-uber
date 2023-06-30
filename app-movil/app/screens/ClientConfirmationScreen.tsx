@@ -11,7 +11,11 @@ import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
 import { colors, spacing } from "../theme"
 import { useStores } from "app/models"
 import ViajeService from "../services/api/viaje.service"
-import socket from "app/utils/socket"
+// import socket from "app/utils/socket"
+import { useSocket } from "app/context/socketContext"
+
+const carImage = require("../../assets/images/app/car.png")
+const carYellow = require("../../assets/images/app/car-yellow.svg")
 
 interface ClientConfirmationScreenProps
   extends NativeStackScreenProps<ClientTabScreenProps<"ClientConfirmation">> {}
@@ -27,7 +31,7 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
       authenticationStore: { authEmail },
     } = useStores()
     const viajeService = new ViajeService()
-
+    const { socket } = useSocket()
     // console.log("Origen=>", origin)
     // console.log("Destination=>", destination)
     // console.log("Props=>", _props.route.params)
@@ -77,10 +81,10 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           console.log("quitamos loader  ")
           // sacar socio data y mostrar en la pandatalla
           // sacar en pantalla datos del socio que acepto el viaje
-
           setConfirmado(true)
           setLoadingBtn(false)
         }
+
         if (viajeIdConfirmado === res?.data?.id && res.data.estado === "FINALIZADO") {
           // navigation.navigate("ClientEndOfTrip", { viaje_id: viajeIdConfirmado })
           navigation.navigate("Client", {
@@ -92,7 +96,7 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
       return () => {
         // socket.off("asignacion_event_socio")
       }
-    }, [])
+    }, [socket])
 
     function handlerClickSolicitarTaxiOperador(): void {
       setLoadingBtn(true)
@@ -125,6 +129,8 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
 
     function handlerClickShowTaxiOperador(): void {
       console.log("mostrar ubicacion del veiculo.")
+      // crear un socket para madar la ubicacion del veiculo en tiemo real
+      // capturamos  la ubicacion  del vehiculo en tiempo real  y mostramos en el mapa
     }
 
     return (
@@ -181,6 +187,7 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
 
           {confirmado && (
             <Marker
+              image={carYellow}
               ref={carRef}
               coordinate={{
                 latitude: origin.latitude,
@@ -189,14 +196,6 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
               title="Card"
             />
           )}
-
-          {/* <Circle */}
-          {/*  center={region} */}
-          {/*  radius={10} */}
-          {/*  strokeWidth={2.5} */}
-          {/*  strokeColor="red" */}
-          {/*  fillColor="#B9B9B9" */}
-          {/* /> */}
         </MapView>
 
         {confirmado === false && origin && destination ? (
