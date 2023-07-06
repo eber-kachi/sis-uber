@@ -164,7 +164,7 @@ const MapsPage = () => {
         socket.off('socios_conectados');
       }
     };
-  }, []);
+  }, [socket]);
 
   // metodo para asignar  un socio con un veiculo
   const handleMarkerClick = (socio_id: string | number) => {
