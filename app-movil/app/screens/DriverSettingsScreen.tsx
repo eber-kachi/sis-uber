@@ -1,9 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { DriverTabScreenProps } from "app/navigators"
-import { Button, Screen, Text, Toggle, ToggleProps } from "app/components"
+import { Button, Screen, Text, Toggle, ToggleProps, Icon } from "app/components"
 import { useStores } from "../models"
 import { spacing } from "../theme"
 import SocioService from "../services/api/socio.service"
@@ -31,11 +32,12 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
     // const navigation = useNavigation()
     const socioService = new SocioService()
     const [location, setLocation] = useState(null)
-    const { socket, join } = useSocket()
+    const { socket } = useSocket()
+    const [Loading, setLoading] = useState<boolean>(false)
 
     async function handlerState(status: boolean) {
       console.log("handlerState => ", { listenLocationUser, status })
-
+      setLoading(true)
       // if  (status){
       await socioService
         .changeStatus({
@@ -44,19 +46,20 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
           location,
         })
         .then((res) => {
-          // console.log("success =>>>>>", res)
-
           if (res.kind === "ok") {
-            socket.emit("socios_conectados", { socio_id: socioId, location })
-
+            console.log("success =>>>>>", res.data.estado)
             setListenLocation(status)
+            socket.emit("socios_conectados", { socio_id: socioId, location })
+            setLoading(false)
           } else {
             setListenLocation(false)
+            setLoading(false)
           }
         })
         .catch((error) => {
           console.log("error =>>>>", error)
           setListenLocation(false)
+          setLoading(false)
         })
       // .finally()
       // const res =  await socioService.changeStatus({ state: status ? "LIBRE" : "SINSERVICO", socio_id: 'ffe981d1-1a0d-4cf2-8849-842bf9039dd4' })
@@ -104,12 +107,15 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
         <View style={$container}>
           <View style={$toggleContainer}>
             <Text preset="bold" style={$titleEstado} text="Estado:" />
-            <ControlledToggle
-              variant="switch"
-              value={listenLocationUser}
-              onValueChange={handlerState}
-              containerStyle={$centeredOneThirdCol}
-            />
+            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+              {Loading && <Icon size={25} icon="loading" />}
+              <ControlledToggle
+                variant="switch"
+                value={listenLocationUser}
+                onValueChange={handlerState}
+                containerStyle={$centeredOneThirdCol}
+              />
+            </View>
             {/* <Button style={$button} tx="common.logOut" onPress={logout}/> */}
           </View>
           <View style={$buttonContainer}>
@@ -158,4 +164,5 @@ const $centeredOneThirdCol: ViewStyle = {
   width: "33.33333%",
   alignItems: "center",
   justifyContent: "center",
+  marginLeft: 6,
 }
