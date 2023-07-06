@@ -33,7 +33,7 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
-    console.log(formData);
+    // console.log(formData);
 
     if (isnew) {
       socioService
@@ -41,7 +41,7 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
         .then((res) => {
           toast('Creado con exito.');
           router.back();
-          console.log(res);
+          // console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -52,7 +52,7 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
         .update(formData, data.id)
         .then((res) => {
           // toastSuccess(res.message);
-          toast('Creado con exito.');
+          toast('Actualizado con exito.');
           router.back();
         })
         .catch((error) => {
@@ -104,9 +104,11 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
               </Col>
               <Col xs={12} md={6}>
                 <Form.Group className='mb-3' controlId='formBasicPassword'>
-                  <Form.Label>Hora fin </Form.Label>
+                  <Form.Label>Horas trabajo </Form.Label>
                   <Form.Control
-                    type='time'
+                    type='number'
+                    min='1'
+                    max='24'
                     placeholder=''
                     {...register('hora_fin', {
                       required: 'Nacionalidad es requerido',

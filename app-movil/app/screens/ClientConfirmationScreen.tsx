@@ -14,8 +14,7 @@ import ViajeService from "../services/api/viaje.service"
 // import socket from "app/utils/socket"
 import { useSocket } from "app/context/socketContext"
 
-const carImage = require("../../assets/images/app/car.png")
-const carYellow = require("../../assets/images/app/car-yellow.svg")
+const carYellow = require("../../assets/images/app/car-yellow.png")
 
 interface ClientConfirmationScreenProps
   extends NativeStackScreenProps<ClientTabScreenProps<"ClientConfirmation">> {}
@@ -37,12 +36,14 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
     // console.log("Props=>", _props.route.params)
     const [loadingBtn, setLoadingBtn] = useState(false)
     const [confirmado, setConfirmado] = useState(false)
-    const [viajeIdConfirmado, setViajeidConfirmado] = useState<string | null>(null)
+    const [viajeIdConfirmado, setViajeidConfirmado] = useState(null)
     // console.log("Prams=>", route.params)
     const mapRef = useRef<MapView>()
     const carRef = useRef<MapMarker>()
     // Pull in one of our MST stores
     // const { someStore, anotherStore } = useStores()
+    console.log("renders")
+    const [carTrack, setCarTrack] = useState<any>()
 
     // Pull in navigation via hook
     const navigation = useNavigation()
@@ -79,10 +80,13 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
 
         if (viajeIdConfirmado === res?.data?.id) {
           console.log("quitamos loader  ")
+          // nos unimos a los eventos del socio
+          socket.emit("socio_join", res.socio_id)
           // sacar socio data y mostrar en la pandatalla
           // sacar en pantalla datos del socio que acepto el viaje
           setConfirmado(true)
           setLoadingBtn(false)
+          socket.emit("socio_join", res.socio_id)
         }
 
         if (viajeIdConfirmado === res?.data?.id && res.data.estado === "FINALIZADO") {
@@ -93,10 +97,21 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           })
         }
       })
+
+      socket.on("viaje_change_track", (res: { socio_id: string; position: any }) => {
+        console.log("track socio ", res.position)
+        setCarTrack(res.position)
+      })
+
       return () => {
-        // socket.off("asignacion_event_socio")
+        socket.off("viaje_change_track")
       }
-    }, [socket])
+    }, [viajeIdConfirmado, socket])
+
+    useEffect(() => {
+      // This effect will run after each state update
+      console.log("Count has been updated:", viajeIdConfirmado)
+    }, [viajeIdConfirmado])
 
     function handlerClickSolicitarTaxiOperador(): void {
       setLoadingBtn(true)
@@ -115,8 +130,10 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
         })
         .then((res) => {
           if (res.kind === "ok") {
-            console.log("handlerClickSolicitarTaxiOperador", res.data)
-            setViajeidConfirmado(res.data?.id)
+            console.log("handlerClickSolicitarTaxiOperador", res?.data?.id)
+            setViajeidConfirmado(() => res?.data?.id)
+            console.log(viajeIdConfirmado)
+
             socket.emit("pendiente_confirmacion", res.data)
           }
         })
@@ -129,8 +146,14 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
 
     function handlerClickShowTaxiOperador(): void {
       console.log("mostrar ubicacion del veiculo.")
-      // crear un socket para madar la ubicacion del veiculo en tiemo real
-      // capturamos  la ubicacion  del vehiculo en tiempo real  y mostramos en el mapa
+      const coordinates = [origin, destination, carTrack]
+      setTimeout(() => {
+        mapRef.current.fitToCoordinates(coordinates, {
+          edgePadding: { top: 150, right: 50, bottom: 150, left: 50 },
+          // edgePadding: DEFAULT_PADDING,
+          animated: true,
+        })
+      }, 2000)
     }
 
     return (
@@ -188,12 +211,12 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           {confirmado && (
             <Marker
               image={carYellow}
-              ref={carRef}
+              // ref={carRef}
               coordinate={{
-                latitude: origin.latitude,
-                longitude: origin.longitude,
+                latitude: carTrack ? carTrack.latitude : origin.latitude,
+                longitude: carTrack ? carTrack.longitude : origin.longitude,
               }}
-              title="Card"
+              title="Car" // podia ir placa
             />
           )}
         </MapView>

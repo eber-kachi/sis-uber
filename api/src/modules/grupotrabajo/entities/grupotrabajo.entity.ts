@@ -11,8 +11,8 @@ export class GrupotrabajoEntity extends AbstractEntity<GrupoTrabajoDTO> {
   @Column({ nullable: true, type: 'time' })
   hora_inicio: string;
 
-  @Column({ nullable: true, type: 'time' })
-  hora_fin: string;
+  @Column({ nullable: true, type: 'int' })
+  hora_fin: number; // horas de trabajo  ejemplo inicio 06:00 + 15 horas de trabajo
 
   // relacion de grupotrabajo con socio
   @OneToMany(() => SocioEntity, (socio) => socio.grupotrabajo)

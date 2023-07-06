@@ -9,6 +9,7 @@ import { ProgressBar } from '@components/ProgressBar';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { ToastContainer } from 'react-toastify';
 import { SocketProvider } from '@hooks/socketContext';
+import React, { useEffect } from 'react';
 
 // You change this configuration value to false so that the Font Awesome core SVG library
 // will not try and insert <style> elements into the <head> of the page.
@@ -20,6 +21,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   // In server-side rendered applications, a SSRProvider must wrap the application in order
   // to ensure that the auto-generated ids are consistent between the server and client.
   // https://react-bootstrap.github.io/getting-started/server-side-rendering/
+  useEffect(() => {
+    localStorage.debug = '*';
+  }, []);
+
   return (
     <SSRProvider>
       <SocketProvider>

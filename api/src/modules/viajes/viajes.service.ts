@@ -33,7 +33,12 @@ export class ViajesService {
 
     const viaje = this.viajeRepository.create(createViajeDto);
     viaje.cliente = user.cliente;
-    return this.viajeRepository.save(viaje);
+    const res = await this.viajeRepository.save(viaje);
+
+    return await this.viajeRepository.findOne({
+      where: { id: res.id },
+      relations: ['cliente', 'socio'],
+    });
   }
 
   async findAll() {
@@ -80,7 +85,10 @@ export class ViajesService {
       );
     }
 
-    const viaje = await this.viajeRepository.findOne({ where: { id: createViajeDto.viaje_id } });
+    const viaje = await this.viajeRepository.findOne({
+      where: { id: createViajeDto.viaje_id },
+      relations: ['cliente', 'socio'],
+    });
     if (!viaje) {
       throw new HttpException(
         {
@@ -105,6 +113,7 @@ export class ViajesService {
   async getLastTrip(socio_id = null, cliente_id = null) {
     if (socio_id != null) {
       const viajes = await this.viajeRepository.find({
+        order: { createdAt: 'DESC' },
         where: { socio: { id: socio_id } },
         relations: ['cliente'],
         take: 5,
@@ -113,6 +122,7 @@ export class ViajesService {
     }
 
     const viajes = await this.viajeRepository.find({
+      order: { createdAt: 'DESC' },
       where: { cliente: cliente_id },
       relations: ['socio'],
       take: 5,

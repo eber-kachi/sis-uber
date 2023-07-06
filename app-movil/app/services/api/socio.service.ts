@@ -18,7 +18,8 @@ export default class SocioService extends BaseApiClass {
       `${this.baseUrl}/change-state`,
       data,
     )
-    // console.log("AuthService=>", response)
+
+    console.log("AuthService=>", response.ok)
     if (!response.ok) {
       const problem = getGeneralApiProblem(response)
 

@@ -13,17 +13,9 @@ const SocketContext = createContext<{
 const SocketProvider = ({ children }: any) => {
   const [socket, setSocket] = useState<SocketIOClient.Socket>();
 
-  useEffect(() => {
-    connect();
-
-    return () => {
-      disconnect();
-    };
-  }, []);
-
   const connect = () => {
-    const socket = io(url, { query: {} });
-    setSocket(socket.connect());
+    const sockets = io(url, { query: {} });
+    setSocket(sockets.connect());
     console.log('conect with socket privider....');
   };
 
@@ -34,6 +26,13 @@ const SocketProvider = ({ children }: any) => {
     // setSocket(undefined);
   };
 
+  useEffect(() => {
+    connect();
+
+    return () => {
+      disconnect();
+    };
+  }, []);
   return (
     <SocketContext.Provider
       value={{

@@ -10,6 +10,7 @@ import { EstadoViaje, StateHandlerEvents } from 'common/constants/estado-viaje';
 import { Server, Socket } from 'socket.io';
 import { SocioService } from '../modules/socio/socio.service';
 import { Logger } from '@nestjs/common';
+import { log } from 'console';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -35,6 +36,7 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   handleConnection(client: Socket, ...args: any[]) {
     this.clients.push(client.id);
     console.log('Hola alguien se conecto al socket 👌👌👌 => ', client.id);
+    console.log();
   }
 
   handleDisconnect(client: Socket) {
@@ -89,22 +91,30 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
         }
         const rooms = this.server.sockets.adapter.rooms;
 
-        const clients = rooms['my-room'];
+        // const clients = rooms['my-room'];
 
-        console.log('The list of clients connected to the room my-room:');
+        // console.log('The list of clients connected to the room my-room:');
         // clients.forEach((client) => {
         //   console.log(client);
         // });
+        // validar que hay un room con el socio
+
+        if (!rooms.has(`socio_events_${payload.socio_id}`)) {
+          throw new Error('Socio no esta conectado ');
+        }
 
         MapTrakingGateway.asignacionSocio.set(payload.data.id, payload.data);
-
+        this.loger.log('rooms => ', rooms);
         // this.server.emit('asignacion_event_socio' + payload.socio_id, payload);
         // this.handler_socio_conect(null, null);
         // this.server.
         this.server.to(`socio_events_${payload.socio_id}`).emit('socio_events_change', payload);
       }
     } catch (error) {
-      client.emit(EstadoViaje.PENDIENTECONFIRMACION, payload.data);
+      console.log('hay un problema en la asignacion_event_socio => ', error);
+
+      this.server.emit(EstadoViaje.PENDIENTECONFIRMACION, payload.data);
+      return { message: 'No existe el socio', status: 404 };
     }
   }
 
@@ -153,7 +163,9 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   @SubscribeMessage('socio_join')
   handleJoinSpecialty(client: Socket, socio_id: string) {
     this.loger.log('Socio joid to events => ' + socio_id, '@SubscribeMessage(socio_join)');
-    client.join(`socio_events_${socio_id}`);
+    if (socio_id !== '') {
+      client.join(`socio_events_${socio_id}`);
+    }
   }
 
   @SubscribeMessage('socio_leave')
@@ -161,6 +173,25 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
     this.loger.log('Chao to events =>' + socio_id, '  @SubscribeMessage(socio_leave)');
 
     client.leave(`socio_events_${socio_id}`);
+  }
+  // manejador de seguimiento del veiculo
+  @SubscribeMessage('viaje_track')
+  handleTraking(client: Socket, payload: { socio_id: string; position: any }) {
+    this.loger.log('change positions => ' + payload.socio_id);
+
+    // client.leave(`socio_events_${socio_id}`);
+    this.server.to(`socio_events_${payload.socio_id}`).emit('viaje_change_track', payload);
+  }
+
+  // notificaciones de los eventos en el viaje
+  // change-notifications
+  @SubscribeMessage('change_notifications')
+  handlchange_notifications(
+    client: any,
+    payload: { socio_id: string; message: any; type?: string },
+  ) {
+    this.loger.log('Join viajes => ' + payload.message, ' @SubscribeMessage(change_notifications)');
+    this.server.to('socio_events_' + payload.socio_id).emit('change-notifications_event', payload);
   }
 
   // socket para comunicar a los socios y clientes de un viaje

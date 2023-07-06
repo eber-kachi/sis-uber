@@ -14,6 +14,7 @@ import MapViewDirections from "react-native-maps-directions"
 import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
 import * as Location from "expo-location"
 import { useSocket } from "app/context/socketContext"
+import { LocationSubscriber } from "expo-location/build/LocationSubscribers"
 
 const carImage = require("../../assets/images/app/car.png")
 const locationClient = require("../../assets/images/app/location-user.png")
@@ -34,6 +35,10 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
     const mapRef = useRef<MapView>()
     const [currentLocation, setCurrentLocation] = useState(null)
     const { socket } = useSocket()
+    const [tracking, setTracking] = useState(true)
+    const [position, setPosition] = useState(null)
+    const watcherRef = useRef<Location.LocationSubscription>()
+
     const {
       authenticationStore: { socioId },
     } = useStores()
@@ -66,6 +71,52 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       //
       // }
     }, [])
+
+    useEffect(() => {
+      const watchPosition = async () => {
+        watcherRef.current = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.Balanced,
+            timeInterval: 2,
+            distanceInterval: 1,
+          },
+          (location) => {
+            socket.emit("viaje_track", {
+              socio_id: socioId,
+              position: {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              },
+            })
+            console.log(
+              "actualizando posision  =>",
+              location.coords.latitude,
+              location.coords.longitude,
+            )
+            setPosition({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            })
+            // setGps({
+            //   location: {
+            //     lat: location.coords.latitude,
+            //     lng: location.coords.longitude,
+            //   },
+            // })
+          },
+        )
+      }
+
+      if (tracking) {
+        watchPosition()
+      } else {
+        watcherRef.current && watcherRef.current.remove()
+      }
+
+      return () => {
+        watcherRef.current && watcherRef.current.remove()
+      }
+    }, [tracking])
 
     // seguimiento del carro
     useEffect(() => {
@@ -104,16 +155,16 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       // conectar a sockets
 
       // eslint-disable-next-line camelcase
-      socket.emit("viaje_join", { viaje_id, socio_id: socioId })
+      // socket.emit("viaje_join", { viaje_id, socio_id: socioId })
 
-      socket.on("viaje_change_event" + socioId, (res) => {
+      socket.on("viaje_change_event", (res) => {
         console.log("viaje_change_event=>", res)
       })
 
       return () => {
         // eslint-disable-next-line camelcase
-        socket.emit("viaje_leave", { viaje_id })
-        socket.off("viaje_change_event" + socioId)
+        // socket.emit("viaje_leave", { viaje_id })
+        socket.off("viaje_change_event")
       }
     }, [])
 
@@ -121,8 +172,8 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       // notificar llegada  o comenzar viaje
       if (goOrigin) {
         console.log("Notificar llegada")
+        socket.emit("change_notifications", { socio_id: socioId, message: "llegue al lugar" })
 
-        socket.emit("", "llegue al lugar ")
         setGoOrigin(false)
       } else if (!goDestination) {
         console.log("Notificar ir al destino ")
@@ -140,6 +191,7 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
           console.log(res.data)
           setViaje(res.data)
           setLoading(false)
+          setTracking(false)
         }
         setGoDestination(false)
       }

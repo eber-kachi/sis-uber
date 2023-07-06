@@ -10,7 +10,7 @@ export class GrupoTrabajoDTO extends AbstractDto {
   hora_inicio: string;
 
   @ApiPropertyOptional()
-  hora_fin: string;
+  hora_fin: number;
 
   constructor(entity: GrupotrabajoEntity) {
     super(entity);

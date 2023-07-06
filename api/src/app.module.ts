@@ -21,6 +21,7 @@ import { MapTrakingGateway } from './gateways/map-traking.gateway';
 import { RolModule } from './modules/rol/rol.module';
 import { GrupotrabajoModule } from './modules/grupotrabajo/grupotrabajo.module';
 import { FileModule } from './modules/file/file.module';
+import { RouteTrakingModule } from './modules/route-traking/route-traking.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { FileModule } from './modules/file/file.module';
     RolModule,
     GrupotrabajoModule,
     FileModule,
+    // RouteTrakingModule,
 
     // TypeOrmModule.forRoot({
     //   type: 'mysql',

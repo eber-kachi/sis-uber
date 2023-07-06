@@ -14,8 +14,8 @@ import { Form, FormLabel, ListGroup } from 'react-bootstrap';
 import { ISocio } from 'src/services/models/socio.model';
 import { log } from 'console';
 import { right } from '@popperjs/core';
-import SocioService from '../../../services/api/Socio.service';
 import { useSocket } from '@hooks/socketContext';
+import SocioService from '../../../services/api/Socio.service';
 
 const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || 'http://localhost:3000';
 
@@ -164,7 +164,7 @@ const MapsPage = () => {
         socket.off('socios_conectados');
       }
     };
-  }, [socket]);
+  }, []);
 
   // metodo para asignar  un socio con un veiculo
   const handleMarkerClick = (socio_id: string | number) => {

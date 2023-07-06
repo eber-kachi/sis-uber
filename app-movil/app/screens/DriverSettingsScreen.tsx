@@ -31,10 +31,10 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
     // const navigation = useNavigation()
     const socioService = new SocioService()
     const [location, setLocation] = useState(null)
-    const { socket } = useSocket()
+    const { socket, join } = useSocket()
 
     async function handlerState(status: boolean) {
-      // console.log(listenLocationUser)
+      console.log("handlerState => ", { listenLocationUser, status })
 
       // if  (status){
       await socioService
@@ -74,21 +74,15 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
       }
     }
 
-    useEffect(() => {
-      console.log("listo para unirce", listenLocationUser)
+    // useEffect(() => {
+    //   console.log("listo para unirce", listenLocationUser)
 
-      if (listenLocationUser) {
-        console.log("socio_join", socioId)
-        socket.emit("socio_join", socioId)
-      } else {
-        console.log("socio_leave", socioId)
-        socket.emit("socio_leave", socioId)
-      }
+    //   join()
 
-      return () => {
-        console.log("salio ")
-      }
-    }, [listenLocationUser])
+    //   return () => {
+    //     console.log("salio ")
+    //   }
+    // }, [listenLocationUser, socket])
 
     useEffect(() => {
       ;(async () => {

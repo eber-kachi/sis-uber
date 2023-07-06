@@ -6,7 +6,7 @@ export class CreateGrupotrabajoDto extends AbstractDto {
   @ApiPropertyOptional()
   nombre: string;
   @ApiPropertyOptional()
-  hora_fin: string;
+  hora_fin: number;
   @ApiPropertyOptional()
   hora_inicio: string;
 

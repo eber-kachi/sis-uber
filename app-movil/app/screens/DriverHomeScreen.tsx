@@ -46,8 +46,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
     console.log("listando ultimos viajes => de", socioId)
     const viajeRes = await viajeService.getLast(socioId)
     if (viajeRes.kind === "ok") {
-      console.log(viajeRes.data)
-
+      // console.log(viajeRes.data)
       setViajes(viajeRes.data)
     }
   }
@@ -60,7 +59,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
       console.log("socio_events_change" + socioId)
       if (socioId === res.socio_id) {
         // todo solo asigna un viaje
-        setNewViajeActive([res.data])
+        setNewViajeActive((previusValue) => [...previusValue, res.data])
       }
     })
     return () => {

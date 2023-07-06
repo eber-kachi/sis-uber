@@ -92,8 +92,12 @@ export class SocioController {
           if (socio.grupotrabajo) {
             const fechaActualStringIn =
               format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_inicio;
-            const fechaActualStringFin =
-              format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_fin;
+            const fechaActualStringFin = format(
+              new Date(fechaActualStringIn).getTime() +
+                socio.grupotrabajo.hora_fin * 60 * 60 * 1000,
+              // fechaActual.setHours(socio.grupotrabajo.hora_fin),
+              'yyyy-MM-dd HH:mm:ss',
+            );
 
             const esHorariovalidoParaTrabajar = this.isWorkingHours(
               fechaActualStringIn,
@@ -128,8 +132,11 @@ export class SocioController {
       if (socio.grupotrabajo) {
         const fechaActualStringIn =
           format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_inicio;
-        const fechaActualStringFin =
-          format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_fin;
+        const fechaActualStringFin = format(
+          new Date(fechaActualStringIn).getTime() + socio.grupotrabajo.hora_fin * 60 * 60 * 1000,
+          // fechaActual.setHours(socio.grupotrabajo.hora_fin),
+          'yyyy-MM-dd HH:mm:ss',
+        );
 
         const esHorariovalidoParaTrabajar = this.isWorkingHours(
           fechaActualStringIn,
@@ -288,23 +295,34 @@ export class SocioController {
   }
 
   isWorkingHours(startTime: string, endTime: string, currentHour: string): boolean {
-    // Convert the start time, end time, and current hour to numbers.
-    // const startTimeNumber = Number(startTime);
-    // const endTimeNumber = Number(endTime);
-    // const currentHourNumber = Number(currentHour);
-    const vaidation =
-      isValid(parseISO(startTime)) && isValid(parseISO(endTime)) && isValid(parseISO(currentHour));
-    if (vaidation) {
-      const startTimeDate = parse(startTime, 'yyyy-MM-dd HH:mm:ss', new Date());
-      const endTimeDate = parse(endTime, 'yyyy-MM-dd HH:mm:ss', new Date());
-      const currentHourDate = parse(currentHour, 'yyyy-MM-dd HH:mm:ss', new Date());
+    // const vaidation =
+    //   isValid(parseISO(startTime)) && isValid(parseISO(endTime)) && isValid(parseISO(currentHour));
+    // if (vaidation) {
+    //   const startTimeDate = parse(startTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+    //   const endTimeDate = parse(endTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+    //   const currentHourDate = parse(currentHour, 'yyyy-MM-dd HH:mm:ss', new Date());
 
-      const isafter = isAfter(new Date(), startTimeDate);
-      const isbefore = isBefore(new Date(), endTimeDate);
-      const isvalidate = isafter && isbefore;
-      // return isAfter(currentHourDate, startTimeDate) && isBefore(currentHourDate, endTimeDate);
-      return isvalidate;
-    }
+    //   // const isafter = isAfter(new Date(), startTimeDate);
+    //   // const isbefore = isBefore(new Date(), endTimeDate);
+    //   const isafter = isAfter(currentHourDate, startTimeDate);
+    //   const isbefore = isBefore(currentHourDate, endTimeDate);
+    //   const isvalidate = isafter && isbefore;
+    //   return isvalidate;
+
+    // }
+
+    const startTimeDate = new Date(startTime);
+    const endTimeDate = new Date(endTime);
+    const currentHourDate = new Date(currentHour);
+
+    const startTimeTimestamp = startTimeDate.getTime();
+    const endTimeTimestamp = endTimeDate.getTime();
+    const currentHourTimestamp = currentHourDate.getTime();
+
+    const isWorkingHours =
+      currentHourTimestamp >= startTimeTimestamp && currentHourTimestamp <= endTimeTimestamp;
+
+    return isWorkingHours;
 
     // Check if the current hour is between the start time and end time.
     // return isBetween(currentHourDate, startTimeDate, endTimeDate);

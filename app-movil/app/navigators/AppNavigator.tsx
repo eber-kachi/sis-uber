@@ -22,6 +22,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { ClientNavigator, ClientTabParamList } from "./ClientNavigator"
 import { ClientConfirmationScreen } from "../screens/ClientConfirmationScreen"
 import { DriverNavigator } from "./DriverNavigator"
+import { useSocket } from "app/context/socketContext"
 // import { ClientNavigator } from "./ClientNavigator"
 
 /**
@@ -71,10 +72,16 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 const AppStack = observer(function AppStack() {
   // @demo remove-block-start
   const {
-    authenticationStore: { isAuthenticated, role },
+    authenticationStore: { isAuthenticated, role, listenLocationUser, socioId },
   } = useStores()
   console.log("AppStack => AppNavigator=>>> " + isAuthenticated, role)
   // @demo remove-block-end
+  const { join, socket } = useSocket()
+
+  React.useEffect(() => {
+    join(listenLocationUser)
+    console.log("AppStack listenLocationUser=>", listenLocationUser)
+  }, [listenLocationUser, socioId, socket.connected])
 
   // @ts-ignore
   const initialRoute = () => {
