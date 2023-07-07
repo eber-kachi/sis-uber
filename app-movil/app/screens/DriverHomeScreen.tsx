@@ -16,6 +16,8 @@ import { useNavigation } from "@react-navigation/native"
 
 // import { useStores } from "app/models"
 import { useSocket } from "app/context/socketContext"
+import SocioService from "app/services/api/socio.service"
+import { socket } from "../context/socketContext"
 
 interface DriverHomeScreenProps
   extends NativeStackScreenProps<DriverTabScreenProps<"DriverHome">> {}
@@ -33,12 +35,13 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
   const [loading, setLoading] = useState(false)
 
   const viajeService = new ViajeService()
+  const socioService = new SocioService()
 
   const listLastTrip = async () => {
     // console.log(socio_id + "  listando ultimos viajes => de", socio_id)
     const viajeRes = await viajeService.getLast(socio_id)
     if (viajeRes.kind === "ok") {
-      // console.log(viajeRes.data)
+      console.log(viajeRes.data)
       setViajes(viajeRes.data)
     }
   }
@@ -68,7 +71,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
     return () => {
       // socket.off("socio_events_" + socioId)
     }
-  }, [socio_id])
+  }, [socio_id, socket.connected])
   // }, [socioId])
 
   useEffect(() => {
@@ -92,6 +95,9 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
             const res = await viajeService.changeStatusViajeById({ viaje_id, estado: "CONFIRMADO" })
             if (res.kind === "ok") {
               console.log("apceptTrip", res.kind)
+              // cambiamos al chofer como ocupado
+              await socioService.changeStatus({ socio_id, state: "OCUPADO" })
+              socket.emit("socios_conectados")
               socket.emit("asignacion_event_socio", { socio_id, data: res.data })
               setLoading(false)
               navigation.navigate("DriverRunTrip", {

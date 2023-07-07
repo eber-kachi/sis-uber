@@ -120,6 +120,18 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           if (res.type === "COMENZAR") {
             // mandar las ultimas ubicaciones del viaje
             // fecha y hora de comienzo del viaje
+            Alert.alert("Alerta", res.message, [
+              {
+                text: "Aceptar",
+                onPress: async () => {
+                  // mandamos la ubicacion de comienzo del viaje
+                  const res = await viajeService.changeStatusViajeById({
+                    estado: "COMENZAR",
+                    viaje_id: viajeIdConfirmado,
+                  })
+                },
+              },
+            ])
           }
 
           if (res.type === "FINALIZADO") {
@@ -127,14 +139,20 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
             Alert.alert(res.type, res.message, [
               {
                 text: "Aceptar",
-                onPress: () => {
-                  console.log("navegamos al calificacion ")
+                onPress: async () => {
+                  // console.log("navegamos al calificacion ")
                   // mandar al screen de calificar
-                  console.log({ viaje_id: viajeIdConfirmado })
-
-                  navigation.navigate("ClientEndOfTrip", {
+                  // console.log({ viaje_id: viajeIdConfirmado })
+                  const res = await viajeService.changeStatusViajeById({
+                    estado: "FINALIZADO",
                     viaje_id: viajeIdConfirmado,
                   })
+                  if (res.kind === "ok") {
+                    navigation.navigate("ClientEndOfTrip", {
+                      viaje_id: viajeIdConfirmado,
+                    })
+                  }
+
                   // navigation.navigate("ClientEndOfTrip", {
 
                   //   params: { viaje_id: viajeIdConfirmado },

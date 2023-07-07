@@ -199,7 +199,7 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
           type: "COMENZAR",
         })
         // mandamos la ubicacion de comienzo del viaje
-        const res = await viajeService.changeStatusViajeById({ estado: "FINALIZADO", viaje_id })
+        const res = await viajeService.changeStatusViajeById({ estado: "COMENZAR", viaje_id })
 
         setGoDestination(true)
       } else {

@@ -140,16 +140,16 @@ export class ViajesService {
     viaje.estado = createViajeDto.estado;
     const currentDateTime = new Date();
     // 2023-06-29 09:08:48
-    if (createViajeDto.status === EstadoViaje.INICIANDOVIAJE) {
-      viaje.start_time = createViajeDto.start_time;
+    if (createViajeDto.estado === 'COMENZAR') {
+      viaje.start_time = format(currentDateTime, 'yyy-MM-dd HH:mm:ss');
       viaje.fecha = format(currentDateTime, 'yyy-MM-dd HH:mm:ss');
     }
 
-    if (createViajeDto.status === EstadoViaje.FINALIZADO) {
+    if (createViajeDto.estado === EstadoViaje.FINALIZADO) {
       viaje.estado = createViajeDto.estado;
       //location
-      viaje.end_latitude = createViajeDto.latitude;
-      viaje.end_longitude = createViajeDto.longitude;
+      // viaje.end_latitude = createViajeDto?.latitude;
+      // viaje.end_longitude = createViajeDto?.longitude;
       viaje.distancia_recorrida = createViajeDto?.distancia_recorrida || 0;
       viaje.end_time = format(currentDateTime, 'yyy-MM-dd HH:mm:ss');
     }

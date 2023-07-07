@@ -87,7 +87,6 @@ export class SocioController {
 
         if (user.socio) {
           const socio = await this.socioService.findOne(user.socio.id);
-          console.log(new Date().getHours());
           const time = 24 * 60 * 60 * 1000;
           const fechaActual =
             new Date().getHours() >= 0 && new Date().getHours() <= 5
@@ -132,7 +131,11 @@ export class SocioController {
       }
 
       const socio = await this.socioService.findOne(createSocioDto.socio_id);
-      const fechaActual = new Date();
+      const time = 24 * 60 * 60 * 1000;
+      const fechaActual =
+        new Date().getHours() >= 0 && new Date().getHours() <= 5
+          ? new Date(new Date().getTime() - time)
+          : new Date();
       const fechaActualString = format(fechaActual, 'yyyy-MM-dd HH:mm:ss');
 
       console.log(fechaActualString);

@@ -11,7 +11,7 @@ import ViajeService from "app/services/api/viaje.service"
 import { Rating } from "react-native-ratings"
 import { isRTL } from "expo-localization"
 
-const welcomeFace = require("../../assets/images/splash-logo-all.png")
+const welcomeFace = require("../../assets/images/logo-car.png")
 
 interface ClientEndOfTripScreenProps
   extends NativeStackScreenProps<AppStackScreenProps<"ClientEndOfTrip">> {}
@@ -61,8 +61,9 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
     return (
       <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
         <Text style={$title}>Viaje finalizado</Text>
-        <Image style={$welcomeFace} source={welcomeFace} resizeMode="contain" />
-
+        <View style={$ratingContainer}>
+          <Image style={$welcomeFace} source={welcomeFace} resizeMode="contain" />
+        </View>
         <View style={{ flex: 1, height: 80 }}>
           <Text style={styles.ratingLabel}>
             Estamos comprometidos a proporcionar un excelente servicio al cliente, por lo que puede
@@ -75,10 +76,11 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
           <Rating
             type="star"
             ratingCount={5}
-            imageSize={30}
+            imageSize={40}
             // showRating
             minValue={1}
             onFinishRating={handleRatingChange}
+            style={{ backgroundColor: "transparent" }}
           />
           {/* Componente de selección de calificación (por ejemplo, estrellas) */}
           {/* Implementa la lógica para actualizar el estado de la calificación */}
@@ -92,7 +94,7 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
 )
 
 const $container: ViewStyle = {
-  paddingTop: spacing.large + spacing.extraLarge,
+  paddingTop: spacing.large,
   paddingBottom: spacing.huge,
   paddingHorizontal: spacing.large,
 }
@@ -113,12 +115,10 @@ const $ratingContainer: ViewStyle = {
   marginBottom: 16,
 }
 const $welcomeFace: ImageStyle = {
-  height: 169,
-  width: 269,
-  position: "absolute",
-  bottom: -47,
-  right: -80,
-  transform: [{ scaleX: isRTL ? -1 : 1 }],
+  height: 250,
+  width: 250,
+  // position: "absolute",
+  alignItems: "center",
 }
 const $submitButton: TextStyle = {
   marginBottom: spacing.small,
