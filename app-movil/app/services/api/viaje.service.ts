@@ -60,4 +60,30 @@ export default class ViajeService extends BaseApiClass {
       return { kind: "bad-data" }
     }
   }
+
+  async setRating(param: {
+    viaje_id: any
+    calificacion: number
+  }): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await api.apisauce.post<any>(
+      `${this.baseUrl}/change-rating`,
+      param,
+    )
+    if (!response.ok) {
+      // console.log("AuthService=>", response.data)
+      const problem = getGeneralApiProblem(response)
+
+      if (problem) return problem
+    }
+    try {
+      // hacer estrategia de login
+      const rawData = response.data
+      return { kind: "ok", data: rawData?.data }
+    } catch (e) {
+      if (__DEV__) {
+        console.tron.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
 }

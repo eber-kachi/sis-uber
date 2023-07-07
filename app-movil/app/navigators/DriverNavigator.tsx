@@ -1,15 +1,8 @@
-
 import React from "react"
-import { createStackNavigator } from "@react-navigation/stack"
-import {
-  WelcomeScreen
-} from "app/screens"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { colors, spacing, typography } from "../theme"
-import { ClientSearchLocationScreen } from "../screens/ClientSearchLocationScreen"
 import { Icon } from "../components"
-import { ClientHomeScreen } from "../screens/ClientHomeScreen"
-import { ClientSettingsScreen } from "../screens/ClientSettingsScreen"
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { TextStyle, ViewStyle } from "react-native"
 import { DriverHomeScreen } from "../screens/DriverHomeScreen"
@@ -17,21 +10,19 @@ import { DriverSettingsScreen } from "../screens/DriverSettingsScreen"
 import { CompositeScreenProps } from "@react-navigation/core"
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs/lib/typescript/src/types"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-import { ClientTabParamList } from "./ClientNavigator"
 
 export type DriverTapParamList = {
-  DriverSettings: undefined,
-  DriverHome: undefined,
+  DriverSettings: undefined
+  DriverHome: undefined
 }
 export type DriverTabScreenProps<T extends keyof DriverTapParamList> = CompositeScreenProps<
   BottomTabScreenProps<DriverTapParamList, T>,
   AppStackScreenProps<keyof AppStackParamList>
-  >
+>
 const Tab = createBottomTabNavigator<DriverTapParamList>()
 
 // const Stack = createStackNavigator<DriverNavigatorParamList>()
 export const DriverNavigator = () => {
-
   const { bottom } = useSafeAreaInsets()
   return (
     <Tab.Navigator

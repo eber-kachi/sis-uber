@@ -1,5 +1,4 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
-import { api } from "../services/api"
 import UserService from "../services/api/user.service"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 const userservice = new UserService()
@@ -53,14 +52,16 @@ export const AuthenticationStoreModel = types
     logout() {
       store.authToken = undefined
       store.authRole = undefined
-      store.authEmail = ""
-      store.clientId = ""
-      store.socioId = ""
+      store.authEmail = undefined
+      store.clientId = undefined
+      store.socioId = undefined
     },
     setRole(value: string) {
       store.authRole = value
     },
     setSocioId(value: string) {
+      console.log("cambiando SocioId=>", value)
+
       store.socioId = value
     },
     setClientId(value: string) {
@@ -71,18 +72,48 @@ export const AuthenticationStoreModel = types
     },
   }))
   .actions((store) => ({
-    async fetchUserByEmail() {
-      const response = await userservice.getUserByEmail(store.authEmail)
-      if (response.kind === "ok") {
-        console.log("AuthenticationStoreModel=>", response.data)
-        if (store.authRole === "DRIVER") {
-          store.setProp("socioId", response.data.socio.id)
-        } else {
-          store.setProp("clientId", response.data.cliente.id)
+    async fetchUserByEmail(): Promise<void> {
+      try {
+        const response = await userservice.getUserByEmail(store.authEmail)
+
+        if (response.kind === "ok") {
+          console.log("AuthenticationStoreModel => ", response.data)
+          //= == "DRIVER"
+          if (response?.data?.socio) {
+            // store.setProp("socioId", response.data.socio.id)
+            // store.setSocioId(response.data.socio.id)
+            store.setProp("socioId", response?.data?.socio?.id)
+            // console.log("entro socioId=>", store.socioId)
+            // store.socioId = yield  response.data.socio.id
+            // return { socio_id: response.data.socio.id, cliente_id: null }
+          } else {
+            store.setProp("clientId", response?.data?.cliente?.id)
+            // store.setClientId(response.data.cliente.id)
+            // return { socio_id: null, cliente_id: response?.data?.cliente?.id }
+          }
         }
-      } else {
-        console.tron.error(`Error fetching user: ${JSON.stringify(response)}`, [])
+      } catch (error) {
+        console.tron.error(`Error fetching user: ${JSON.stringify(error)}`, [])
       }
+      // const response = await userservice.getUserByEmail(store.authEmail)
+      // if (response.kind === "ok") {
+      //   console.log("AuthenticationStoreModel => ", response.data)
+      //   //= == "DRIVER"
+      //   if (response?.data?.socio) {
+      //     // store.setProp("socioId", response.data.socio.id)
+      //     // store.setSocioId(response.data.socio.id)
+      //     store.setProp("socioId", response?.data?.socio?.id)
+      //     console.log("entro socioId=>", store.socioId)
+      //     // store.socioId = yield  response.data.socio.id
+      //     return { socio_id: response.data.socio.id, cliente_id: null }
+      //   } else {
+      //     store.setProp("clientId", response?.data?.cliente?.id)
+      //     // store.setClientId(response.data.cliente.id)
+      //     return { socio_id: null, cliente_id: response?.data?.cliente?.id }
+      //   }
+      // } else {
+      //   console.tron.error(`Error fetching user: ${JSON.stringify(response)}`, [])
+      // }
     },
   }))
 

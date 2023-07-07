@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Dimensions, ImageStyle, View, ViewStyle } from "react-native"
+import { Alert, Dimensions, ImageStyle, View, ViewStyle, Vibration } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { Button, Icon, Screen } from "app/components"
 import { ClientTabScreenProps } from "app/navigators"
@@ -13,7 +13,7 @@ import { useStores } from "app/models"
 import ViajeService from "../services/api/viaje.service"
 // import socket from "app/utils/socket"
 import { useSocket } from "app/context/socketContext"
-
+import { Rating, AirbnbRating } from "react-native-ratings"
 const carYellow = require("../../assets/images/app/car-yellow.png")
 
 interface ClientConfirmationScreenProps
@@ -46,8 +46,8 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
     const [carTrack, setCarTrack] = useState<any>()
 
     // Pull in navigation via hook
-    const navigation = useNavigation()
-    // const { navigation } = _props
+    // const navigation = useNavigation()
+    const { navigation } = _props
     useEffect(() => {
       // setDestinoLocationInitial(null)
       // setDestinoLocationFinal(null)
@@ -89,24 +89,68 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
           socket.emit("socio_join", res.socio_id)
         }
 
-        if (viajeIdConfirmado === res?.data?.id && res.data.estado === "FINALIZADO") {
-          // navigation.navigate("ClientEndOfTrip", { viaje_id: viajeIdConfirmado })
-          navigation.navigate("Client", {
-            screen: "ClientEndOfTrip",
-            params: { viaje_id: viajeIdConfirmado },
-          })
-        }
+        // if (viajeIdConfirmado === res?.data?.id && res.data.estado === "FINALIZADO") {
+        //   // navigation.navigate("ClientEndOfTrip", { viaje_id: viajeIdConfirmado })
+        //   navigation.navigate("Client", {
+        //     screen: "ClientEndOfTrip",
+        //     params: { viaje_id: viajeIdConfirmado },
+        //   })
+        // }
       })
 
       socket.on("viaje_change_track", (res: { socio_id: string; position: any }) => {
         console.log("track socio ", res.position)
         setCarTrack(res.position)
       })
+      socket.on(
+        "change-notifications_event",
+        (res: { socio_id: string; message: any; type?: string }) => {
+          console.log("notifications=> ", res.message)
+          Vibration.vibrate([500, 800, 400])
+          if (res.message && !res.type) {
+            Alert.alert("Alerta", res.message, [
+              {
+                text: "Aceptar",
+                onPress: () => {
+                  console.log("")
+                },
+              },
+            ])
+          }
+          if (res.type === "COMENZAR") {
+            // mandar las ultimas ubicaciones del viaje
+            // fecha y hora de comienzo del viaje
+          }
+
+          if (res.type === "FINALIZADO") {
+            console.log("notifications=> ", res.message)
+            Alert.alert(res.type, res.message, [
+              {
+                text: "Aceptar",
+                onPress: () => {
+                  console.log("navegamos al calificacion ")
+                  // mandar al screen de calificar
+                  console.log({ viaje_id: viajeIdConfirmado })
+
+                  navigation.navigate("ClientEndOfTrip", {
+                    viaje_id: viajeIdConfirmado,
+                  })
+                  // navigation.navigate("ClientEndOfTrip", {
+
+                  //   params: { viaje_id: viajeIdConfirmado },
+                  // })
+                },
+              },
+            ])
+          }
+        },
+      )
 
       return () => {
         socket.off("viaje_change_track")
+        socket.off("change-notifications_event")
       }
-    }, [viajeIdConfirmado, socket])
+    }, [viajeIdConfirmado, socket.connected])
 
     useEffect(() => {
       // This effect will run after each state update

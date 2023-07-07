@@ -22,7 +22,8 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { ClientNavigator, ClientTabParamList } from "./ClientNavigator"
 import { ClientConfirmationScreen } from "../screens/ClientConfirmationScreen"
 import { DriverNavigator } from "./DriverNavigator"
-import { useSocket } from "app/context/socketContext"
+import { SocketProvider, useSocket } from "app/context/socketContext"
+import { ClientEndOfTripScreen } from "app/screens/ClientEndOfTripScreen"
 // import { ClientNavigator } from "./ClientNavigator"
 
 /**
@@ -72,16 +73,19 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 const AppStack = observer(function AppStack() {
   // @demo remove-block-start
   const {
-    authenticationStore: { isAuthenticated, role, listenLocationUser, socioId },
+    authenticationStore: { isAuthenticated, role, listenLocation, socio_id },
   } = useStores()
   console.log("AppStack => AppNavigator=>>> " + isAuthenticated, role)
   // @demo remove-block-end
   const { join, socket } = useSocket()
 
   React.useEffect(() => {
-    join(listenLocationUser)
-    console.log("AppStack listenLocationUser=>", listenLocationUser)
-  }, [listenLocationUser, socioId, socket.connected])
+    if (isAuthenticated) {
+      join(listenLocation, socio_id)
+      socket.emit("socios_conectados")
+    }
+    console.log(socio_id + " AppStack listenLocationUser=>", listenLocation)
+  }, [listenLocation, socio_id, socket.connected])
 
   // @ts-ignore
   const initialRoute = () => {
@@ -112,6 +116,7 @@ const AppStack = observer(function AppStack() {
             <Stack.Screen name="Client" component={ClientNavigator} />
             <Stack.Screen name="Demo" component={DemoNavigator} />
             <Stack.Screen name="ClientConfirmation" component={ClientConfirmationScreen} />
+            <Stack.Screen name="ClientEndOfTrip" component={ClientEndOfTripScreen} />
           </>
         ) : (
           <>
@@ -149,7 +154,9 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       {...props}
     >
-      <AppStack />
+      <SocketProvider>
+        <AppStack />
+      </SocketProvider>
     </NavigationContainer>
   )
 })

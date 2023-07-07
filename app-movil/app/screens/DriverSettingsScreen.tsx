@@ -26,7 +26,7 @@ interface DriverSettingsScreenProps
 export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
   function DriverSettingsScreen() {
     const {
-      authenticationStore: { logout, listenLocationUser, authEmail, setListenLocation, socioId },
+      authenticationStore: { logout, listenLocationUser, authEmail, setListenLocation, socio_id },
     } = useStores()
     // Pull in navigation via hook
     // const navigation = useNavigation()
@@ -49,7 +49,7 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
           if (res.kind === "ok") {
             console.log("success =>>>>>", res.data.estado)
             setListenLocation(status)
-            socket.emit("socios_conectados", { socio_id: socioId, location })
+            // socket.emit("socios_conectados", { socio_id, location })
             setLoading(false)
           } else {
             setListenLocation(false)
@@ -67,8 +67,8 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
     }
 
     const findSocio = async () => {
-      const socioresponse = await socioService.getById(socioId)
-      console.log({ socioresponse })
+      const socioresponse = await socioService.getById(socio_id)
+      // console.log({ socioresponse })
       if (socioresponse.kind === "ok") {
         console.log(socioresponse.data.estado)
         if (socioresponse.data.estado === "LIBRE") {
@@ -76,7 +76,17 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
         }
       }
     }
-
+    const handlerLogout = async () => {
+      const response = await socioService.changeStatus({
+        state: "SINSERVICO",
+        socio_id: authEmail,
+        location,
+      })
+      if (response.kind === "ok") {
+        setListenLocation(false)
+        logout()
+      }
+    }
     // useEffect(() => {
     //   console.log("listo para unirce", listenLocationUser)
 
@@ -119,7 +129,7 @@ export const DriverSettingsScreen: FC<DriverSettingsScreenProps> = observer(
             {/* <Button style={$button} tx="common.logOut" onPress={logout}/> */}
           </View>
           <View style={$buttonContainer}>
-            <Button style={$button} tx="common.logOut" onPress={logout} />
+            <Button style={$button} tx="common.logOut" onPress={handlerLogout} />
           </View>
         </View>
       </Screen>

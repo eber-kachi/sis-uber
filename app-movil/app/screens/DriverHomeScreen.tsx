@@ -2,15 +2,7 @@
 
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import {
-  Alert,
-  RefreshControl,
-  TextStyle,
-  View,
-  ViewStyle,
-  FlatList,
-  SafeAreaView,
-} from "react-native"
+import { Alert, TextStyle, View, ViewStyle, FlatList, SafeAreaView, Vibration } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { DriverTabScreenProps } from "app/navigators"
 import { Icon, ListItem, Screen, Text } from "app/components"
@@ -29,7 +21,7 @@ interface DriverHomeScreenProps
 
 export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function DriverHomeScreen() {
   const {
-    authenticationStore: { socioId },
+    authenticationStore: { socio_id },
   } = useStores()
 
   // Pull in navigation via hook
@@ -38,26 +30,36 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
   const [viajes, setViajes] = useState<IViaje[]>([])
   const [newViajeActive, setNewViajeActive] = useState<IViaje[]>([])
   const [loading, setLoading] = useState(false)
-  const [refreshing, setRefreshing] = React.useState(false)
 
   const viajeService = new ViajeService()
 
   const listLastTrip = async () => {
-    console.log("listando ultimos viajes => de", socioId)
-    const viajeRes = await viajeService.getLast(socioId)
+    // console.log(socio_id + "  listando ultimos viajes => de", socio_id)
+    const viajeRes = await viajeService.getLast(socio_id)
     if (viajeRes.kind === "ok") {
       // console.log(viajeRes.data)
       setViajes(viajeRes.data)
     }
   }
+  const removeCompletions = (newTripActive: IViaje[], viajes: IViaje[]) => {
+    const newTripActiveWithoutCompletions = []
+    for (const trip of newTripActive) {
+      if (!viajes.some((t) => t.id === trip.id && t.estado === "FINALIZADO")) {
+        newTripActiveWithoutCompletions.push(trip)
+      }
+    }
+    return newTripActiveWithoutCompletions
+  }
+
   useEffect(() => {
-    console.log("socio_events_change")
-    console.log("viajes=>  ", viajes.length)
+    // console.log("socio_events_change")
+    // console.log("viajes=>  ", viajes.length)
 
     // socket.on("socio_events_change_" + socioId, (res) => {
     socket.on("socio_events_change", (res) => {
-      console.log("socio_events_change" + socioId)
-      if (socioId === res.socio_id) {
+      // console.log("socio_events_change" + socio_id)
+      if (socio_id === res.socio_id) {
+        Vibration.vibrate([500, 800, 400])
         // todo solo asigna un viaje
         setNewViajeActive((previusValue) => [...previusValue, res.data])
       }
@@ -65,14 +67,14 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
     return () => {
       // socket.off("socio_events_" + socioId)
     }
-  }, [socioId])
+  }, [socio_id])
   // }, [socioId])
 
   useEffect(() => {
-    if (socioId.length > 1) {
+    if (socio_id.length > 1) {
       listLastTrip()
     }
-  }, [socioId])
+  }, [socio_id])
 
   const apceptTrip = async (viaje_id: string) => {
     // console.log("apceptTrip", viaje_id)
@@ -89,7 +91,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
             const res = await viajeService.changeStatusViajeById({ viaje_id, estado: "CONFIRMADO" })
             if (res.kind === "ok") {
               console.log("apceptTrip", res.kind)
-              socket.emit("asignacion_event_socio", { socio_id: socioId, data: res.data })
+              socket.emit("asignacion_event_socio", { socio_id, data: res.data })
               setLoading(false)
               navigation.navigate("DriverRunTrip", {
                 viaje_id,
@@ -107,7 +109,7 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
             })
             if (res.kind === "ok") {
               console.log("apceptTrip", res.kind)
-              socket.emit("asignacion_event_socio", { socio_id: socioId, data: res.data })
+              socket.emit("asignacion_event_socio", { socio_id, data: res.data })
               setLoading(false)
               setNewViajeActive((viajes) => viajes.filter((item) => item.id !== res.data.id))
             }
@@ -122,8 +124,10 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      if (socioId.length > 1) {
+      if (socio_id.length > 1) {
         listLastTrip()
+        // revisamos si hay duplicado en NewViajeActive y viajes
+        setNewViajeActive((previusValue) => removeCompletions(previusValue, viajes))
       }
     })
     return unsubscribe
@@ -162,62 +166,14 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
         </Text>
         <SafeAreaView style={{ marginTop: 10 }}>
           {viajes.length !== 0 ? (
-            // viajes.map((item, index) => (
-            //   <ListItem key={index} topSeparator style={{ height: 100 }}>
-            //     <View
-            //       style={{
-            //         flexDirection: "column",
-            //         flex: 1,
-            //         height: 50,
-            //         backgroundColor: "red",
-            //       }}
-            //     >
-            //       <Text
-            //         size="xs"
-            //         style={{ justifyContent: "center", alignItems: "flex-start", height: 30 }}
-            //       >
-            //         <Icon
-            //           style={{ alignItems: "flex-start", justifyContent: "center" }}
-            //           size={18}
-            //           icon="BrandgoogleMaps"
-            //         />{" "}
-            //         {item.initial_address}
-            //       </Text>
-
-            //       <Text size="xs" style={{}}>
-            //         <Icon size={20} icon="carService" />
-            //         {item.final_address} {item.initial_address}
-            //       </Text>
-            //       {/* <Text size='xxs'  >Fecha: {item.createdAt}</Text> */}
-            //     </View>
-            //   </ListItem>
-            // ))
             <FlatList
               data={viajes}
               renderItem={({ item, index }) => (
                 <ListItem
                   key={index}
                   topSeparator
-                  RightComponent={
-                    <View
-                      style={{
-                        flex: 1,
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                        alignSelf: "center",
-                      }}
-                    >
-                      {item.estado === "COMPLETADO" && <Icon size={18} icon="checkedSuccess" />}
-                    </View>
-                  }
+                  rightIcon={item.estado === "FINALIZADO" ? "checkedSuccess" : "info"}
                 >
-                  {/* <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  > */}
                   <View
                     style={{
                       flexDirection: "column",
@@ -245,33 +201,13 @@ export const DriverHomeScreen: FC<DriverHomeScreenProps> = observer(function Dri
                     </View>
                     {/* <Text size='xxs'  >Fecha: {item.createdAt}</Text> */}
                   </View>
-
-                  {/* <View
-                      style={{
-                        // alignItems: "center",
-                        flex: 1,
-                      }}
-                    >
-                      {item.estado === "COMPLETADO" ? (
-                        <Icon size={18} icon="carService" />
-                      ) : (
-                        <Icon size={18} icon="carService" />
-                      )}
-                    </View>
-                  </View> */}
                 </ListItem>
               )}
             />
           ) : (
-            // <ListItem topSeparator>
-            //   <View style={{ flex: 1, height: 20 }}>
             <Text size="xs">Sin historial.</Text>
-            //  </View>
-            // </ListItem>
           )}
         </SafeAreaView>
-        {/*  )} */}
-        {/* /> */}
       </View>
     </Screen>
   )
@@ -288,26 +224,14 @@ const $title: TextStyle = {
 }
 const $subTitle: TextStyle = {
   fontFamily: typography.primary.bold,
-  // fontSize: 14,
 }
-// const $flatListStyle: ViewStyle = {
-//   paddingHorizontal: spacing.extraSmall,
-//   backgroundColor: colors.palette.neutral200,
-//   flex: 1,
-//   overflow: "scroll",
-// }
 
 const $secctionTopLast: ViewStyle = {
-  // flex: 1,
-  // flexDirection:"column",
   paddingHorizontal: spacing.extraSmall,
   backgroundColor: colors.palette.neutral200,
 }
 
 const $secctionNewTrip: ViewStyle = {
-  // flex:1,
-  // flexDirection:"column",
-  // height: 80,
   paddingHorizontal: spacing.extraSmall,
   backgroundColor: colors.palette.accent300,
   borderRadius: 20,

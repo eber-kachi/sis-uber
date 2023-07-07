@@ -113,6 +113,7 @@ export const iconRegistry = {
   carService: require("../../assets/icons/car-service.png"),
   locationUser: require("../../assets/icons/location-user.png"),
   checkedSuccess: require("../../assets/icons/checked-success.png"),
+  info: require("../../assets/icons/info.png"),
 }
 
 const $imageStyle: ImageStyle = {

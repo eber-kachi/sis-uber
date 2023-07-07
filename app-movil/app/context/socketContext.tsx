@@ -1,9 +1,7 @@
+/* eslint-disable camelcase */
 import React, { createContext, useState, useContext } from "react"
 import { io, Socket } from "socket.io-client"
 import { DEFAULT_API_CONFIG } from "../services/api/api"
-import { useStores } from "app/models"
-import { boolean } from "mobx-state-tree/dist/internal"
-import { log } from "react-native-reanimated"
 
 // export const socket = socketio.connect(SOCKET_URL)
 
@@ -12,35 +10,33 @@ const SocketContext = createContext<{
   socket: Socket
   connect: () => void
   disconnect: () => void
-  join: (status: boolean) => void
+  join: (status: boolean, socio_id: string) => void
 }>(null)
 
 const SocketProvider = ({ children }) => {
-  const {
-    authenticationStore: { socioId },
-  } = useStores()
-
   const [socket, setSocket] = useState(() => {
-    console.log("conect with socket privider....")
-    return io(DEFAULT_API_CONFIG.url, { query: {}, transports: ["websocket"] })
+    if (!socket) {
+      console.log("conect with socket privider....")
+      return io(DEFAULT_API_CONFIG.url, { query: {}, transports: ["websocket"] })
+    }
   })
 
   const connect = () => {
     // const socket = io(DEFAULT_API_CONFIG.url, { query: {} })
     // setSocket(socket.connect())
-    console.log("conect with socket privider....")
+    // console.log("conect with socket privider....")
   }
 
-  const join = (status: boolean) => {
+  const join = (status: boolean, socio_id: string) => {
     // console.warn("socio join =>", { status, socioId })
-    console.warn(`status=> ${status} socioId !== "" ${socioId !== ""} S=> ${socioId}`)
+    // console.warn(`status=> ${status} socioId !=="" ${socio_id !== ""} S=> ${socio_id}`)
 
-    if (status && socioId !== "") {
-      socket.emit("socio_join", socioId)
-      console.log("socio_join  socioId=> ", socioId)
+    if (status && socio_id !== "") {
+      socket.emit("socio_join", socio_id)
+      console.log("socio_join  socioId=> ", socio_id)
     } else {
-      socket.emit("socio_leave", socioId.length && socioId)
-      console.log("socio_leave => socioId=> ", socioId)
+      socket.emit("socio_leave", socio_id)
+      console.log("socio_leave => socioId=> ", socio_id)
     }
   }
 

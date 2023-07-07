@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { FC, useEffect, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { Dimensions, View, ViewStyle } from "react-native"
@@ -14,9 +15,15 @@ import MapViewDirections from "react-native-maps-directions"
 import { GOOGLE_MAP_SERVER_KEY } from "../services/googleMapsApi"
 import * as Location from "expo-location"
 import { useSocket } from "app/context/socketContext"
-import { LocationSubscriber } from "expo-location/build/LocationSubscribers"
 
-const carImage = require("../../assets/images/app/car.png")
+interface ILocation {
+  latitude: number
+  longitude: number
+  latitudeDelta: number
+  longitudeDelta: number
+}
+
+const carPlomoImg = require("../../assets/images/app/car.png")
 const locationClient = require("../../assets/images/app/location-user.png")
 
 interface DriverRunTripScreenProps
@@ -27,20 +34,21 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
     // @ts-ignore
     // eslint-disable-next-line camelcase
     const { viaje_id } = _props.route.params
+    const { navigation } = _props
+
     const viajeService = new ViajeService()
     const [viaje, setViaje] = useState<IViaje>(null)
     const [loading, setLoading] = useState(false)
     const [goOrigin, setGoOrigin] = useState(true)
     const [goDestination, setGoDestination] = useState(false)
     const mapRef = useRef<MapView>()
-    const [currentLocation, setCurrentLocation] = useState(null)
+    const [currentLocation, setCurrentLocation] = useState<ILocation>(null)
     const { socket } = useSocket()
     const [tracking, setTracking] = useState(true)
-    const [position, setPosition] = useState(null)
     const watcherRef = useRef<Location.LocationSubscription>()
 
     const {
-      authenticationStore: { socioId },
+      authenticationStore: { socio_id },
     } = useStores()
 
     useEffect(() => {
@@ -82,21 +90,26 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
           },
           (location) => {
             socket.emit("viaje_track", {
-              socio_id: socioId,
+              socio_id,
               position: {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
               },
             })
-            console.log(
-              "actualizando posision  =>",
-              location.coords.latitude,
-              location.coords.longitude,
-            )
-            setPosition({
+            // console.log(
+            //   "actualizando posision  =>",
+            //   location.coords.latitude,
+            //   location.coords.longitude,
+            // )
+            setCurrentLocation((locations) => ({
+              ...locations,
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
-            })
+            }))
+            // setPosition({
+            //   latitude: location.coords.latitude,
+            //   longitude: location.coords.longitude,
+            // })
             // setGps({
             //   location: {
             //     lat: location.coords.latitude,
@@ -172,12 +185,22 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
       // notificar llegada  o comenzar viaje
       if (goOrigin) {
         console.log("Notificar llegada")
-        socket.emit("change_notifications", { socio_id: socioId, message: "llegue al lugar" })
+        socket.emit("change_notifications", {
+          socio_id,
+          message: "Llegue al lugar indicado.",
+        })
 
         setGoOrigin(false)
       } else if (!goDestination) {
         console.log("Notificar ir al destino ")
-        socket.emit("", "viaje en transcurso")
+        socket.emit("change_notifications", {
+          socio_id,
+          message: "Empezamos Viaje...",
+          type: "COMENZAR",
+        })
+
+        const res = await viajeService.changeStatusViajeById({ estado: "FINALIZADO", viaje_id })
+
         setGoDestination(true)
       } else {
         // finalizado
@@ -187,11 +210,16 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
         //   .then((res: any) => {
         // console.log(res.kind)
         if (res.kind === "ok") {
-          socket.emit("", res.data)
+          socket.emit("change_notifications", {
+            socio_id,
+            type: "FINALIZADO",
+            message: "Viaje finalizado gracias por su preferencia.",
+          })
           console.log(res.data)
           setViaje(res.data)
           setLoading(false)
           setTracking(false)
+          navigation.navigate("DriverHome")
         }
         setGoDestination(false)
       }
@@ -227,12 +255,11 @@ export const DriverRunTripScreen: FC<DriverRunTripScreenProps> = observer(
             )}
             {currentLocation && (
               <Marker
-                draggable
                 coordinate={{
                   latitude: currentLocation ? currentLocation.latitude : 0,
                   longitude: currentLocation ? currentLocation.longitude : 0,
                 }}
-                image={carImage}
+                image={carPlomoImg}
               />
             )}
             {currentLocation && goOrigin && (

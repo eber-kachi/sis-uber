@@ -5,9 +5,10 @@ import { observer } from "mobx-react-lite"
 import { Alert, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
+import { Screen, Text, Button } from "app/components"
 import { spacing } from "../theme"
 import ViajeService from "app/services/api/viaje.service"
+import { Rating } from "react-native-ratings"
 
 interface ClientEndOfTripScreenProps
   extends NativeStackScreenProps<AppStackScreenProps<"ClientEndOfTrip">> {}
@@ -15,7 +16,7 @@ interface ClientEndOfTripScreenProps
 export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
   function ClientEndOfTripScreen(_props) {
     // @ts-ignore
-    const { viaje_id } = _props.route.params
+    const viaje_id = _props.route.params?.viaje_id
 
     const viajeService = new ViajeService()
     // @ts-ignore
@@ -24,48 +25,38 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
 
     // Pull in navigation via hook
     // const navigation = useNavigation()
+    const { navigation } = _props
 
-    const [rating, setRating] = useState(0)
-    const [comment, setComment] = useState("")
-    const [viaje, setViaje] = useState(null)
+    const [rating, setRating] = useState<number>(1)
 
     const handleRatingChange = (value) => {
       setRating(value)
     }
 
-    const handleCommentChange = (value) => {
-      setComment(value)
-    }
-    const getviaje = async () => {
-      const viajeres = await viajeService.getById(viaje_id)
-      if (viajeres.kind === "ok") {
-        setViaje(viajeres.data)
-      }
-    }
-
     useEffect(() => {
       // obtener viaje para poder alificar
-      getviaje()
     }, [])
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       if (rating === 0) {
         Alert.alert("Error", "Por favor, seleccione una calificación.")
         return
       }
 
       // Aquí puedes realizar la lógica de envío de calificación y comentarios al backend
+      const response = await viajeService.setRating({ viaje_id, calificacion: rating })
+      if (response.kind === "ok") {
+        // Mostrar un mensaje de confirmación
+        Alert.alert("¡Gracias!", "Calificación y comentarios enviados exitosamente.")
 
-      // Mostrar un mensaje de confirmación
-      Alert.alert("¡Gracias!", "Calificación y comentarios enviados exitosamente.")
-
-      // Reiniciar los valores de calificación y comentarios
-      setRating(0)
-      setComment("")
+        // Reiniciar los valores de calificación y comentarios
+        setRating(1)
+        navigation.navigate("ClientSearchLocation")
+      }
     }
 
     return (
-      <Screen style={$root} preset="scroll">
+      <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
         <Text style={$title}>Finalización de Viaje</Text>
         <View style={{ flex: 1, height: 80 }}>
           <Text style={styles.ratingLabel}>detalles del viaje:</Text>
@@ -73,31 +64,33 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
 
         <View style={$ratingContainer}>
           <Text style={styles.ratingLabel}>Calificación:</Text>
+          <Rating
+            type="star"
+            ratingCount={5}
+            imageSize={30}
+            showRating
+            minValue={1}
+            onFinishRating={handleRatingChange}
+          />
           {/* Componente de selección de calificación (por ejemplo, estrellas) */}
           {/* Implementa la lógica para actualizar el estado de la calificación */}
         </View>
-        <View style={styles.commentContainer}>
-          <Text style={styles.commentLabel}>Comentarios:</Text>
-          {/* <TextInput */}
-          {/*  style={styles.commentInput} */}
-          {/*  multiline */}
-          {/*  placeholder="Escribe tus comentarios aquí" */}
-          {/*  value={comment} */}
-          {/*  onChangeText={handleCommentChange} */}
-          {/* /> */}
+        <View style={$buttonContainer}>
+          <Button style={$button} tx="common.logOut" onPress={handleSubmit} />
         </View>
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={$submitButton}>Enviar</Text>
-        </TouchableOpacity>
       </Screen>
     )
   },
 )
 
-const $root: ViewStyle = {
-  flex: 1,
+const $container: ViewStyle = {
+  paddingTop: spacing.large + spacing.extraLarge,
+  paddingBottom: spacing.huge,
+  paddingHorizontal: spacing.large,
 }
-
+const $button: ViewStyle = {
+  marginBottom: spacing.extraSmall,
+}
 const $title: TextStyle = {
   marginBottom: spacing.small,
   fontSize: 24,
@@ -114,7 +107,10 @@ const $ratingContainer: ViewStyle = {
 const $submitButton: TextStyle = {
   marginBottom: spacing.small,
 }
-
+const $buttonContainer: ViewStyle = {
+  marginBottom: spacing.medium,
+  marginTop: spacing.medium,
+}
 const styles = {
   container: {
     flex: 1,

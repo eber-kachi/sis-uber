@@ -48,7 +48,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
     // Make a request to your server to get an authentication token.
     service
       .login({ email: authEmail, password: authPassword })
-      .then((res: any) => {
+      .then(async (res: any) => {
         console.log("todo bien =>>>>", res)
         // If successful, reset the fields and set the token.
         setIsSubmitted(false)
@@ -61,10 +61,13 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
             setAuthEmail(res.data.user.email)
             setRole(res.data.user.role)
             setAuthToken(res.data.token.accessToken)
-            fetchUserByEmail()
+            await fetchUserByEmail()
           }
           if (res.data.user.role === "DRIVER") {
-            // setListenLocation()
+            // // setListenLocation()
+            // // eslint-disable-next-line camelcase
+            // const { socio_id } = await fetchUserByEmail()
+            // setSocioId(socio_id)
           }
         }
       })
