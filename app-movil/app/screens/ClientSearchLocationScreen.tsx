@@ -45,14 +45,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
 
     // Pull in navigation via hook
     const navigation = useNavigation()
-    const { socket } = useSocket()
 
-    const [initialRegion, setInitialRegion] = useState({
-      latitude: -17.394228156430533,
-      longitude: -66.28467617356642,
-      latitudeDelta,
-      longitudeDelta,
-    })
     const mapRef = useRef<MapView>()
 
     const [addressInitial, setAddressInitial] = useState("")
@@ -62,8 +55,6 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
     const [addressFinal, setAddressFinal] = useState("")
     const [destinoLocationFinal, setDestinoLocationFinal] = useState(null)
 
-    const [address, setAddress] = useState("")
-    const [city, setCity] = useState("")
     const [locationRejected, setLocationRejected] = useState(false)
 
     // pedir permisos a la aplicacion para usar geolocation
@@ -210,40 +201,12 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
       geolocation()
     }, [])
 
-    // useEffect(() => {
-    //   console.log("region", region)
-    // }, [region])
-
-    useEffect(() => {
-      // setDestinoLocationInitial(null)
-      // setDestinoLocationFinal(null)
-
-      if (!locationRejected) {
-        setTimeout(() => {
-          // poner de la base de datos
-          // mapRef.current.animateToRegion({
-          //   latitude: -17.394228156430533,
-          //   longitude: -66.28467617356642,
-          //   latitudeDelta: latitudeDelta,
-          //   longitudeDelta: longitudeDelta
-          // });
-        }, 1000)
-      } else {
-        // -17.394228156430533, -66.28467617356642
-      }
-    }, [mapRef.current])
-
     // GooglePlaceData
     async function onPressDestinationChange(data: GooglePlaceData, details: GooglePlaceDetail) {
-      console.log(data.place_id)
       const res: any = await getcoords(data.place_id)
-      // console.log("onPressDestinationChange", res.coords.lat, res.coords.lng)
 
       if (res) {
         const coordinates = [destinoLocationInitial, destinoLocationFinal]
-
-        // console.log("coordinates", coordinates)
-
         setDestinoLocationFinal({
           latitude: res.coords.lat,
           longitude: res.coords.lng,
@@ -255,31 +218,27 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
             // edgePadding: DEFAULT_PADDING,
             animated: true,
           })
-        }, 1000)
+          // sacamos el texto de la direcion final
+          Geocoder.from(res.coords.lat, res.coords.lng)
+            .then((json) => {
+              const formatted_address = json.results[0].formatted_address
+              const city_address = json.results[5].formatted_address.split(",")[0]
+              console.log("setAddressFinal", formatted_address)
 
-        // mapRef.current.animateToRegion({
-        //   latitude:res.coords.lat,
-        //   longitude: res.coords.lng,
-        //   latitudeDelta,
-        //   longitudeDelta,
-        // })
+              setAddressFinal(formatted_address)
+            })
+            .catch((error) => console.warn(error))
+        }, 1000)
       }
     }
 
     function handlerClickInitaRoute(): void {
-      // navigation.navigate("ClientConfirmation", {
-      //   screen: "ClientConfirmationScreen",
-      //   params: {
-      //     origin: "",
-      //     destino: "",
-      //   },
-      // })
       navigation.navigate("ClientConfirmation", {
         origin: destinoLocationInitial,
         destination: destinoLocationFinal,
         viaje: {
-          orgin: addressInitial,
-          destination: "",
+          origin: addressInitial,
+          destination: addressFinal,
         },
       })
 
@@ -342,7 +301,7 @@ export const ClientSearchLocationScreen: FC<ClientSearchLocationScreenProps> = o
 
           <GooglePlacesAutocomplete
             placeholder="Busca el Destino"
-            onPress={(data, details = null) => onPressDestinationChange(data, details)}
+            onPress={(data, details) => onPressDestinationChange(data, details)}
             query={{ key: "AIzaSyDL11CwUA9M76UsmwAMOEf3UsXR2sWnSRk" }}
             fetchDetails={true}
             onFail={(error) => console.log(error)}

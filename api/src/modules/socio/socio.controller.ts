@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -86,7 +87,13 @@ export class SocioController {
 
         if (user.socio) {
           const socio = await this.socioService.findOne(user.socio.id);
-          const fechaActual = new Date();
+          console.log(new Date().getHours());
+          const time = 24 * 60 * 60 * 1000;
+          const fechaActual =
+            new Date().getHours() >= 0 && new Date().getHours() <= 5
+              ? new Date(new Date().getTime() - time)
+              : new Date();
+
           const fechaActualString = format(fechaActual, 'yyyy-MM-dd HH:mm:ss');
 
           if (socio.grupotrabajo) {
@@ -313,7 +320,7 @@ export class SocioController {
 
     const startTimeDate = new Date(startTime);
     const endTimeDate = new Date(endTime);
-    const currentHourDate = new Date(currentHour);
+    const currentHourDate = new Date();
 
     const startTimeTimestamp = startTimeDate.getTime();
     const endTimeTimestamp = endTimeDate.getTime();

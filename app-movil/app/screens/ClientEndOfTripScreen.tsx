@@ -2,13 +2,16 @@
 
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Alert, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Alert, TextStyle, Image, View, ViewStyle, ImageStyle } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { AppStackScreenProps } from "app/navigators"
 import { Screen, Text, Button } from "app/components"
 import { spacing } from "../theme"
 import ViajeService from "app/services/api/viaje.service"
 import { Rating } from "react-native-ratings"
+import { isRTL } from "expo-localization"
+
+const welcomeFace = require("../../assets/images/splash-logo-all.png")
 
 interface ClientEndOfTripScreenProps
   extends NativeStackScreenProps<AppStackScreenProps<"ClientEndOfTrip">> {}
@@ -57,9 +60,14 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
 
     return (
       <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
-        <Text style={$title}>Finalización de Viaje</Text>
+        <Text style={$title}>Viaje finalizado</Text>
+        <Image style={$welcomeFace} source={welcomeFace} resizeMode="contain" />
+
         <View style={{ flex: 1, height: 80 }}>
-          <Text style={styles.ratingLabel}>detalles del viaje:</Text>
+          <Text style={styles.ratingLabel}>
+            Estamos comprometidos a proporcionar un excelente servicio al cliente, por lo que puede
+            estar seguro de que está en buenas manos.
+          </Text>
         </View>
 
         <View style={$ratingContainer}>
@@ -68,7 +76,7 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
             type="star"
             ratingCount={5}
             imageSize={30}
-            showRating
+            // showRating
             minValue={1}
             onFinishRating={handleRatingChange}
           />
@@ -76,7 +84,7 @@ export const ClientEndOfTripScreen: FC<ClientEndOfTripScreenProps> = observer(
           {/* Implementa la lógica para actualizar el estado de la calificación */}
         </View>
         <View style={$buttonContainer}>
-          <Button style={$button} tx="common.logOut" onPress={handleSubmit} />
+          <Button style={$button} text="Enviar" onPress={handleSubmit} />
         </View>
       </Screen>
     )
@@ -99,11 +107,19 @@ const $title: TextStyle = {
 const $ratingContainer: ViewStyle = {
   paddingVertical: spacing.micro,
   paddingHorizontal: spacing.medium,
-  flexDirection: "row",
+  flexDirection: "column",
   alignItems: "center",
+  justifyContent: "center",
   marginBottom: 16,
 }
-
+const $welcomeFace: ImageStyle = {
+  height: 169,
+  width: 269,
+  position: "absolute",
+  bottom: -47,
+  right: -80,
+  transform: [{ scaleX: isRTL ? -1 : 1 }],
+}
 const $submitButton: TextStyle = {
   marginBottom: spacing.small,
 }
@@ -129,8 +145,10 @@ const styles = {
     marginBottom: 16,
   },
   ratingLabel: {
-    fontSize: 16,
+    fontSize: 18,
     marginRight: 8,
+    marginTop: 5,
+    marginBottom: 8,
   },
   commentContainer: {
     marginBottom: 16,

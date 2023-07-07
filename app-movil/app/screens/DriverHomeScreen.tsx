@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable camelcase */
 
 import React, { FC, useEffect, useState } from "react"

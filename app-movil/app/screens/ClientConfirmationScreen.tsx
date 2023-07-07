@@ -167,7 +167,7 @@ export const ClientConfirmationScreen: FC<ClientConfirmationScreenProps> = obser
 
           end_latitude: destination.latitude,
           end_longitude: destination.longitude,
-          initial_address: viajeAddress.orgin,
+          initial_address: viajeAddress.origin,
           final_address: viajeAddress.destination,
           user_email: authEmail,
           estado: "pendiente_confirmacion",
