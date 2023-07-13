@@ -1,21 +1,20 @@
 $enable-negative-margins: true;
 
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
-@import "layout/avatar";
-@import "layout/footer";
-@import "layout/header";
-@import "layout/progress";
-@import "layout/sidebar";
+@import 'layout/avatar';
+@import 'layout/footer';
+@import 'layout/header';
+@import 'layout/progress';
+@import 'layout/sidebar';
 
-@import "~nprogress/nprogress.css";
+@import '~nprogress/nprogress.css';
 
-@import "_custom";
+@import '_custom';
 
-.rotate-45{
+.rotate-45 {
   transform: rotate(45deg);
 }
-
 
 //.-mt-5{
 //  margin-top: -30px;
@@ -28,5 +27,68 @@ $enable-negative-margins: true;
 //  border-radius:  0.3rem;
 //  color: white;
 //}
+.bg-light {
+  background: #dcdde9 !important;
+}
 
+// .btn-success {
+//   background-color: #41476e;
+// }
+.btn-success {
+  color: #ffffff;
+  background-color: #41476e !important;
+  border-color: #41476e !important;
+}
 
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.active,
+.open .dropdown-toggle.btn-success {
+  color: #ffffff;
+  background-color: #41476e !important;
+  border-color: #41476e !important;
+}
+
+.btn-success:active,
+.btn-success.active,
+.open .dropdown-toggle.btn-success {
+  background-image: none;
+  color: #ffffff;
+  background-color: #41476e !important;
+  border-color: #41476e !important;
+}
+
+.btn-success.disabled,
+.btn-success[disabled],
+fieldset[disabled] .btn-success,
+.btn-success.disabled:hover,
+.btn-success[disabled]:hover,
+fieldset[disabled] .btn-success:hover,
+.btn-success.disabled:focus,
+.btn-success[disabled]:focus,
+fieldset[disabled] .btn-success:focus,
+.btn-success.disabled:active,
+.btn-success[disabled]:active,
+fieldset[disabled] .btn-success:active,
+.btn-success.disabled.active,
+.btn-success[disabled].active,
+fieldset[disabled] .btn-success.active {
+  background-color: #41476e !important;
+  border-color: #41476e !important;
+}
+
+.btn-success .badge {
+  color: #41476e !important;
+  background-color: #ffffff !important;
+}
+
+// :checked}
+.form-check-input:checked {
+  background-color: #41476e !important;
+  border-color: #41476e !important;
+}
+
+.text-title {
+  color: #41476e;
+}

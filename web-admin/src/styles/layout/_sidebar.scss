@@ -1,17 +1,17 @@
-$sidebar-background: #fdfdfd;
+$sidebar-background: #fbfbfb;
 // $sidebar-text-color: rgba(255, 255, 255, 0.6);
-$sidebar-text-color: rgb(39, 39, 39);
+$sidebar-text-color: #41476e;
 $sidebar-brand-height: 4rem;
-$sidebar-brand-background: rgba(188, 214, 213, 0.2);
-$sidebar-nav-group-background: rgba(0, 0, 0, 0.2);
-$sidebar-link-color: rgba(32, 32, 32, 0.6);
-$sidebar-link-color-hover: rgba(255, 255, 255, 0.87);
+$sidebar-brand-background: #fbfbfb;
+$sidebar-nav-group-background: #fbfbfb;
+$sidebar-link-color: #9196b9;
+$sidebar-link-color-hover: #626894;
 $sidebar-link-background-hover: rgba(255, 255, 255, 0.05);
 $sidebar-toggler-height: 3rem;
-$sidebar-toggler-background: rgba(0, 0, 21, 0.2);
-$sidebar-toggler-background-hover: rgba(0, 0, 0, 0.3);
-$sidebar-toggler-color: rgba(255, 255, 255, 0.6);
-$sidebar-toggler-color-hover: #ffffff;
+$sidebar-toggler-background: rgb(251, 251, 251, 0.4);
+$sidebar-toggler-background-hover: rgb(251, 251, 251, 0.6);
+$sidebar-toggler-color: #626894;
+$sidebar-toggler-color-hover: #41476e;
 $sidebar-z-index: $zindex-fixed; // Default 1030
 $sidebar-overlay-z-index: 1025;
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AdminLayout } from '@layout/index';
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { Button, Col, Form, InputGroup, Row, Card } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import GrupoTrabajoService from 'src/services/api/GrupoTrabajo.service';
 
@@ -66,83 +66,92 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
     <AdminLayout>
       <div className='row'>
         <div className='col'>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Row>
-              <Col xs={12} md={12}>
-                <Form.Group className='mb-3' controlId='formBasicPassword'>
-                  <Form.Label>Nombre </Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder=''
-                    {...register('nombre', { required: 'Es requerido' })}
-                  />
-                  {errors.nombre?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.nombre?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3' controlId='formBasicPassword'>
-                  <Form.Label>Hora inicio</Form.Label>
-                  <Form.Control
-                    type='time'
-                    placeholder=''
-                    {...register('hora_inicio', {
-                      required: 'C.I es requerido',
-                    })}
-                  />
-                  {errors.hora_inicio?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.hora_inicio?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3' controlId='formBasicPassword'>
-                  <Form.Label>Horas trabajo </Form.Label>
-                  <Form.Control
-                    type='number'
-                    min='1'
-                    max='24'
-                    placeholder=''
-                    {...register('hora_fin', {
-                      required: 'Nacionalidad es requerido',
-                    })}
-                  />
-                  {errors.hora_fin?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.hora_fin?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
+          <div>
+            <h3 className='text-title text-center'>{`${
+              isnew ? 'Crear ' : 'Editar'
+            } grupo trabajo`}</h3>
+          </div>
+          <Card>
+            <Card.Body>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Row>
+                  <Col xs={12} md={12}>
+                    <Form.Group className='mb-3' controlId='formBasicPassword'>
+                      <Form.Label>Nombre </Form.Label>
+                      <Form.Control
+                        type='text'
+                        placeholder=''
+                        {...register('nombre', { required: 'Es requerido' })}
+                      />
+                      {errors.nombre?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.nombre?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3' controlId='formBasicPassword'>
+                      <Form.Label>Hora inicio</Form.Label>
+                      <Form.Control
+                        type='time'
+                        placeholder=''
+                        {...register('hora_inicio', {
+                          required: 'C.I es requerido',
+                        })}
+                      />
+                      {errors.hora_inicio?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.hora_inicio?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3' controlId='formBasicPassword'>
+                      <Form.Label>Horas trabajo </Form.Label>
+                      <Form.Control
+                        type='number'
+                        min='1'
+                        max='24'
+                        placeholder=''
+                        {...register('hora_fin', {
+                          required: 'Nacionalidad es requerido',
+                        })}
+                      />
+                      {errors.hora_fin?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.hora_fin?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
 
-            <div className='d-flex justify-content-center'>
-              <Button
-                className='w-25 m-4'
-                type='submit'
-                variant='outline-success'
-              >
-                Guardar
-              </Button>
-              <Button
-                className='m-4'
-                variant='outline-danger'
-                type='button'
-                onClick={() => {
-                  router.back();
-                }}
-              >
-                Cerrar
-              </Button>
-            </div>
-          </form>
+                <div className='d-flex justify-content-center'>
+                  <Button
+                    className='w-25 m-4'
+                    type='submit'
+                    variant='outline-success'
+                  >
+                    Guardar
+                  </Button>
+                  <Button
+                    className='m-4'
+                    variant='outline-danger'
+                    type='button'
+                    onClick={() => {
+                      router.back();
+                    }}
+                  >
+                    Cerrar
+                  </Button>
+                </div>
+              </form>
+            </Card.Body>
+          </Card>
         </div>
       </div>
     </AdminLayout>

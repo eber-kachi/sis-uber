@@ -1,65 +1,64 @@
-import { AdminLayout } from '@layout/index'
-import React, { useEffect, useState } from 'react'
-import Table from 'react-bootstrap/Table'
-import Button from 'react-bootstrap/Button'
-import { toast } from 'react-toastify'
-import { IUser } from 'src/services/models/user.model'
-import { AxiosError } from 'axios'
-import Link from 'next/link'
-import UserService from '../../../services/api/User.service'
+import { AdminLayout } from '@layout/index';
+import React, { useEffect, useState } from 'react';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import { toast } from 'react-toastify';
+import { IUser } from 'src/services/models/user.model';
+import { AxiosError } from 'axios';
+import Link from 'next/link';
+import { Card } from 'react-bootstrap';
+import UserService from '../../../services/api/User.service';
 
 const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
   // console.log("user value=>", userValue)
-  console.log('list=>', dataResponce)
-  const clienteService = new UserService()
-  const [modalShow, setModalShow] = useState(false)
-  const [objects, setObjects] = useState<IUser[]>(
-    dataResponce || [],
-  )
+  console.log('list=>', dataResponce);
+  const clienteService = new UserService();
+  const [modalShow, setModalShow] = useState(false);
+  const [objects, setObjects] = useState<IUser[]>(dataResponce || []);
 
   const getData = async () => {
-    const responce: any = await clienteService.getAll()
+    const responce: any = await clienteService.getAll();
     // filtamos solo para editar usuarios que acceden al web-admin
     const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
       if (['USER', 'ADMIN'].includes(user.role)) {
-        return [...users, user]
+        return [...users, user];
       }
-      return users
-    }, [])
-    setObjects(usersfinaly)
-  }
+      return users;
+    }, []);
+    setObjects(usersfinaly);
+  };
 
   const onClickDelete = (id: string) => {
     clienteService
       .delete(id)
       .then((res) => {
-        console.log(res)
-        toast('Eliminado con exito.')
-        getData()
+        console.log(res);
+        toast('Eliminado con exito.');
+        getData();
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         if (error instanceof AxiosError) {
-          toast.error(error.message)
+          toast.error(error.message);
         }
-      })
-  }
+      });
+  };
 
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
 
   return (
     <AdminLayout>
-      <div className="row">
-        <div className="m-2 d-flex flex flex-row justify-content-between">
+      <div className='row'>
+        <div className='p-2 d-flex flex flex-row justify-content-between'>
           <div>
-            <h3>Lista de usuarios</h3>
+            <h3 className='text-title'>Lista de usuarios</h3>
           </div>
           <div>
             <Link
-              className="btn btn-success"
+              className='btn btn-success'
               href={{
                 pathname: '/dashboard/users/[id]',
                 query: { id: 'new' },
@@ -69,51 +68,55 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
             </Link>
           </div>
         </div>
-
-        <Table striped>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Correo electrónico</th>
-              <th>Rol</th>
-              {/* <th>Licencia</th> */}
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {objects.length > 0 &&
-              objects.map((object, index) => (
-                <tr key={object.id}>
-                  <td>{++index}</td>
-                  <td>{object.email}</td>
-
-                  <td>{object.role}</td>
-                  <td>
-                    <div className="">
-                      <Link
-                        title="Editar"
-                        className="btn btn-warning"
-                        href={{
-                          pathname: '/dashboard/users/[id]',
-                          query: { id: object.id },
-                        }}
-                      >
-                        Editar
-                      </Link>
-                      <Button
-                        title="Eliminar"
-                        variant="outline-danger"
-                        onClick={() => onClickDelete(object.id)}
-                      >
-                        Eliminar
-                      </Button>
-                    </div>
-                  </td>
+        <Card>
+          <Card.Body>
+            <Table striped responsive size='sm'>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Correo electrónico</th>
+                  <th>Rol</th>
+                  {/* <th>Licencia</th> */}
+                  <th>Acciones</th>
                 </tr>
-              ))}
-          </tbody>
-        </Table>
+              </thead>
+              <tbody>
+                {objects.length > 0 &&
+                  objects.map((object, index) => (
+                    <tr key={object.id}>
+                      <td>{++index}</td>
+                      <td>{object.email}</td>
+
+                      <td>{object.role}</td>
+                      <td>
+                        <div className=''>
+                          <Link
+                            title='Editar'
+                            className='btn btn-warning'
+                            href={{
+                              pathname: '/dashboard/users/[id]',
+                              query: { id: object.id },
+                            }}
+                          >
+                            Editar
+                          </Link>
+                          <Button
+                            title='Eliminar'
+                            variant='outline-danger'
+                            onClick={() => onClickDelete(object.id)}
+                          >
+                            Eliminar
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Card>
       </div>
+
       {/* onSave={()=> {}} */}
       {/* <CustomModal */}
       {/*  show={modalShow} */}
@@ -125,8 +128,8 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
       {/*  <h1>Hola como estas desde la lista </h1> */}
       {/* </CustomModal> */}
     </AdminLayout>
-  )
-}
+  );
+};
 
 // export async function getServerSideProps(context) {
 //   const service = new UserService();
@@ -139,4 +142,4 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
 //   };
 // }
 
-export default UserListPage
+export default UserListPage;

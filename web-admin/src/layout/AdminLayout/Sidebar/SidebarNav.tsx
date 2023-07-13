@@ -1,11 +1,11 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAddressCard,
   faBell,
   faFileLines,
   faStar,
   IconDefinition,
-} from '@fortawesome/free-regular-svg-icons'
+} from '@fortawesome/free-regular-svg-icons';
 import {
   faBug,
   faCalculator,
@@ -27,13 +27,13 @@ import {
   faUserCircle,
   faBookAtlas,
   faGroupArrowsRotate,
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 import React, {
   PropsWithChildren,
   useContext,
   useEffect,
   useState,
-} from 'react'
+} from 'react';
 import {
   Accordion,
   AccordionContext,
@@ -41,143 +41,171 @@ import {
   Button,
   Nav,
   useAccordionButton,
-} from 'react-bootstrap'
-import classNames from 'classnames'
-import Link from 'next/link'
+} from 'react-bootstrap';
+import classNames from 'classnames';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 type SidebarNavItemProps = {
   href: string;
   icon?: IconDefinition;
-} & PropsWithChildren
+} & PropsWithChildren;
 
 const SidebarNavItem = (props: SidebarNavItemProps) => {
-  const { icon, children, href } = props
+  const { icon, children, href } = props;
+
+  const router = useRouter();
+  console.log(router);
+
+  const isActive = router.path === href;
 
   return (
     <Nav.Item>
       <Link href={href} passHref legacyBehavior>
-        <Nav.Link className="px-3 py-2 d-flex align-items-center">
+        <Nav.Link
+          className={`px-3 py-2 d-flex align-items-center ${
+            isActive ? 'active' : ''
+          }`}
+        >
           {icon ? (
-            <FontAwesomeIcon className="nav-icon ms-n3" icon={icon} />
+            <FontAwesomeIcon className='nav-icon ms-n3' icon={icon} />
           ) : (
-            <span className="nav-icon ms-n3" />
+            <span className='nav-icon ms-n3' />
           )}
           {children}
         </Nav.Link>
       </Link>
     </Nav.Item>
-  )
-}
+  );
+};
 
 const SidebarNavTitle = (props: PropsWithChildren) => {
-  const { children } = props
+  const { children } = props;
 
   return (
-    <li className="nav-title px-3 py-2 mt-3 text-uppercase fw-bold">
+    <li className='nav-title px-3 py-2 mt-3 text-uppercase fw-bold'>
       {children}
     </li>
-  )
-}
+  );
+};
 
 type SidebarNavGroupToggleProps = {
   eventKey: string;
   icon: IconDefinition;
   setIsShow: (isShow: boolean) => void;
-} & PropsWithChildren
+} & PropsWithChildren;
 
 const SidebarNavGroupToggle = (props: SidebarNavGroupToggleProps) => {
   // https://react-bootstrap.github.io/components/accordion/#custom-toggle-with-expansion-awareness
-  const { activeEventKey } = useContext(AccordionContext)
-  const { eventKey, icon, children, setIsShow } = props
+  const { activeEventKey } = useContext(AccordionContext);
+  const { eventKey, icon, children, setIsShow } = props;
 
-  const decoratedOnClick = useAccordionButton(eventKey)
+  const decoratedOnClick = useAccordionButton(eventKey);
 
-  const isCurrentEventKey = activeEventKey === eventKey
+  const isCurrentEventKey = activeEventKey === eventKey;
 
   useEffect(() => {
-    setIsShow(activeEventKey === eventKey)
-  }, [activeEventKey, eventKey, setIsShow])
+    setIsShow(activeEventKey === eventKey);
+  }, [activeEventKey, eventKey, setIsShow]);
 
   return (
     <Button
-      variant="link"
-      type="button"
+      variant='link'
+      type='button'
       className={classNames(
         'rounded-0 nav-link px-3 py-2 d-flex align-items-center flex-fill w-100 shadow-none',
         {
           collapsed: !isCurrentEventKey,
-        },
+        }
       )}
       onClick={decoratedOnClick}
     >
-      <FontAwesomeIcon className="nav-icon ms-n3" icon={icon} />
+      <FontAwesomeIcon className='nav-icon ms-n3' icon={icon} />
       {children}
-      <div className="nav-chevron ms-auto text-end">
-        <FontAwesomeIcon size="xs" icon={faChevronUp} />
+      <div className='nav-chevron ms-auto text-end'>
+        <FontAwesomeIcon size='xs' icon={faChevronUp} />
       </div>
     </Button>
-  )
-}
+  );
+};
 
 type SidebarNavGroupProps = {
   toggleIcon: IconDefinition;
   toggleText: string;
-} & PropsWithChildren
+} & PropsWithChildren;
 
 const SidebarNavGroup = (props: SidebarNavGroupProps) => {
-  const { toggleIcon, toggleText, children } = props
+  const { toggleIcon, toggleText, children } = props;
 
-  const [isShow, setIsShow] = useState(false)
+  const [isShow, setIsShow] = useState(false);
 
   return (
     <Accordion
-      as="li"
-      bsPrefix="nav-group"
+      as='li'
+      bsPrefix='nav-group'
       className={classNames({ show: isShow })}
     >
       <SidebarNavGroupToggle
         icon={toggleIcon}
-        eventKey="0"
+        eventKey='0'
         setIsShow={setIsShow}
       >
         {toggleText}
       </SidebarNavGroupToggle>
-      <Accordion.Collapse eventKey="0">
-        <ul className="nav-group-items list-unstyled">{children}</ul>
+      <Accordion.Collapse eventKey='0'>
+        <ul className='nav-group-items list-unstyled'>{children}</ul>
       </Accordion.Collapse>
     </Accordion>
-  )
-}
+  );
+};
 
 export default function SidebarNav() {
   return (
-    <ul className="list-unstyled">
+    <ul className='list-unstyled'>
       {/* <SidebarNavItem icon={faGauge} href="/">
         Dashboard
         <small className="ms-auto"><Badge bg="info" className="ms-auto">NEW</Badge></small>
       </SidebarNavItem> */}
-      <SidebarNavItem icon={faUserCircle} href="/dashboard/users">
+      <SidebarNavItem icon={faUserCircle} href='/dashboard/users'>
         Usuarios
         {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
       </SidebarNavItem>
-      <SidebarNavItem icon={faGroupArrowsRotate} href="/dashboard/grupotrabajo">
+      <SidebarNavItem icon={faGroupArrowsRotate} href='/dashboard/grupotrabajo'>
         Grupo trabajo
         {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
       </SidebarNavItem>
-      <SidebarNavItem icon={faUsers} href="/dashboard/socios">
+      <SidebarNavItem icon={faUsers} href='/dashboard/socios'>
         Socios
         {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
       </SidebarNavItem>
-      <SidebarNavItem icon={faAddressBook} href="/dashboard/clientes">
+      <SidebarNavItem icon={faAddressBook} href='/dashboard/clientes'>
         Clientes
         {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
       </SidebarNavItem>
-      <SidebarNavItem icon={faBookAtlas} href="/dashboard/reportes">
+      <SidebarNavItem icon={faBookAtlas} href='/dashboard/reportes'>
         Reportes
       </SidebarNavItem>
-      <SidebarNavItem icon={faMap} href="/dashboard/maps">
+      <SidebarNavItem icon={faMap} href='/dashboard/maps'>
         Mapa Socios
       </SidebarNavItem>
+
+      {/* <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText='Base'>
+        <SidebarNavItem href='base/accordion.html'>Accordion</SidebarNavItem>
+        <SidebarNavItem href='base/breadcrumb.html'>Breadcrumb</SidebarNavItem>
+        <SidebarNavItem href='base/cards.html'>Cards</SidebarNavItem>
+        <SidebarNavItem href='base/carousel.html'>Carousel</SidebarNavItem>
+        <SidebarNavItem href='base/collapse.html'>Collapse</SidebarNavItem>
+        <SidebarNavItem href='base/list-group.html'>List group</SidebarNavItem>
+        <SidebarNavItem href='base/navs.html'>Navs</SidebarNavItem>
+        <SidebarNavItem href='base/pagination.html'>Pagination</SidebarNavItem>
+        <SidebarNavItem href='base/popovers.html'>Popovers</SidebarNavItem>
+        <SidebarNavItem href='base/progress.html'>Progress</SidebarNavItem>
+        <SidebarNavItem href='base/scrollspy.html'>Scrollspy</SidebarNavItem>
+        <SidebarNavItem href='base/spinners.html'>Spinners</SidebarNavItem>
+        <SidebarNavItem href='base/tables.html'>Tables</SidebarNavItem>
+        <SidebarNavItem href='base/tabs.html'>Tabs</SidebarNavItem>
+        <SidebarNavItem href='base/tooltips.html'>Tooltips</SidebarNavItem>
+      </SidebarNavGroup> */}
 
       {/* <SidebarNavTitle>Theme</SidebarNavTitle>
       <SidebarNavItem icon={faDroplet} href="colors.html">Colors</SidebarNavItem>
@@ -251,5 +279,5 @@ export default function SidebarNav() {
       {/* <SidebarNavItem icon={faFileLines} href="docs.html">Docs</SidebarNavItem>
       <SidebarNavItem icon={faLayerGroup} href="https://coreui.io/pro/">Try CoreUI PRO</SidebarNavItem> */}
     </ul>
-  )
+  );
 }

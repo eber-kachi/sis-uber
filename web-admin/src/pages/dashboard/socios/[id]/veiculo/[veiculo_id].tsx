@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { AdminLayout } from '@layout/index';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row, Card } from 'react-bootstrap';
 import SocioService from '../../../../../services/api/Socio.service';
 import VeiculoService from '../../../../../services/api/Veiculo.service';
 
@@ -100,136 +100,145 @@ const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
     <AdminLayout>
       <div className='row'>
         <div className='col'>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Row>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>N° Placa</Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder=''
-                    {...register('placa', { required: 'Es requerido' })}
-                  />
-                  {errors.placa?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.placa?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Modelo</Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder=''
-                    {...register('modelo', { required: 'Es requerido' })}
-                  />
-                  {errors.modelo?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.modelo?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Marca</Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder=''
-                    {...register('marca', { required: 'Es requerido' })}
-                  />
-                  {errors.marca?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.marca?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Color</Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder=''
-                    {...register('color', { required: 'color es requerido' })}
-                  />
-                  {errors.color?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.color?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={6} md={4}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Capacidad</Form.Label>
-                  <Form.Control
-                    type='number'
-                    placeholder=''
-                    {...register('capacidad', { required: 'Es requerido' })}
-                  />
-                  {errors.capacidad?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.capacidad?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col xs={6} md={4}>
-                <Form.Group className='mb-3'>
-                  <Form.Label> Caracteristicas</Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder=''
-                    {...register('caracteristicas', {
-                      required: 'Es requerido',
-                    })}
-                  />
-                  {errors.caracteristicas?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.caracteristicas?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col xs={6} md={4}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Año</Form.Label>
-                  <Form.Control
-                    type='year'
-                    placeholder=''
-                    {...register('anio', { required: 'true' })}
-                  />
-                  {errors.anio?.type === 'required' && (
-                    <span>{errors.anio?.message} </span>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12} md={6} className='d-flex'>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Foto</Form.Label>
-                  <Form.Control
-                    type='file'
-                    accept='.png, .jpj'
-                    placeholder=''
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      // console.log(e.target?.files[0]);
-                      setFoto(e.target.files && e.target?.files[0]);
-                    }}
-                  />
-                  {/* {errors.foto?.type === "required" && (
+          <div>
+            <h3 className='text-title text-center'>{`${
+              isnew ? 'Crear ' : 'Editar'
+            } Veiculo`}</h3>
+          </div>
+          <Card>
+            <Card.Body>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Row>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>N° Placa</Form.Label>
+                      <Form.Control
+                        type='text'
+                        placeholder=''
+                        {...register('placa', { required: 'Es requerido' })}
+                      />
+                      {errors.placa?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.placa?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>Modelo</Form.Label>
+                      <Form.Control
+                        type='text'
+                        placeholder=''
+                        {...register('modelo', { required: 'Es requerido' })}
+                      />
+                      {errors.modelo?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.modelo?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>Marca</Form.Label>
+                      <Form.Control
+                        type='text'
+                        placeholder=''
+                        {...register('marca', { required: 'Es requerido' })}
+                      />
+                      {errors.marca?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.marca?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>Color</Form.Label>
+                      <Form.Control
+                        type='text'
+                        placeholder=''
+                        {...register('color', {
+                          required: 'color es requerido',
+                        })}
+                      />
+                      {errors.color?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.color?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={6} md={4}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>Capacidad</Form.Label>
+                      <Form.Control
+                        type='number'
+                        placeholder=''
+                        {...register('capacidad', { required: 'Es requerido' })}
+                      />
+                      {errors.capacidad?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.capacidad?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} md={4}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label> Caracteristicas</Form.Label>
+                      <Form.Control
+                        type='text'
+                        placeholder=''
+                        {...register('caracteristicas', {
+                          required: 'Es requerido',
+                        })}
+                      />
+                      {errors.caracteristicas?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.caracteristicas?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col xs={6} md={4}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>Año</Form.Label>
+                      <Form.Control
+                        type='year'
+                        placeholder=''
+                        {...register('anio', { required: 'true' })}
+                      />
+                      {errors.anio?.type === 'required' && (
+                        <span>{errors.anio?.message} </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12} md={6} className='d-flex'>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>Foto</Form.Label>
+                      <Form.Control
+                        type='file'
+                        accept='.png, .jpj'
+                        placeholder=''
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          // console.log(e.target?.files[0]);
+                          setFoto(e.target.files && e.target?.files[0]);
+                        }}
+                      />
+                      {/* {errors.foto?.type === "required" && (
                     <span className="text-danger">{errors.foto?.message} </span>
                   )} */}
-                </Form.Group>
-                {/* <Image
+                    </Form.Group>
+                    {/* <Image
                   alt={object.nombres}
                   src={
                     process.env.NEXT_PUBLIC_BACKEND_URL +
@@ -240,57 +249,59 @@ const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
                   height={50}
                   objectFit="cover"
                 /> */}
-                <img
-                  alt='hola'
-                  className='m-1'
-                  style={{
-                    width: '100px',
-                    height: '100px',
-                    objectFit: 'contain',
-                  }}
-                  src={
-                    data?.foto
-                      ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/socios-files/${data?.foto}`
-                      : 'https://eggerslab.com/wp-content/uploads/2016/02/foto-user.png'
-                  }
-                />
-              </Col>
-              <Col xs={12} md={6}>
-                <Form.Group className='mb-3'>
-                  <Form.Label>N° Movil</Form.Label>
-                  <Form.Control
-                    type='number'
-                    placeholder=''
-                    {...register('n_movil', { required: 'Es requerido' })}
-                  />
-                  {errors.n_movil?.type === 'required' && (
-                    <span className='text-danger'>
-                      {errors.n_movil?.message}{' '}
-                    </span>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-            <div className='d-flex justify-content-center'>
-              <Button
-                className='w-25 m-4'
-                type='submit'
-                variant='outline-success'
-              >
-                Guardar
-              </Button>
-              <Button
-                className='m-4'
-                variant='outline-danger'
-                type='button'
-                onClick={() => {
-                  router.back();
-                }}
-              >
-                Cerrar
-              </Button>
-            </div>
-          </form>
+                    <img
+                      alt='hola'
+                      className='m-1'
+                      style={{
+                        width: '100px',
+                        height: '100px',
+                        objectFit: 'contain',
+                      }}
+                      src={
+                        data?.foto
+                          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/socios-files/${data?.foto}`
+                          : 'https://eggerslab.com/wp-content/uploads/2016/02/foto-user.png'
+                      }
+                    />
+                  </Col>
+                  <Col xs={12} md={6}>
+                    <Form.Group className='mb-3'>
+                      <Form.Label>N° Movil</Form.Label>
+                      <Form.Control
+                        type='number'
+                        placeholder=''
+                        {...register('n_movil', { required: 'Es requerido' })}
+                      />
+                      {errors.n_movil?.type === 'required' && (
+                        <span className='text-danger'>
+                          {errors.n_movil?.message}{' '}
+                        </span>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <div className='d-flex justify-content-center'>
+                  <Button
+                    className='w-25 m-4'
+                    type='submit'
+                    variant='outline-success'
+                  >
+                    Guardar
+                  </Button>
+                  <Button
+                    className='m-4'
+                    variant='outline-danger'
+                    type='button'
+                    onClick={() => {
+                      router.back();
+                    }}
+                  >
+                    Cerrar
+                  </Button>
+                </div>
+              </form>
+            </Card.Body>
+          </Card>
         </div>
       </div>
     </AdminLayout>

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 
 import GrupoTrabajoService from 'src/services/api/GrupoTrabajo.service';
+import { Card } from 'react-bootstrap';
 
 const GrupoTrabajoListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   const socioService = new GrupoTrabajoService();
@@ -43,7 +44,7 @@ const GrupoTrabajoListPage = ({ dataResponce }: { dataResponce: any[] }) => {
       <div className='row'>
         <div className='m-2 d-flex flex flex-row justify-content-between'>
           <div>
-            <h3>Lista de grupo trabajo</h3>
+            <h3 className='text-title'>Lista de grupo trabajo</h3>
           </div>
           <div>
             <Link
@@ -57,49 +58,52 @@ const GrupoTrabajoListPage = ({ dataResponce }: { dataResponce: any[] }) => {
             </Link>
           </div>
         </div>
-
-        <Table striped>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nombre </th>
-              <th>Horario grupo trabajo </th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {objects.length > 0 &&
-              objects.map((object, index) => (
-                <tr key={object.id}>
-                  <td>{++index}</td>
-
-                  <td>{object.nombre}</td>
-                  <td>
-                    {object.hora_inicio} + {object.hora_fin} h
-                  </td>
-                  <td>
-                    <div className=''>
-                      <Link
-                        className='btn btn-outline-warning'
-                        href={{
-                          pathname: '/dashboard/grupotrabajo/[id]',
-                          query: { id: object.id },
-                        }}
-                      >
-                        Editar
-                      </Link>
-                      <Button
-                        variant='outline-danger'
-                        onClick={() => onClickDelete(object.id)}
-                      >
-                        Eliminar
-                      </Button>
-                    </div>
-                  </td>
+        <Card>
+          <Card.Body>
+            <Table striped responsive size='sm'>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nombre </th>
+                  <th>Horario grupo trabajo </th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-          </tbody>
-        </Table>
+              </thead>
+              <tbody>
+                {objects.length > 0 &&
+                  objects.map((object, index) => (
+                    <tr key={object.id}>
+                      <td>{++index}</td>
+
+                      <td>{object.nombre}</td>
+                      <td>
+                        {object.hora_inicio} + {object.hora_fin} h
+                      </td>
+                      <td>
+                        <div className=''>
+                          <Link
+                            className='btn btn-outline-warning'
+                            href={{
+                              pathname: '/dashboard/grupotrabajo/[id]',
+                              query: { id: object.id },
+                            }}
+                          >
+                            Editar
+                          </Link>
+                          <Button
+                            variant='outline-danger'
+                            onClick={() => onClickDelete(object.id)}
+                          >
+                            Eliminar
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Card>
       </div>
     </AdminLayout>
   );
