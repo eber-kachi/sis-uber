@@ -89,10 +89,10 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
 
                       <td>{object.role}</td>
                       <td>
-                        <div className=''>
+                        <div className='gap'>
                           <Link
                             title='Editar'
-                            className='btn btn-warning'
+                            className='btn btn-warning text-white mx-2'
                             href={{
                               pathname: '/dashboard/users/[id]',
                               query: { id: object.id },
@@ -102,7 +102,7 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
                           </Link>
                           <Button
                             title='Eliminar'
-                            variant='outline-danger'
+                            variant='danger'
                             onClick={() => onClickDelete(object.id)}
                           >
                             Eliminar

@@ -57,14 +57,16 @@ const SidebarNavItem = (props: SidebarNavItemProps) => {
   const router = useRouter();
   console.log(router);
 
-  const isActive = router.path === href;
-
+  const searchForUsers = (string: string, path: string) =>
+    path.includes(string);
+  // Returns True if the string contains the substring `users`, False otherwise.
+  const isActive = searchForUsers(href, router.asPath);
   return (
     <Nav.Item>
       <Link href={href} passHref legacyBehavior>
         <Nav.Link
           className={`px-3 py-2 d-flex align-items-center ${
-            isActive ? 'active' : ''
+            isActive ? 'active-link' : ''
           }`}
         >
           {icon ? (

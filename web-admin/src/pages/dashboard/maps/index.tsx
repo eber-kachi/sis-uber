@@ -10,7 +10,7 @@ import {
 import ViajeService from 'src/services/api/Viaje.service';
 import { toast } from 'react-toastify';
 // import socket from '@lib/sockets/socket';
-import { Form, FormLabel, ListGroup } from 'react-bootstrap';
+import { Form, FormLabel, ListGroup, Card } from 'react-bootstrap';
 import { ISocio } from 'src/services/models/socio.model';
 import { log } from 'console';
 import { right } from '@popperjs/core';
@@ -248,171 +248,177 @@ const MapsPage = () => {
 
   return (
     <AdminLayout>
-      <div className='row '>
-        <div
-          className='col col-12 col-sm-12 col-md-2'
-          style={{ overflowY: 'scroll', height: '75vh' }}
-        >
-          <h5 className='text-center'>Nuevos viajes</h5>
-
-          <ListGroup>
-            {viajePending &&
-              viajePending.map((viaje: any, index) => (
-                <ListGroup.Item key={viaje.id + index}>
-                  <label className='d-flex gap-1  form-label'>
-                    <input
-                      className='form-check-input'
-                      id={viaje.id}
-                      value={viaje.id}
-                      name='viajes'
-                      type='radio'
-                      aria-label={`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
-                      onChange={() => {}}
-                      // onChange={handlerSelectViaje}
-                      onClick={handlerSelectViaje}
-                    />
-                    {`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
-                  </label>
-                </ListGroup.Item>
-              ))}
-          </ListGroup>
-        </div>
-        <div className='col col-12 col-md-8 col-sm-12'>
-          <div style={{ display: 'flex', height: '80vh' }}>
-            <GoogleMap
-              options={mapOptions}
-              zoom={zoom}
-              center={{
-                lat: currenLocationSelect
-                  ? currenLocationSelect.latitude
-                  : -17.39470732739393,
-                lng: currenLocationSelect
-                  ? currenLocationSelect.longitude
-                  : -66.28102605202128,
-              }}
-              mapTypeId={google.maps.MapTypeId.ROADMAP}
-              mapContainerStyle={{ width: '100%', height: '100%' }}
-              onLoad={() => console.log('Map Component Loaded...')}
+      <Card>
+        <Card.Body>
+          <div className='row '>
+            <div
+              className='col col-12 col-sm-12 col-md-2'
+              style={{ overflowY: 'scroll', height: '75vh' }}
             >
-              {/* <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="https://picsum.photos/64" /> */}
-              {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}
-              {memoizedMarkers.map((markerData: ISocio, index: number) => (
-                <CustomMarker
-                  id={markerData.id}
-                  key={+index}
-                  draggable
-                  position={{
-                    lat: markerData.latitude,
-                    lng: markerData.longitude,
-                  }}
-                  label={{
-                    text: `${index}`,
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    className: 'marker-label font-weight-bold -mt-30',
-                  }}
-                  icon={{
-                    url: `${urlfornt}/assets/img/cars/${
-                      markerData.estado === 'LIBRE'
-                        ? 'car-green.svg'
-                        : 'car-red.svg'
-                    }`,
-                    scale: 0.02,
-                    scaledSize: new window.google.maps.Size(30, 30),
-                    origin: new window.google.maps.Point(0, 0),
-                    anchor: new window.google.maps.Point(25, 25),
-                  }}
-                  onMarkerClick={handleMarkerClick}
-                />
-                // <MarkerF
-                //   key={+index}
-                //   // options={{ optimized: true }}
-                //   onDrag={(e) => {
-                //     console.log("aqui");
-                //     console.log(e);
-                //   }}
-                //   draggable
-                //   position={{ lat: markerData.lat, lng: markerData.lng }}
-                //   onLoad={() => console.log("Marker Loaded")}
-                //   onClick={(e) => {
-                //     console.log("click me..", e);
-                //   }}
-                //   onDblClick={(event) => {
-                //     console.log(event.domEvent.currentTarget);
-                //     // const idCarFromMarker = event.target.key;
-                //   }}
-                //   label={{
-                //     text: "Richat",
-                //     color: "black",
-                //     fontWeight: "bold",
-                //     className: "marker-label font-weight-bold -mt-30",
-                //   }}
-                //   icon={{
-                //     // path: "M61.2849 48.0244C61.2849 64.3164 48.0769 77.5244 31.7849 77.5244C15.4929 77.5244 2.28491 64.3164 2.28491 48.0244C2.28491 34.9504 22.2469 12.2714 29.6169 3.82141C31.1029 2.11741 33.7479 2.12141 35.2349 3.82441C42.6149 12.2764 61.2849 34.9514 61.2849 48.0244Z",
-                //     url: "http://localhost:3000/assets/img/cars/car-red.svg",
-                //     scale: 0.02,
-                //     scaledSize: new window.google.maps.Size(30, 30),
-                //     origin: new window.google.maps.Point(0, 0),
-                //     anchor: new window.google.maps.Point(25, 25),
-                //   }}
-                // />
-              ))}
+              <h5 className='text-center text-title'>Nuevos viajes</h5>
 
-              {currenLocationSelect && (
-                <MarkerF
-                  position={{
+              <ListGroup>
+                {viajePending &&
+                  viajePending.map((viaje: any, index) => (
+                    <ListGroup.Item key={viaje.id + index}>
+                      <label className='d-flex gap-1  form-label'>
+                        <input
+                          className='form-check-input'
+                          id={viaje.id}
+                          value={viaje.id}
+                          name='viajes'
+                          type='radio'
+                          aria-label={`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
+                          onChange={() => {}}
+                          // onChange={handlerSelectViaje}
+                          onClick={handlerSelectViaje}
+                        />
+                        {`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
+                      </label>
+                    </ListGroup.Item>
+                  ))}
+              </ListGroup>
+            </div>
+            <div className='col col-12 col-md-8 col-sm-12'>
+              <div style={{ display: 'flex', height: '80vh' }}>
+                <GoogleMap
+                  options={mapOptions}
+                  zoom={zoom}
+                  center={{
                     lat: currenLocationSelect
                       ? currenLocationSelect.latitude
-                      : 0,
+                      : -17.39470732739393,
                     lng: currenLocationSelect
                       ? currenLocationSelect.longitude
-                      : 0,
+                      : -66.28102605202128,
                   }}
-                  onLoad={() => console.log('Marker Loaded')}
-                  icon={{
-                    // url: `http://localhost:3000/assets/img/location-user.png`,
-                    url: `${urlfornt}/assets/img/location.gif`,
-                    scale: 0.02,
-                    scaledSize: new window.google.maps.Size(30, 30),
-                    origin: new window.google.maps.Point(0, 0),
-                    anchor: new window.google.maps.Point(25, 25),
-                  }}
-                />
-              )}
-              {/* {[1000, 2500].map((radius, idx) => { */}
-              {/*  return ( */}
-              {/*    <CircleF */}
-              {/*      key={idx} */}
-              {/*      center={mapCenter} */}
-              {/*      radius={radius} */}
-              {/*      onLoad={() => console.log('Circle Load...')} */}
-              {/*      options={{ */}
-              {/*        fillColor: radius > 1000 ? 'red' : 'green', */}
-              {/*        strokeColor: radius > 1000 ? 'red' : 'green', */}
-              {/*        strokeOpacity: 0.8, */}
-              {/*      }} */}
-              {/*    />)})} */}
-            </GoogleMap>
+                  mapTypeId={google.maps.MapTypeId.ROADMAP}
+                  mapContainerStyle={{ width: '100%', height: '100%' }}
+                  onLoad={() => console.log('Map Component Loaded...')}
+                >
+                  {/* <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="https://picsum.photos/64" /> */}
+                  {/* <MarkerF  position={mapCenter} onLoad={() => console.log('Marker Loaded')}   icon="http://localhost:3000/assets/img/cars/car-red.svg" /> */}
+                  {memoizedMarkers.map((markerData: ISocio, index: number) => (
+                    <CustomMarker
+                      id={markerData.id}
+                      key={+index}
+                      draggable
+                      position={{
+                        lat: markerData.latitude,
+                        lng: markerData.longitude,
+                      }}
+                      label={{
+                        text: `${index}`,
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        className: 'marker-label font-weight-bold -mt-30',
+                      }}
+                      icon={{
+                        url: `${urlfornt}/assets/img/cars/${
+                          markerData.estado === 'LIBRE'
+                            ? 'car-green.svg'
+                            : 'car-red.svg'
+                        }`,
+                        scale: 0.02,
+                        scaledSize: new window.google.maps.Size(30, 30),
+                        origin: new window.google.maps.Point(0, 0),
+                        anchor: new window.google.maps.Point(25, 25),
+                      }}
+                      onMarkerClick={handleMarkerClick}
+                    />
+                    // <MarkerF
+                    //   key={+index}
+                    //   // options={{ optimized: true }}
+                    //   onDrag={(e) => {
+                    //     console.log("aqui");
+                    //     console.log(e);
+                    //   }}
+                    //   draggable
+                    //   position={{ lat: markerData.lat, lng: markerData.lng }}
+                    //   onLoad={() => console.log("Marker Loaded")}
+                    //   onClick={(e) => {
+                    //     console.log("click me..", e);
+                    //   }}
+                    //   onDblClick={(event) => {
+                    //     console.log(event.domEvent.currentTarget);
+                    //     // const idCarFromMarker = event.target.key;
+                    //   }}
+                    //   label={{
+                    //     text: "Richat",
+                    //     color: "black",
+                    //     fontWeight: "bold",
+                    //     className: "marker-label font-weight-bold -mt-30",
+                    //   }}
+                    //   icon={{
+                    //     // path: "M61.2849 48.0244C61.2849 64.3164 48.0769 77.5244 31.7849 77.5244C15.4929 77.5244 2.28491 64.3164 2.28491 48.0244C2.28491 34.9504 22.2469 12.2714 29.6169 3.82141C31.1029 2.11741 33.7479 2.12141 35.2349 3.82441C42.6149 12.2764 61.2849 34.9514 61.2849 48.0244Z",
+                    //     url: "http://localhost:3000/assets/img/cars/car-red.svg",
+                    //     scale: 0.02,
+                    //     scaledSize: new window.google.maps.Size(30, 30),
+                    //     origin: new window.google.maps.Point(0, 0),
+                    //     anchor: new window.google.maps.Point(25, 25),
+                    //   }}
+                    // />
+                  ))}
+
+                  {currenLocationSelect && (
+                    <MarkerF
+                      position={{
+                        lat: currenLocationSelect
+                          ? currenLocationSelect.latitude
+                          : 0,
+                        lng: currenLocationSelect
+                          ? currenLocationSelect.longitude
+                          : 0,
+                      }}
+                      onLoad={() => console.log('Marker Loaded')}
+                      icon={{
+                        // url: `http://localhost:3000/assets/img/location-user.png`,
+                        url: `${urlfornt}/assets/img/location.gif`,
+                        scale: 0.02,
+                        scaledSize: new window.google.maps.Size(30, 30),
+                        origin: new window.google.maps.Point(0, 0),
+                        anchor: new window.google.maps.Point(25, 25),
+                      }}
+                    />
+                  )}
+                  {/* {[1000, 2500].map((radius, idx) => { */}
+                  {/*  return ( */}
+                  {/*    <CircleF */}
+                  {/*      key={idx} */}
+                  {/*      center={mapCenter} */}
+                  {/*      radius={radius} */}
+                  {/*      onLoad={() => console.log('Circle Load...')} */}
+                  {/*      options={{ */}
+                  {/*        fillColor: radius > 1000 ? 'red' : 'green', */}
+                  {/*        strokeColor: radius > 1000 ? 'red' : 'green', */}
+                  {/*        strokeOpacity: 0.8, */}
+                  {/*      }} */}
+                  {/*    />)})} */}
+                </GoogleMap>
+              </div>
+            </div>
+            <div className='col col-12 col-md-2 col-sm-12'>
+              <div className='container-fluid'>
+                <h5 className='text-center text-title'>
+                  Socios conectados {veiculos.length}
+                </h5>
+                <ListGroup>
+                  {veiculos &&
+                    veiculos.map((socio: any, index) => (
+                      <ListGroup.Item
+                        key={socio.id + index}
+                        onClick={() => handlerSelectSocio(socio)}
+                      >
+                        🚗 {socio?.veiculo?.n_movil} - {socio.nombres}{' '}
+                        {socio.apellidos}
+                      </ListGroup.Item>
+                    ))}
+                </ListGroup>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className='col col-12 col-md-2 col-sm-12'>
-          <div className='container-fluid'>
-            <h5 className='text-center'>Socios conectados {veiculos.length}</h5>
-            <ListGroup>
-              {veiculos &&
-                veiculos.map((socio: any, index) => (
-                  <ListGroup.Item
-                    key={socio.id + index}
-                    onClick={() => handlerSelectSocio(socio)}
-                  >
-                    🚗 {socio?.veiculo?.n_movil} - {socio.nombres}{' '}
-                    {socio.apellidos}
-                  </ListGroup.Item>
-                ))}
-            </ListGroup>
-          </div>
-        </div>
-      </div>
+        </Card.Body>
+      </Card>
     </AdminLayout>
   );
 };
