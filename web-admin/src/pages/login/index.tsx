@@ -147,7 +147,7 @@ const Index: NextPage = () => {
                           type='submit'
                           disabled={submitting}
                         >
-                          Inicial sessión
+                          Iniciar sessión
                         </Button>
                       </Col>
                       {/* <Col xs={6} className='text-end'>
