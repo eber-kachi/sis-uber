@@ -79,7 +79,7 @@ export default function VeiculoEditPage({
         })
         .catch((error) => {
           console.log(error);
-          toast('Error al crear.', {});
+          toast(error.message, { type: 'error' });
         });
     } else {
       socioService

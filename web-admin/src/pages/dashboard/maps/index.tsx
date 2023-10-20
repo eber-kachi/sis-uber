@@ -21,13 +21,38 @@ const urlfornt = process.env.NEXT_PUBLIC_FRONT_URL || 'http://localhost:3000';
 
 const CustomMarker = (props: any) => {
   // id=> socio id
-  const { id, onMarkerClick } = props;
+  const { id, onMarkerClick, position, data } = props;
 
   const handleClick = () => {
-    onMarkerClick(id);
+    if (data.estado === 'LIBRE') {
+      console.log(id);
+      onMarkerClick(id);
+    }
   };
 
-  return <MarkerF onClick={handleClick} {...props} />;
+  return (
+    <MarkerF
+      draggable
+      position={position}
+      label={{
+        text: `${data.veiculo?.n_movil}`,
+        color: '#fff',
+        fontWeight: 'bold',
+        className: 'marker-label font-weight-bold -mt-30 ',
+      }}
+      icon={{
+        url: `${urlfornt}/assets/img/cars/${
+          data.estado === 'LIBRE' ? 'car-green.svg' : 'car-red.svg'
+        }`,
+        scale: 0.02,
+        scaledSize: new window.google.maps.Size(30, 30),
+        origin: new window.google.maps.Point(0, 0),
+        anchor: new window.google.maps.Point(25, 25),
+      }}
+      onClick={handleClick}
+      {...props}
+    />
+  );
 };
 
 const MapsPage = () => {
@@ -168,7 +193,7 @@ const MapsPage = () => {
 
   // metodo para asignar  un socio con un veiculo
   const handleMarkerClick = (socio_id: string | number) => {
-    // console.log("EL id en el padre=> ", id);
+    console.log('EL id en el padre=> ', socio_id);
     // console.log(selectedViajeId);
     if (selectedViajeId != null) {
       viajeService
@@ -224,7 +249,7 @@ const MapsPage = () => {
   };
   // mover el mapa donde se hizo click
   const handlerSelectSocio = (socio: any) => {
-    console.log(socio);
+    // console.log(socio);
     moveToCoordinate({
       latitude: socio?.latitude,
       longitude: socio?.longitude,
@@ -302,28 +327,29 @@ const MapsPage = () => {
                     <CustomMarker
                       id={markerData.id}
                       key={+index}
-                      draggable
+                      data={markerData}
                       position={{
                         lat: markerData.latitude,
                         lng: markerData.longitude,
                       }}
-                      label={{
-                        text: `${index}`,
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        className: 'marker-label font-weight-bold -mt-30',
-                      }}
-                      icon={{
-                        url: `${urlfornt}/assets/img/cars/${
-                          markerData.estado === 'LIBRE'
-                            ? 'car-green.svg'
-                            : 'car-red.svg'
-                        }`,
-                        scale: 0.02,
-                        scaledSize: new window.google.maps.Size(30, 30),
-                        origin: new window.google.maps.Point(0, 0),
-                        anchor: new window.google.maps.Point(25, 25),
-                      }}
+                      // draggable
+                      // label={{
+                      //   text: `${markerData.veiculo?.n_movil}`,
+                      //   color: '#fff',
+                      //   fontWeight: 'bold',
+                      //   className: 'marker-label font-weight-bold -mt-30 ',
+                      // }}
+                      // icon={{
+                      //   url: `${urlfornt}/assets/img/cars/${
+                      //     markerData.estado === 'LIBRE'
+                      //       ? 'car-green.svg'
+                      //       : 'car-red.svg'
+                      //   }`,
+                      //   scale: 0.02,
+                      //   scaledSize: new window.google.maps.Size(30, 30),
+                      //   origin: new window.google.maps.Point(0, 0),
+                      //   anchor: new window.google.maps.Point(25, 25),
+                      // }}
                       onMarkerClick={handleMarkerClick}
                     />
                     // <MarkerF

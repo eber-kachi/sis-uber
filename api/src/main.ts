@@ -31,7 +31,7 @@ async function bootstrap() {
 
   // app.
   loger.log(`app Run port: ${port}`);
-  console.log(join(__dirname, '..', 'public'));
+  // console.log(join(__dirname, '..', 'public'));
 }
 
 bootstrap();

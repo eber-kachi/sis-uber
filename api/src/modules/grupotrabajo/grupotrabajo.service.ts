@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateGrupotrabajoDto } from './dto/create-grupotrabajo.dto';
 import { UpdateGrupotrabajoDto } from './dto/update-grupotrabajo.dto';
 import { GrupotrabajoRepository } from './grupotrabajo.repository';
@@ -35,7 +35,19 @@ export class GrupotrabajoService {
   }
 
   async remove(id: string) {
-    const grupo = await this.grupotrabajoRepository.find({ where: { id: id } });
+    const grupo = await this.grupotrabajoRepository.findOne({
+      where: { id: id },
+      relations: ['socios'],
+    });
+    if (grupo.socios.length > 0) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'No es posible borrar grupo, tiene socios asociados ' + grupo.socios.length,
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
     return await this.grupotrabajoRepository.remove(grupo);
   }
 }

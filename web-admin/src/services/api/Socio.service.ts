@@ -1,10 +1,10 @@
-import axios from '@lib/axios'
-import { BaseAPIClass } from './BaseClass'
+import axios from '@lib/axios';
+import { BaseAPIClass } from './BaseClass';
 
 export default class SocioService extends BaseAPIClass {
   constructor() {
-    super()
-    this.baseUrl = '/api/socios'
+    super();
+    this.baseUrl = '/api/socios';
   }
 
   getAllWithStatus() {
@@ -14,7 +14,7 @@ export default class SocioService extends BaseAPIClass {
         .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
-          resolve(response.data)
+          resolve(response.data);
           // } else {
           // reject(response.data);
           // }
@@ -23,9 +23,9 @@ export default class SocioService extends BaseAPIClass {
           // console.error('Promise', error);
           // console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
-          reject(error)
-        })
-    })
+          reject(error);
+        });
+    });
   }
 
   addCar(arg0: { socio_id: any; veiculo_id: any }) {
@@ -35,7 +35,7 @@ export default class SocioService extends BaseAPIClass {
         .then((response) => {
           // console.log(response);
           // if (response.statusText === 'OK') {
-          resolve(response.data)
+          resolve(response.data);
           // } else {
           // reject(response.data);
           // }
@@ -44,8 +44,22 @@ export default class SocioService extends BaseAPIClass {
           // console.error('Promise', error);
           // console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
-          reject(error)
+          reject(error);
+        });
+    });
+  }
+
+  getReport() {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${this.baseUrl}/report/download`, { responseType: 'stream' })
+        .then((response) => {
+          // console.log(response);
+          resolve(response.data);
         })
-    })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 }

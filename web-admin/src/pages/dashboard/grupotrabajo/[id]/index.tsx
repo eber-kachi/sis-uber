@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AdminLayout } from '@layout/index';
@@ -12,11 +12,15 @@ type Inputs = {
   hora_fin: string;
 };
 
-const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
+// const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
+const VeiculoEditPage = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const { id } = router.query;
+
   const socioService = new GrupoTrabajoService();
-  console.log(data);
+
+  const [isnew, setIsnew] = useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
 
   const {
     register,
@@ -24,6 +28,7 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
     watch,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<Inputs>({
     defaultValues: {
       nombre: data?.nombre ? data.nombre : '',
@@ -31,6 +36,25 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
       hora_fin: data?.hora_fin ? data.hora_fin : '',
     },
   });
+
+  const getById = async () => {
+    const response = await socioService.getById(String(id));
+    reset({ ...response?.data });
+    // setValue('email', response.data.user ? response.data.user.email : '');
+    setData(response?.data);
+  };
+
+  useEffect(() => {
+    if (id !== 'new') {
+      setIsnew(false);
+      getById().then();
+    } else {
+      setIsnew(true);
+      setData(null);
+    }
+
+    return () => {};
+  }, [router.isReady]);
 
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
     // console.log(formData);
@@ -158,39 +182,39 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
   );
 };
 
-export async function getServerSideProps(context: any) {
-  const { id } = context.params;
+// export async function getServerSideProps(context: any) {
+//   const { id } = context.params;
 
-  console.log(context.params);
+//   console.log(context.params);
 
-  if (id !== 'new') {
-    try {
-      const service = new GrupoTrabajoService();
-      const response = await service.getById(id);
-      return {
-        props: {
-          isnew: false,
-          // eslint-disable-next-line camelcase
-          data: response.data,
-        },
-      };
-    } catch (e: any) {
-      // console.log(e);
-      if (e?.response?.status === 404) {
-        return {
-          notFound: true,
-        };
-      }
-    }
-  }
+//   if (id !== 'new') {
+//     try {
+//       const service = new GrupoTrabajoService();
+//       const response = await service.getById(id);
+//       return {
+//         props: {
+//           isnew: false,
+//           // eslint-disable-next-line camelcase
+//           data: response.data,
+//         },
+//       };
+//     } catch (e: any) {
+//       // console.log(e);
+//       if (e?.response?.status === 404) {
+//         return {
+//           notFound: true,
+//         };
+//       }
+//     }
+//   }
 
-  return {
-    props: {
-      isnew: true,
-      // eslint-disable-next-line camelcase
-      data: {},
-    },
-  };
-}
+//   return {
+//     props: {
+//       isnew: true,
+//       // eslint-disable-next-line camelcase
+//       data: {},
+//     },
+//   };
+// }
 
 export default VeiculoEditPage;

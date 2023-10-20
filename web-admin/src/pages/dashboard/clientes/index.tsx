@@ -11,7 +11,7 @@ import ClienteService from '../../../services/api/Cliente.service';
 const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
   // console.log("user value=>", userValue)
-  console.log('list=>', dataResponce);
+  // console.log('list=>', dataResponce);
   const clienteService = new ClienteService();
   const [modalShow, setModalShow] = useState(false);
   const [objects, setObjects] = useState(dataResponce || []);
@@ -35,7 +35,9 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
       });
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <AdminLayout>
@@ -99,15 +101,15 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   );
 };
 
-export async function getServerSideProps(context: any) {
-  const service = new ClienteService();
-  const responce = await service.getAll();
-  // console.log(responce);
-  return {
-    props: {
-      dataResponce: responce.data,
-    },
-  };
-}
+// export async function getServerSideProps(context: any) {
+//   const service = new ClienteService();
+//   const responce = await service.getAll();
+//   // console.log(responce);
+//   return {
+//     props: {
+//       dataResponce: responce.data,
+//     },
+//   };
+// }
 
 export default SocioListPage;

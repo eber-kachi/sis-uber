@@ -22,7 +22,7 @@ import { ClienteRegisterDto } from './dto/cliente-register.dto';
 
 import type { Response } from 'express';
 import { CustomInterceptorIgnore } from '../../interceptors/custom-interceptor-ignore.service';
-import { log } from 'console';
+
 @Controller('clientes')
 @ApiTags('clientes')
 export class ClienteController {

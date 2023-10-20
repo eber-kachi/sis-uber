@@ -147,6 +147,8 @@ export class ViajesService {
 
     if (createViajeDto.estado === EstadoViaje.FINALIZADO) {
       viaje.estado = createViajeDto.estado;
+      await this.socioService.changeState(viaje.socio.id, 'LIBRE', null);
+
       //location
       // viaje.end_latitude = createViajeDto?.latitude;
       // viaje.end_longitude = createViajeDto?.longitude;

@@ -38,7 +38,7 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
         getData();
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.message);
         if (error instanceof AxiosError) {
           toast.error(error.message);
         }

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { AdminLayout } from '@layout/index';
@@ -19,20 +19,26 @@ type Inputs = {
   n_movil: string;
 };
 
-const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
+// const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
+const veiculoEditPage = () => {
   const router = useRouter();
+  const { veiculo_id } = router.query;
+
   const socioService = new VeiculoService();
   const socio = new SocioService();
 
   const [foto, setFoto] = useState<any>(null);
 
-  console.log('Veiculo=> ', data);
+  const [isnew, setIsnew] = useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<Inputs>({
     defaultValues: {
       placa: data?.placa ? data.placa : '',
@@ -47,8 +53,27 @@ const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
     },
   });
 
+  const getById = async () => {
+    const response = await socioService.getById(String(veiculo_id));
+    reset({ ...response?.data });
+    // setValue('email', response.data.user ? response.data.user.email : '');
+    setData(response?.data);
+  };
+
+  useEffect(() => {
+    if (veiculo_id !== 'new') {
+      setIsnew(false);
+      getById().then();
+    } else {
+      setIsnew(true);
+      setData(null);
+    }
+
+    return () => {};
+  }, [router.isReady]);
+
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
-    console.log(formData);
+    // console.log(formData)
 
     const newForm = new FormData();
     newForm.append('placa', formData.placa);
@@ -103,7 +128,7 @@ const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
           <div>
             <h3 className='text-title text-center'>{`${
               isnew ? 'Crear ' : 'Editar'
-            } Veiculo`}</h3>
+            } Vehículo`}</h3>
           </div>
           <Card>
             <Card.Body>
@@ -308,38 +333,38 @@ const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
   );
 };
 
-export async function getServerSideProps(context: any) {
-  const { veiculo_id } = context.params;
-  console.log(context.params.id);
-  if (veiculo_id !== 'new') {
-    try {
-      const service = new VeiculoService();
-      const response = await service.getById(veiculo_id);
+// export async function getServerSideProps(context: any) {
+//   const { veiculo_id } = context.params;
+//   console.log(context.params.id);
+//   if (veiculo_id !== 'new') {
+//     try {
+//       const service = new VeiculoService();
+//       const response = await service.getById(veiculo_id);
 
-      return {
-        props: {
-          isnew: false,
-          // eslint-disable-next-line camelcase
-          data: response.data,
-        },
-      };
-    } catch (e: any) {
-      // console.log(e);
-      if (e?.response?.status === 404) {
-        return {
-          notFound: true,
-        };
-      }
-    }
-  }
+//       return {
+//         props: {
+//           isnew: false,
+//           // eslint-disable-next-line camelcase
+//           data: response.data,
+//         },
+//       };
+//     } catch (e: any) {
+//       // console.log(e);
+//       if (e?.response?.status === 404) {
+//         return {
+//           notFound: true,
+//         };
+//       }
+//     }
+//   }
 
-  return {
-    props: {
-      isnew: true,
-      // eslint-disable-next-line camelcase
-      data: { socio_id: context.params.id },
-    },
-  };
-}
+//   return {
+//     props: {
+//       isnew: true,
+//       // eslint-disable-next-line camelcase
+//       data: { socio_id: context.params.id },
+//     },
+//   };
+// }
 
 export default veiculoEditPage;

@@ -17,6 +17,8 @@ import { UpdateViajeDto } from './dto/update-viaje.dto';
 import { CreateViajeClient } from './dto/create-viaje-client';
 import { ResponseMessage } from 'decorators/response_message.decorator';
 
+// import { WebSocketModule, WebSocketService } from '@nestjs/websockets';
+
 @Controller('viajes')
 export class ViajesController {
   constructor(private readonly viajesService: ViajesService) {}

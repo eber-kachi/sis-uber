@@ -1,9 +1,12 @@
 'use strict';
 
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { AbstractEntity } from '../abstract.entity';
 
 export class AbstractDto {
-  id?: string | null;
+  @ApiPropertyOptional()
+  id?: string | null | undefined;
+
   createdAt: Date;
   updatedAt: Date;
 

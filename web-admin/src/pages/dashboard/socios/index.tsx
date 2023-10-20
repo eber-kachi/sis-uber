@@ -37,6 +37,7 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any }) => {
 
   useEffect(() => {
     console.log(dataResponce);
+    getData();
   }, []);
 
   return (
@@ -160,7 +161,7 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any }) => {
                             }}
                           >
                             {/* <a className='btn-warning m-1'> */}
-                            Veiculo
+                            Vehículo
                             {/* </a> */}
                           </Link>
                           <Link
@@ -194,34 +195,34 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any }) => {
   );
 };
 
-export async function getServerSideProps(context: any) {
-  const service = new SocioService();
-  try {
-    const responce = await service.getAll();
+// export async function getServerSideProps(context: any) {
+//   const service = new SocioService();
+//   try {
+//     const responce = await service.getAll();
 
-    return {
-      props: {
-        dataResponce: responce.data,
-      },
-    };
-  } catch (error: any) {
-    // console.error("===========================================>", error)
-    if (error?.response?.status == 401) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: '/login',
-        },
-        props: {},
-      };
-    }
-  }
-  // console.log(responce);
-  return {
-    props: {
-      dataResponce: [],
-    },
-  };
-}
+//     return {
+//       props: {
+//         dataResponce: responce.data,
+//       },
+//     };
+//   } catch (error: any) {
+//     // console.error("===========================================>", error)
+//     if (error?.response?.status == 401) {
+//       return {
+//         redirect: {
+//           permanent: false,
+//           destination: '/login',
+//         },
+//         props: {},
+//       };
+//     }
+//   }
+//   // console.log(responce);
+//   return {
+//     props: {
+//       dataResponce: [],
+//     },
+//   };
+// }
 
 export default SocioListPage;

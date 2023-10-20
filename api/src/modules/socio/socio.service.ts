@@ -7,6 +7,8 @@ import { UserService } from '../user/user.service';
 import { RoleType } from 'common/constants/role-type';
 import { In } from 'typeorm';
 import { GrupotrabajoService } from 'modules/grupotrabajo/grupotrabajo.service';
+import { createPdf } from '@saemhco/nestjs-html-pdf';
+import path from 'path';
 
 @Injectable()
 export class SocioService {
@@ -52,7 +54,7 @@ export class SocioService {
   async findOne(id: string) {
     return await this.socioRepository.findOneOrFail({
       where: { id: id },
-      relations: ['user', 'grupotrabajo'],
+      relations: ['user', 'grupotrabajo', 'veiculo'],
     });
     // {
     // where: findData,
@@ -133,5 +135,64 @@ export class SocioService {
     socio.estado = state;
 
     return this.socioRepository.save(socio);
+  }
+
+  async reportviajes() {
+    // get datetime of Date
+    const date = new Date();
+    // yeas month day min
+    // const datetime =
+    //   date.getFullYear() +
+    //   '-' +
+    //   (date.getMonth() + 1) +
+    //   '-' +
+    //   date.getDate() +
+    //   ' ' +
+    //   date.getHours() +
+    //   ':' +
+    //   date.getMinutes();
+    // const datetime = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()+ ;
+    const socios = await this.socioRepository.find({
+      relations: ['user', 'viajes', 'veiculo', 'grupotrabajo'],
+      order: { nombres: 'ASC', apellidos: 'ASC', viajes: { fecha: 'DESC' } },
+    });
+
+    // const viajes = clientes.map((cliente, index) => ({
+    //   cliente: `${cliente.nombres} ${cliente.apellidos}`,
+    //   totalViajes: cliente.viajes.length,
+    //   id: index + 1,
+    // }));
+
+    const data = {
+      title: 'Lista de socios',
+      // datetime: datetime,
+      i: 1,
+      socios: socios,
+      table: {
+        headers: ['#', 'Fecha', 'Estado', 'Calificacion', 'Direccion', 'Tiempos'],
+      },
+    };
+    const filePath = path.join(process.cwd(), 'report-template', 'pdf-socios-viajes.hbs');
+    return createPdf(
+      filePath,
+      {
+        format: 'A4',
+        printBackground: true,
+        displayHeaderFooter: true,
+        margin: {
+          left: '10mm',
+          top: '25mm',
+          right: '10mm',
+          bottom: '15mm',
+        },
+        // headerTemplate: `<div style="width: 100%; text-align: center;"><span style="font-size: 20px;">Sindicato </span><br><span class="date" style="font-size:15px"><span></div>`,
+        headerTemplate: `<div style="width: 100%; text-align: center;"><span class="date" style="font-size:10px"><span></div>`,
+        footerTemplate:
+          '<div style="width: 100%; text-align: center; font-size: 10px;"> <span class="pageNumber"></span> de <span class="totalPages"></span></div>',
+        landscape: true,
+      },
+      data,
+    );
+    // return '';
   }
 }

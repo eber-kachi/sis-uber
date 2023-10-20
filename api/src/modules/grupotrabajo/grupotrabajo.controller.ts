@@ -8,7 +8,7 @@ export class GrupotrabajoController {
   constructor(private readonly grupotrabajoService: GrupotrabajoService) {}
 
   @Post()
-  create(@Body() createGrupotrabajoDto: CreateGrupotrabajoDto) {
+  create(@Body() createGrupotrabajoDto: any) {
     return this.grupotrabajoService.create(createGrupotrabajoDto);
   }
 

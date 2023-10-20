@@ -14,6 +14,7 @@ import {
   UseGuards,
   Req,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { SocioService } from './socio.service';
 import { SocioDto } from './dto/create-socio.dto';
@@ -38,6 +39,8 @@ import {
   parse,
   parseISO,
 } from 'date-fns';
+import { CustomInterceptorIgnore } from 'interceptors/custom-interceptor-ignore.service';
+import type { Response } from 'express';
 
 @Controller('socios')
 @ApiTags('socios')
@@ -46,8 +49,19 @@ export class SocioController {
 
   @Post()
   @ApiConsumes('multipart/form-data')
-  async create(@Body() createSocioDto: any): Promise<any> {
+  @ApiConsumes('multipart/form-data')
+  @ApiFile([{ name: 'foto' }])
+  @UseInterceptors(FileInterceptor('foto', multerOptions))
+  async create(@Body() createSocioDto: any, @UploadedFile() file: IFile): Promise<any> {
+    if (file) {
+      //borrar la otra foto que habia
+      return (await this.socioService.create({ ...createSocioDto, foto: file.filename })).toDto();
+    }
+
     const createSocio = await this.socioService.create(createSocioDto);
+    // console.log(createSocio);
+    // return this.socioService.update(id, updateSocioDto);
+
     return createSocio.toDto();
   }
 
@@ -188,6 +202,48 @@ export class SocioController {
       // await this.service.findAll()
       return this.socioService.findAll();
       // throw new HttpException('Un super error ', HttpStatus.FORBIDDEN);
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'Ocurrio un problema al procesar la informacion.',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
+  @Get('/report/download')
+  @CustomInterceptorIgnore()
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Cliente Registrado exitosamente.')
+  // async getTrips(@Param('id') id: string, @Res() res) {
+  async getTrips(@Res() res: Response) {
+    try {
+      const buffer: Buffer = await this.socioService.reportviajes();
+      // return this.clienteService.reportviajes();
+      res.set({
+        // pdf
+        'Content-Type': 'application/pdf',
+        // 'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename=pdf.pdf`,
+        'Content-Length': buffer.length,
+        // prevent cache
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: 0,
+      });
+
+      console.log(buffer.toString('base64'));
+
+      res.status(200).send({
+        content: buffer.toString('base64'),
+        filename: 'result.pdf',
+        mimeType: 'application/pdf',
+      });
+      // return new StreamableFile(buffer);
+      // res.headers.set('Content-Type', 'application/pdf');
     } catch (error) {
       console.log(error);
 

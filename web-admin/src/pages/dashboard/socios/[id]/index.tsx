@@ -33,21 +33,28 @@ type Inputs = {
   grupotrabajo_id: string;
 };
 
-const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
-  console.log('editar=>', data);
+// const SocioEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
+const SocioEditPage = () => {
+  // console.log('editar=>', data);
 
   const router = useRouter();
+  const { id } = router.query;
   const [loading, setLoading] = useState(false);
   const socioService = new SocioService();
   const grupoTrabajoService = new GrupoTrabajoService();
   const [foto, setFoto] = useState<any>(null);
   const [grupoTrabajo, setGrupoTrabajo] = useState<any[]>([]);
+
+  const [isnew, setIsnew] = useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<Inputs>({
     defaultValues: {
       nombres: data?.nombres ? data.nombres : '',
@@ -64,20 +71,35 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
       grupotrabajo_id: data?.grupotrabajo_id ? data.grupotrabajo_id : '',
     },
   });
-  watch((e) => {
-    console.log(e);
-  });
-
-  useEffect(() => {
-    listGrupotrabajo();
-    return () => {};
-  }, []);
+  // watch((e) => {
+  //   console.log(e);
+  // });
 
   const listGrupotrabajo = async () => {
     const respose = await grupoTrabajoService.getAll();
     console.log(respose.data);
     setGrupoTrabajo(respose.data);
   };
+  const getSocioById = async () => {
+    const response = await socioService.getById(String(id));
+    reset({ ...response?.data });
+    setValue('email', response.data.user ? response.data.user.email : '');
+    setData(response?.data);
+  };
+
+  useEffect(() => {
+    listGrupotrabajo();
+
+    if (id !== 'new') {
+      setIsnew(false);
+      getSocioById().then();
+    } else {
+      setIsnew(true);
+      setData(null);
+    }
+
+    return () => {};
+  }, [router.isReady]);
 
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
     // console.log(formData)
@@ -376,39 +398,39 @@ const VeiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
   );
 };
 
-export async function getServerSideProps(context: any) {
-  const { id } = context.params;
+// export async function getServerSideProps(context: any) {
+//   const { id } = context.params;
 
-  // console.log(context.params)
-  const service = new SocioService();
+//   // console.log(context.params)
+//   const service = new SocioService();
 
-  if (id !== 'new') {
-    try {
-      const response = await service.getById(id);
-      return {
-        props: {
-          isnew: false,
-          // eslint-disable-next-line camelcase
-          data: response?.data,
-        },
-      };
-    } catch (e: any) {
-      console.log(e);
-      if (e?.response?.status === 404) {
-        return {
-          notFound: true,
-        };
-      }
-    }
-  }
+//   if (id !== 'new') {
+//     try {
+//       const response = await service.getById(id);
+//       return {
+//         props: {
+//           isnew: false,
+//           // eslint-disable-next-line camelcase
+//           data: response?.data,
+//         },
+//       };
+//     } catch (e: any) {
+//       console.log(e);
+//       if (e?.response?.status === 404) {
+//         return {
+//           notFound: true,
+//         };
+//       }
+//     }
+//   }
 
-  return {
-    props: {
-      isnew: true,
-      // eslint-disable-next-line camelcase
-      data: {},
-    },
-  };
-}
+//   return {
+//     props: {
+//       isnew: true,
+//       // eslint-disable-next-line camelcase
+//       data: {},
+//     },
+//   };
+// }
 
-export default VeiculoEditPage;
+export default SocioEditPage;

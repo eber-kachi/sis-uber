@@ -55,7 +55,6 @@ const SidebarNavItem = (props: SidebarNavItemProps) => {
   const { icon, children, href } = props;
 
   const router = useRouter();
-  console.log(router);
 
   const searchForUsers = (string: string, path: string) =>
     path.includes(string);

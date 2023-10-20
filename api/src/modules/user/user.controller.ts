@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Param,
   Patch,
@@ -34,15 +35,44 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: any) {
     console.log(createUserDto);
-    const createUser = await this.userService.create(createUserDto);
-    return createUser.toDto();
+    try {
+      const createUser = await this.userService.create(createUserDto);
+      return createUser.toDto();
+    } catch (error) {
+      console.log(error);
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'No es posible borrar grupo, tiene socios asociados ',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 
   @Post('/register')
   // @Auth(RoleType.ADMIN)
   async createuser(@Body() createUserDto: any) {
-    const createUser = await this.userService.createUser(createUserDto, null);
-    return createUser.toDto();
+    try {
+      // const createUser = await this.userService.create(createUserDto);
+      // return createUser.toDto();
+
+      const createUser = await this.userService.createUser(createUserDto, null);
+      return createUser.toDto();
+    } catch (error) {
+      console.log(error);
+      // const message = '';
+      if (error?.message.includes('ER_DUP_ENTRY') && error.message.includes('@')) {
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            message: 'Error duplicado correo => ' + createUserDto?.email,
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+    }
   }
 
   @Get('admin')

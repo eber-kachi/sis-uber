@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/semi */
 import axios from '@lib/axios';
 
 export abstract class BaseAPIClass {
@@ -188,7 +189,7 @@ export abstract class BaseAPIClass {
           console.error('Promise', error);
           console.info('Promise', error.message);
           // todo mostrar al usuario que paso  un error
-          reject(error);
+          reject(error?.response?.data);
         });
     });
     // return axios.delete(`${this.baseUrl}/${id}`);
