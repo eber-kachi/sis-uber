@@ -1,4 +1,12 @@
-import { Column, Entity, JoinColumn, OneToOne, OneToMany, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { AbstractEntity } from '../../../common/abstract.entity';
 import { SocioDto } from '../dto/create-socio.dto';
 import { UserEntity } from '../../user/user.entity';
@@ -8,6 +16,9 @@ import { GrupotrabajoEntity } from 'modules/grupotrabajo/entities/grupotrabajo.e
 
 @Entity({ name: 'socios' })
 export class SocioEntity extends AbstractEntity<SocioDto> {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column({ nullable: true })
   nombres: string;
 

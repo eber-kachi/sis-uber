@@ -7,6 +7,7 @@ import { AbstractDto } from './dto/AbstractDto';
 
 export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
   // @Column({ length: 150 })
+  // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
