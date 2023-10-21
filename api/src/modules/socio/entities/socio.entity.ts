@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  AfterInsert,
 } from 'typeorm';
 import { AbstractEntity } from '../../../common/abstract.entity';
 import { SocioDto } from '../dto/create-socio.dto';
@@ -13,11 +14,17 @@ import { UserEntity } from '../../user/user.entity';
 import { ViajeEntity } from '../../viajes/entities/viaje.entity';
 import { VeiculoEntity } from '../../veiculo/entities/veiculo.entity';
 import { GrupotrabajoEntity } from 'modules/grupotrabajo/entities/grupotrabajo.entity';
+import { v1 as uuid } from 'uuid';
 
 @Entity({ name: 'socios' })
 export class SocioEntity extends AbstractEntity<SocioDto> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @AfterInsert()
+  generateUuid() {
+    this.id = uuid();
+  }
 
   @Column({ nullable: true })
   nombres: string;
