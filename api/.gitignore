@@ -37,3 +37,6 @@ lerna-debug.log*
 deploy.sh
 #files  upload 
 ./socios-files/*
+*.env
+package-lock.json
+yarn.lock
