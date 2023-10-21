@@ -50,10 +50,9 @@ export class SocioController {
 
   @Post()
   @ApiConsumes('multipart/form-data')
-  @ApiConsumes('multipart/form-data')
   @ApiFile([{ name: 'foto' }])
   @UseInterceptors(FileInterceptor('foto', multerOptions))
-  async create(@Body() createSocioDto: any, @UploadedFile() file: IFile): Promise<any> {
+  async create(@Body() createSocioDto: SocioDto, @UploadedFile() file: IFile): Promise<any> {
     console.log(createSocioDto);
 
     if (file) {

@@ -15,9 +15,7 @@ export class SocioDto extends AbstractDto {
   @ApiPropertyOptional()
   nacionalidad: string;
   @ApiPropertyOptional()
-  foto: string;
-  @ApiPropertyOptional()
-  estado: string;
+  foto: any;
 
   // licencia
   @ApiPropertyOptional()
@@ -35,6 +33,9 @@ export class SocioDto extends AbstractDto {
   @ApiPropertyOptional()
   grupotrabajo_id: string;
 
+  @ApiPropertyOptional()
+  user_id: any;
+
   constructor(entity: SocioEntity) {
     super(entity);
     this.nombres = entity.nombres;
@@ -42,7 +43,7 @@ export class SocioDto extends AbstractDto {
     this.ci = entity.ci;
     this.nacionalidad = entity.nacionalidad;
     this.foto = entity.foto;
-    this.estado = entity.estado;
+    // this.estado = entity.estado;
     this.emision = entity.emision;
     this.vencimiento = entity.vencimiento;
     this.nro_licencia = entity.nro_licencia;
