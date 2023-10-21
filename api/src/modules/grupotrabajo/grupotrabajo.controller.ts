@@ -5,10 +5,11 @@ import { UpdateGrupotrabajoDto } from './dto/update-grupotrabajo.dto';
 
 @Controller('grupotrabajos')
 export class GrupotrabajoController {
-  constructor(private readonly grupotrabajoService: GrupotrabajoService) {}
+  constructor(private readonly grupotrabajoService: GrupotrabajoService) { }
 
   @Post()
   create(@Body() createGrupotrabajoDto: any) {
+    console.log(createGrupotrabajoDto);
     return this.grupotrabajoService.create(createGrupotrabajoDto);
   }
 

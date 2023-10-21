@@ -8,10 +8,10 @@ export class GrupotrabajoService {
   /**
    *
    */
-  constructor(public readonly grupotrabajoRepository: GrupotrabajoRepository) {}
-  create(createGrupotrabajoDto: CreateGrupotrabajoDto) {
+  constructor(public readonly grupotrabajoRepository: GrupotrabajoRepository) { }
+  async create(createGrupotrabajoDto: CreateGrupotrabajoDto) {
     const grupo = this.grupotrabajoRepository.create(createGrupotrabajoDto);
-    return this.grupotrabajoRepository.save(grupo);
+    return await this.grupotrabajoRepository.save(grupo);
   }
 
   async findAll() {
