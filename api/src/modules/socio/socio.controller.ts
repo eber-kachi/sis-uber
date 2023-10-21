@@ -52,11 +52,11 @@ export class SocioController {
   @ApiConsumes('multipart/form-data')
   @ApiFile([{ name: 'foto' }])
   @UseInterceptors(FileInterceptor('foto', multerOptions))
-  async create(@Body() createSocioDto: SocioDto, @UploadedFile() file: IFile): Promise<any> {
+  async create(@Body() createSocioDto: any, @UploadedFile() file?: IFile): Promise<any> {
     console.log(createSocioDto);
 
     if (file) {
-      //borrar la otra foto que habia
+      //borrar la otra foto que había
       return (await this.socioService.create({ ...createSocioDto, foto: file.filename })).toDto();
     }
 
