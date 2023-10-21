@@ -17,7 +17,7 @@ export class SocioService {
     // public readonly userRepository: UserRepository,
     public readonly userService: UserService,
     public readonly grupoTrabajo: GrupotrabajoService,
-  ) {}
+  ) { }
 
   async create(createSocioDto: SocioDto) {
     const user = await this.userService.createWithRole(
@@ -31,7 +31,7 @@ export class SocioService {
     socio.user = user;
     socio.grupotrabajo_id = createSocioDto.grupotrabajo_id;
 
-    return this.socioRepository.save(socio);
+    return await this.socioRepository.save(socio);
   }
 
   async addcardBysocioid(createSocioDto: any) {

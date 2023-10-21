@@ -15,6 +15,7 @@ import {
   Req,
   UploadedFile,
   Res,
+  Logger,
 } from '@nestjs/common';
 import { SocioService } from './socio.service';
 import { SocioDto } from './dto/create-socio.dto';
@@ -45,7 +46,7 @@ import type { Response } from 'express';
 @Controller('socios')
 @ApiTags('socios')
 export class SocioController {
-  constructor(private socioService: SocioService) {}
+  constructor(private socioService: SocioService) { }
 
   @Post()
   @ApiConsumes('multipart/form-data')
@@ -53,6 +54,8 @@ export class SocioController {
   @ApiFile([{ name: 'foto' }])
   @UseInterceptors(FileInterceptor('foto', multerOptions))
   async create(@Body() createSocioDto: any, @UploadedFile() file: IFile): Promise<any> {
+    console.log(createSocioDto);
+
     if (file) {
       //borrar la otra foto que habia
       return (await this.socioService.create({ ...createSocioDto, foto: file.filename })).toDto();
@@ -114,7 +117,7 @@ export class SocioController {
               format(fechaActual, 'yyyy-MM-dd') + ' ' + socio.grupotrabajo.hora_inicio;
             const fechaActualStringFin = format(
               new Date(fechaActualStringIn).getTime() +
-                socio.grupotrabajo.hora_fin * 60 * 60 * 1000,
+              socio.grupotrabajo.hora_fin * 60 * 60 * 1000,
               // fechaActual.setHours(socio.grupotrabajo.hora_fin),
               'yyyy-MM-dd HH:mm:ss',
             );
