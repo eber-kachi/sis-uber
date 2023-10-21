@@ -1,0 +1,80 @@
+{
+  "name": "taxiwayra",
+  "displayName": "taxiwayra",
+  "expo": {
+    "name": "taxiwayra",
+    "slug": "taxiwayra",
+    "scheme": "taxiwayra",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/app-icon-all.png",
+    "splash": {
+      "image": "./assets/images/splash-logo-all.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#41476e"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/4bd04872-6f17-4781-b786-470ddcef8b0d"
+    },
+    "jsEngine": "hermes",
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "icon": "./assets/images/app-icon-android-legacy.png",
+      "package": "com.taxiwayra",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
+        "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
+      },
+      "splash": {
+        "image": "./assets/images/splash-logo-android-universal.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#41476e"
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.VIBRATE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE" 
+      ]
+    },
+    "ios": {
+      "icon": "./assets/images/app-icon-ios.png",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.taxiwayra",
+      "splash": {
+        "image": "./assets/images/splash-logo-ios-mobile.png",
+        "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#41476e"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/app-icon-web-favicon.png",
+      "splash": {
+        "image": "./assets/images/splash-logo-web.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#41476e"
+      }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      "expo-localization"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4bd04872-6f17-4781-b786-470ddcef8b0d"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
+  }
+}
