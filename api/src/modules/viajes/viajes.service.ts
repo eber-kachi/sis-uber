@@ -15,7 +15,7 @@ export class ViajesService {
     public readonly viajeRepository: ViajeRepository,
     public readonly userService: UserService,
     public readonly socioService: SocioService,
-  ) {}
+  ) { }
 
   async create(createViajeDto: CreateViajeClient) {
     console.log('CreateViajeClient', createViajeDto);
@@ -135,7 +135,7 @@ export class ViajesService {
 
     const viaje = await this.viajeRepository.findOne({
       where: { id: createViajeDto.viaje_id },
-      relations: ['cliente'],
+      relations: ['cliente', 'socio'],
     });
     viaje.estado = createViajeDto.estado;
     const currentDateTime = new Date();
