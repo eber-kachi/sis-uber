@@ -41,7 +41,7 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
   @Column({ nullable: false })
   foto: string;
 
-  @Column({ nullable: true, default: 'SINSERVICIO', enum: ['LIBRE', 'OCUPADO', 'SINSERVICIO'] }) // se usara para saber si el socio esta con un cliente con una carrera
+  @Column({ nullable: true, default: 'SINSERVICIO' }) // se usara para saber si el socio esta con un cliente con una carrera
   estado: string; // LIBRE , OCUPADO, SINSERVICIO
 
   // licencia
