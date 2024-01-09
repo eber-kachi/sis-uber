@@ -287,7 +287,7 @@ export class SocioController {
     @Body() updateSocioDto: UpdateSocioDto,
     @UploadedFile() file: IFile,
   ) {
-    console.log(file);
+    console.log({ file, updateSocioDto });
     if (file) {
       //borrar la otra foto que habia
       return this.socioService.update(id, { ...updateSocioDto, foto: file.filename });

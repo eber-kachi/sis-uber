@@ -67,7 +67,7 @@ export class SocioService {
     return socio;
   }
 
-  async update(id: string, updateSocioDto: any) {
+  async update(id: string, updateSocioDto: UpdateSocioDto) {
     console.log({ updateSocioDto });
     const socioUpdate = await this.socioRepository.findOne({
       where: { id: id },
