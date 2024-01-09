@@ -73,7 +73,7 @@ export class SocioEntity extends AbstractEntity<SocioDto> {
   // userId: string;
 
   @OneToOne(() => UserEntity, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @OneToMany(() => ViajeEntity, (data) => data.socio)
