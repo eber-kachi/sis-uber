@@ -9,6 +9,7 @@ import { In } from 'typeorm';
 import { GrupotrabajoService } from 'modules/grupotrabajo/grupotrabajo.service';
 import { createPdf } from '@saemhco/nestjs-html-pdf';
 import path from 'path';
+import { log } from 'console';
 
 @Injectable()
 export class SocioService {
@@ -66,7 +67,8 @@ export class SocioService {
     return socio;
   }
 
-  async update(id: string, updateSocioDto: UpdateSocioDto) {
+  async update(id: string, updateSocioDto: any) {
+    console.log({ updateSocioDto });
     const socioUpdate = await this.socioRepository.findOne({
       where: { id: id },
       relations: ['user'],
