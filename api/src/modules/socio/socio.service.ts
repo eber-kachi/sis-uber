@@ -81,7 +81,7 @@ export class SocioService {
     await this.userService.update(socioUpdate.user.id, { email: updateSocioDto.email });
     // quitamos un valor del objeto
     delete updateSocioDto.email;
-    // delete updateSocioDto?.user_id;
+    delete updateSocioDto?.user_id;
     if (updateSocioDto.grupotrabajo_id) {
       const grupo = await this.grupoTrabajo.findOne(updateSocioDto.grupotrabajo_id);
       socioUpdate.grupotrabajo = grupo;
