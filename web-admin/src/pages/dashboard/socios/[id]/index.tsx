@@ -84,6 +84,7 @@ const SocioEditPage = () => {
     const response = await socioService.getById(String(id));
     reset({ ...response?.data });
     setValue('email', response.data.user ? response.data.user.email : '');
+    setValue('user_id', response.data.user ? response.data.user.id : '');
     setData(response?.data);
   };
 
@@ -98,7 +99,7 @@ const SocioEditPage = () => {
       setData(null);
     }
 
-    return () => {};
+    return () => { };
   }, [router.isReady]);
 
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
@@ -149,9 +150,8 @@ const SocioEditPage = () => {
       <div className='row'>
         <div className='col'>
           <div>
-            <h3 className='text-title text-center'>{`${
-              isnew ? 'Crear ' : 'Editar'
-            } socio`}</h3>
+            <h3 className='text-title text-center'>{`${isnew ? 'Crear ' : 'Editar'
+              } socio`}</h3>
           </div>
           <Card>
             <Card.Body>
