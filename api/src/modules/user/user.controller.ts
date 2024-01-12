@@ -30,7 +30,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(
     private userService: UserService, // private readonly translationService: TranslationService,
-  ) {}
+  ) { }
 
   @Post()
   async create(@Body() createUserDto: any) {
@@ -93,7 +93,7 @@ export class UserController {
   getUsers(
     @Query(new ValidationPipe({ transform: true }))
     pageOptionsDto: UsersPageOptionsDto,
-  ): Promise<PageDto<UserDto>> {
+  ) {
     return this.userService.getUsers(pageOptionsDto);
   }
 

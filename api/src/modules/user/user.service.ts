@@ -20,7 +20,7 @@ export class UserService {
     public readonly userRepository: UserRepository,
     public readonly validatorService: ValidatorService,
     public readonly awsS3Service: AwsS3Service,
-  ) {}
+  ) { }
 
   /**
    * Find single user
@@ -66,6 +66,7 @@ export class UserService {
     return this.userRepository.save(user);
   }
   async createWithRole(userRegisterDto: UserRegisterDto, role: RoleType) {
+
     const user = this.userRepository.create({ ...userRegisterDto, role });
 
     return this.userRepository.save(user);
@@ -77,11 +78,15 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async getUsers(pageOptionsDto: UsersPageOptionsDto): Promise<PageDto<UserDto>> {
-    const queryBuilder = this.userRepository.createQueryBuilder('user');
-    const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
+  // async getUsers(pageOptionsDto: UsersPageOptionsDto): Promise<PageDto<UserDto>> {
+  async getUsers(pageOptionsDto: UsersPageOptionsDto) {
+    // const queryBuilder = this.userRepository.createQueryBuilder('user');
+    // const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
 
-    return items.toPageDto(pageMetaDto);
+    // return items.toPageDto(pageMetaDto);
+    const queryBuilder = await this.userRepository.find();
+    return queryBuilder;
+
   }
 
   async getByEmail(email: string): Promise<UserEntity> {
