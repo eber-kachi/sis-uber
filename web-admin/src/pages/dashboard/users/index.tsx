@@ -22,9 +22,9 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
     // filtamos solo para editar usuarios que acceden al web-admin
     const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
       // if (['USER', 'ADMIN'].includes(user.role)) {
-      //   return [...users, user];
+      return [...users, user];
       // }
-      return users;
+      // return users;
     }, []);
     setObjects(usersfinaly);
   };
