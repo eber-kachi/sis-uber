@@ -5,11 +5,12 @@ import { SocioRepository } from './socio.repository';
 // import { UserRepository } from '../user/user.repository';
 import { UserService } from '../user/user.service';
 import { RoleType } from 'common/constants/role-type';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { GrupotrabajoService } from 'modules/grupotrabajo/grupotrabajo.service';
 import { createPdf } from '@saemhco/nestjs-html-pdf';
 import path from 'path';
 import { log } from 'console';
+import { InjectEntityManager } from '@nestjs/typeorm';
 
 @Injectable()
 export class SocioService {
@@ -18,9 +19,13 @@ export class SocioService {
     // public readonly userRepository: UserRepository,
     public readonly userService: UserService,
     public readonly grupoTrabajo: GrupotrabajoService,
+    @InjectEntityManager()
+    private entityManager: EntityManager,
   ) { }
 
   async create(createSocioDto: SocioDto) {
+    // await this.entityManager.transaction(async manager => {
+
     const user = await this.userService.createWithRole(
       {
         email: createSocioDto.email,
@@ -28,11 +33,13 @@ export class SocioService {
       },
       RoleType.DRIVER,
     );
+
     const socio = await this.socioRepository.create(createSocioDto);
     socio.user = user;
     socio.grupotrabajo_id = createSocioDto.grupotrabajo_id;
 
     return await this.socioRepository.save(socio);
+    // });
   }
 
   async addcardBysocioid(createSocioDto: any) {

@@ -53,18 +53,30 @@ export class SocioController {
   @ApiFile([{ name: 'foto' }])
   @UseInterceptors(FileInterceptor('foto', multerOptions))
   async create(@Body() createSocioDto: any, @UploadedFile() file?: IFile): Promise<any> {
-    console.log(createSocioDto);
+    try {
+      console.log(createSocioDto);
 
-    if (file) {
-      //borrar la otra foto que había
-      return (await this.socioService.create({ ...createSocioDto, foto: file.filename })).toDto();
+      if (file) {
+        //borrar la otra foto que había
+        return (await this.socioService.create({ ...createSocioDto, foto: file.filename })).toDto();
+      }
+
+      const createSocio = await this.socioService.create(createSocioDto);
+      // console.log(createSocio);
+      // return this.socioService.update(id, updateSocioDto);
+
+      return createSocio.toDto();
+    } catch (error) {
+      console.log(typeof error);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: String(error),
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
-    const createSocio = await this.socioService.create(createSocioDto);
-    // console.log(createSocio);
-    // return this.socioService.update(id, updateSocioDto);
-
-    return createSocio.toDto();
   }
 
   @Post('add-car')
