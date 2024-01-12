@@ -73,7 +73,7 @@ export default function VeiculoEditPage({
       socioService
         .userRegister(formData)
         .then((res) => {
-          toast('Creado con exito.');
+          toast('Creado con éxito.');
           router.back();
           console.log(res);
         })
@@ -86,7 +86,7 @@ export default function VeiculoEditPage({
         .update(formData, data.id)
         .then((res) => {
           // toastSuccess(res.message);
-          toast('Creado con exito.');
+          toast('Editado con éxito.');
           router.back();
         })
         .catch((error) => {
@@ -101,9 +101,8 @@ export default function VeiculoEditPage({
       <div className='row'>
         <div className='col'>
           <div>
-            <h3 className='text-title text-center'>{`${
-              isnew ? 'Crear ' : 'Editar'
-            } Usuario`}</h3>
+            <h3 className='text-title text-center'>{`${isnew ? 'Crear ' : 'Editar'
+              } Usuario`}</h3>
           </div>
           <Card>
             <Card.Body>
@@ -125,9 +124,30 @@ export default function VeiculoEditPage({
                     </Form.Group>
                   </Col>
                   <Col xs={12} md={6}>
-                    <Form.Group className='mb-3' controlId='rol'>
+                    <div className='form-group mb-3'>
+                      <label>Rol</label>
+                      {/* <Form.Group className='mb-3' controlId='rol'> */}
                       <Form.Label>Rol</Form.Label>
-                      <Form.Select
+                      <select
+                        className='form-control'
+                        value={getValues()?.role ? getValues()?.role : data.role}
+                        // {...register('role', { required: 'Es requerido' })}
+                        onChange={(c) => {
+                          console.log(c.target.value);
+                          setValue('role', c.target.value)
+                        }}
+                      >
+                        {/* <option value='' disabled>
+                          Selecione un rol
+                        </option> */}
+                        {rols &&
+                          rols.map((c, index) => (
+                            <option key={index} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                      </select>
+                      {/* <Form.Select
                         defaultValue={data?.role ? data.role : ''}
                         {...register('role', { required: 'Es requerido' })}
                       >
@@ -140,13 +160,16 @@ export default function VeiculoEditPage({
                               {c}
                             </option>
                           ))}
-                      </Form.Select>
+                      </Form.Select> */}
+
                       {errors.role?.type === 'required' && (
                         <span className='text-danger'>
                           {errors.role?.message}{' '}
                         </span>
                       )}
-                    </Form.Group>
+                      {/* </Form.Group> */}
+                    </div>
+
                   </Col>
                 </Row>
                 <Row>

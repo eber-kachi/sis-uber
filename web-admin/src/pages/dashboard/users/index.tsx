@@ -34,7 +34,7 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
       .delete(id)
       .then((res) => {
         console.log(res);
-        toast('Eliminado con exito.');
+        toast('Eliminado con éxito.');
         getData();
       })
       .catch((error) => {

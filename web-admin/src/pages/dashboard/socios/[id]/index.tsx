@@ -53,6 +53,7 @@ const SocioEditPage = () => {
     handleSubmit,
     watch,
     formState: { errors },
+    getValues,
     setValue,
     reset,
   } = useForm<Inputs>({
@@ -136,7 +137,7 @@ const SocioEditPage = () => {
       socioService
         .updateFormData(newForm, data.id)
         .then((res) => {
-          toast('Creado con exito.');
+          toast('Editado con exito.');
           router.back();
         })
         .catch((error) => {
@@ -346,7 +347,7 @@ const SocioEditPage = () => {
                           required: 'Es requerido',
                         })}
                         defaultValue={
-                          data?.grupotrabajo_id ? data.grupotrabajo_id : ''
+                          getValues()?.grupotrabajo_id ? getValues()?.grupotrabajo_id : data?.grupotrabajo_id
                         }
                       >
                         <option disabled value=''>
