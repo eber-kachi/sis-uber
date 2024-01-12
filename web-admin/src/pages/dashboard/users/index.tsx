@@ -21,9 +21,9 @@ const UserListPage = ({ dataResponce }: { dataResponce: any[] }) => {
     const responce: any = await clienteService.getAll();
     // filtamos solo para editar usuarios que acceden al web-admin
     const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
-      if (['USER', 'ADMIN'].includes(user.role)) {
-        return [...users, user];
-      }
+      // if (['USER', 'ADMIN'].includes(user.role)) {
+      //   return [...users, user];
+      // }
       return users;
     }, []);
     setObjects(usersfinaly);
