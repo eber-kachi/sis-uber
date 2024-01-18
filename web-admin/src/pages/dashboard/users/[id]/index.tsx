@@ -8,6 +8,7 @@ import { Button, Col, Form, InputGroup, Row, Card } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import UserService from 'src/services/api/User.service';
 import RolService from 'src/services/api/Rol.service';
+import { log } from 'console';
 
 type Inputs = {
   email: string;
@@ -67,7 +68,9 @@ export default function VeiculoEditPage({
   }, []);
 
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
-    console.log(formData);
+    // console.log(formData);
+    const formValue = getValues();
+    console.log(formValue);
 
     if (isnew) {
       socioService
@@ -130,16 +133,16 @@ export default function VeiculoEditPage({
                       <Form.Label>Rol</Form.Label>
                       <select
                         className='form-control'
-                        value={getValues()?.role ? getValues()?.role : data.role}
+                        value={getValues()?.role != '' ? getValues()?.role : getValues()?.role == '' ? '' : data.role}
                         // {...register('role', { required: 'Es requerido' })}
                         onChange={(c) => {
                           console.log(c.target.value);
                           setValue('role', c.target.value)
                         }}
                       >
-                        {/* <option value='' disabled>
+                        <option value='' disabled>
                           Selecione un rol
-                        </option> */}
+                        </option>
                         {rols &&
                           rols.map((c, index) => (
                             <option key={index} value={c}>
