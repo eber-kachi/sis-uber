@@ -86,7 +86,6 @@ export class UserService {
     // return items.toPageDto(pageMetaDto);
     const queryBuilder = await this.userRepository.find();
     return queryBuilder;
-
   }
 
   async getByEmail(email: string): Promise<UserEntity> {

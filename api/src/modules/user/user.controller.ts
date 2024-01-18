@@ -85,16 +85,16 @@ export class UserController {
   @Get()
   // @Auth(RoleType.USER)
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Get users list',
-    type: PageDto,
-  })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Get users list',
+  //   type: PageDto,
+  // })
   getUsers(
-    @Query(new ValidationPipe({ transform: true }))
-    pageOptionsDto: UsersPageOptionsDto,
+    // @Query(new ValidationPipe({ transform: true }))
+    // pageOptionsDto: UsersPageOptionsDto,
   ) {
-    return this.userService.getUsers(pageOptionsDto);
+    return this.userService.findAll();
   }
 
   @Get('/all')

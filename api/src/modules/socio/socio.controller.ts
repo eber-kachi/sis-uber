@@ -67,7 +67,7 @@ export class SocioController {
 
       return createSocio.toDto();
     } catch (error) {
-      console.log(typeof error);
+      console.log(error);
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
