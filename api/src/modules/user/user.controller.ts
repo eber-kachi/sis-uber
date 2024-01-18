@@ -72,6 +72,14 @@ export class UserController {
           HttpStatus.FORBIDDEN,
         );
       }
+
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: error?.message
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 

@@ -21,9 +21,11 @@ type Inputs = {
 
 // const veiculoEditPage = ({ isnew, data }: { isnew: boolean; data: any }) => {
 const veiculoEditPage = () => {
+
+
   const router = useRouter();
   const { veiculo_id } = router.query;
-
+  console.log(router.query);
   const socioService = new VeiculoService();
   const socio = new SocioService();
 
@@ -31,6 +33,7 @@ const veiculoEditPage = () => {
 
   const [isnew, setIsnew] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
+  const [socio_id, setSocioId] = useState<string | null>(null);
 
   const {
     register,
@@ -69,7 +72,11 @@ const veiculoEditPage = () => {
       setData(null);
     }
 
-    return () => {};
+    if (router.isReady) {
+      setSocioId(String(router?.query?.id));
+    }
+
+    return () => { };
   }, [router.isReady]);
 
   const onSubmit: SubmitHandler<Inputs> = (formData) => {
@@ -93,14 +100,21 @@ const veiculoEditPage = () => {
       socioService
         .create(newForm)
         .then(async (res: any) => {
+          console.log(res);
           //  despues de  crear el veiculo debemos agregarle al socio
-          await socio.addCar({
-            socio_id: data.socio_id,
+          socio.addCar({
+            socio_id: socio_id,
             veiculo_id: res.data.id,
-          });
+          })
+            .then(data => {
+              toast('Vehículo asignado con éxito.');
+            })
+            .catch((err) => {
+              console.error(err);
+              toast('Error al asignar vehículo. Intente más tarde')
+            });
           toast('Creado con exito.');
           router.back();
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -126,9 +140,8 @@ const veiculoEditPage = () => {
       <div className='row'>
         <div className='col'>
           <div>
-            <h3 className='text-title text-center'>{`${
-              isnew ? 'Crear ' : 'Editar'
-            } Vehículo`}</h3>
+            <h3 className='text-title text-center'>{`${isnew ? 'Crear ' : 'Editar'
+              } Vehículo`}</h3>
           </div>
           <Card>
             <Card.Body>
