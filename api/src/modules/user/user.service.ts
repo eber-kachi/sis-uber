@@ -115,7 +115,7 @@ export class UserService {
   }
 
   async findAll() {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.find({ order: { createdAt: 'ASC', role: 'ASC' } });
     return users;
   }
 
