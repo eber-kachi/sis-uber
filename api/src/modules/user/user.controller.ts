@@ -57,7 +57,7 @@ export class UserController {
     try {
       // const createUser = await this.userService.create(createUserDto);
       // return createUser.toDto();
-
+      console.log({ createUserDto });
       const createUser = await this.userService.createUser(createUserDto, null);
       return createUser.toDto();
     } catch (error) {
