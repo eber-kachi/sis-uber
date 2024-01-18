@@ -20,13 +20,13 @@ const ListUsers = () => {
         // filtamos solo para editar usuarios que acceden al web-admin
         console.log({ responce });
 
-        const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
-            // if (['USER', 'ADMIN'].includes(user.role)) {
-            return [...users, user];
-            // }
-            // return users;
-        }, []);
-        setObjects(usersfinaly);
+        // const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
+        //     // if (['USER', 'ADMIN'].includes(user.role)) {
+        //     return [...users, user];
+        //     // }
+        //     // return users;
+        // }, []);
+        setObjects(responce?.data);
     };
 
     const onClickDelete = (id: string) => {

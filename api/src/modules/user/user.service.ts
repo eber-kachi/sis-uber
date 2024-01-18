@@ -63,7 +63,7 @@ export class UserService {
       // user.avatar = await this.awsS3Service.uploadImage(file);
     }
 
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
   async createWithRole(userRegisterDto: UserRegisterDto, role: RoleType) {
 
