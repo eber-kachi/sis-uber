@@ -11,17 +11,20 @@ import { Column } from 'typeorm';
 
 import { Trim } from '../../../decorators/transforms.decorator';
 import { RoleType } from 'common/constants/role-type';
+import { Transform } from 'class-transformer';
 export class ClienteRegisterDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Trim()
+  @Transform(({ value }) => String(value).split(' ').map(v => v.charAt(0).toUpperCase() + v.slice(1)).join(' '))
   readonly nombres: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Trim()
+  @Transform(({ value }) => String(value).split(' ').map(v => v.charAt(0).toUpperCase() + v.slice(1)).join(' '))
   readonly apellidos: string;
 
   @ApiPropertyOptional({ enum: RoleType })

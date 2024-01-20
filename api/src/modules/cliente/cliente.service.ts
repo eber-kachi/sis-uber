@@ -9,7 +9,6 @@ import { RoleType } from 'common/constants/role-type';
 // generate report to pdf
 import * as path from 'path';
 import { createPdf } from '@saemhco/nestjs-html-pdf';
-import { log } from 'console';
 
 @Injectable()
 export class ClienteService {
@@ -17,7 +16,7 @@ export class ClienteService {
     public readonly clienteRepository: ClienteRepository,
     // public readonly userRepository: UserRepository,
     public readonly userService: UserService,
-  ) {}
+  ) { }
 
   async create(createClienteDto: ClienteRegisterDto) {
     //buscar si usuario ya existe
@@ -32,7 +31,7 @@ export class ClienteService {
 
     const cliente = await this.clienteRepository.create(createClienteDto);
     cliente.nombres = createClienteDto.nombres;
-    cliente.apellidos = createClienteDto.nombres;
+    cliente.apellidos = createClienteDto.apellidos;
     cliente.user = user;
     cliente.viajes = null;
     cliente.direccionMadre = null;

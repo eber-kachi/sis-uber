@@ -98,7 +98,8 @@ export class UserService {
     // return userEntity;
     const socios = await this.userRepository.findOne({
       where: { email: email },
-      relations: ['cliente', 'socio'],
+      // relations: ['cliente', 'socio'],
+      relations: { cliente: true, socio: { veiculo: true } },
     });
 
     return socios;

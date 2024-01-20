@@ -55,6 +55,7 @@ export class SocioController {
   async create(@Body() createSocioDto: any, @UploadedFile() file?: IFile): Promise<any> {
     try {
       console.log(createSocioDto);
+      console.log(file);
 
       if (file) {
         //borrar la otra foto que había
@@ -68,6 +69,16 @@ export class SocioController {
       return createSocio.toDto();
     } catch (error) {
       console.log(error);
+      if (error?.message.includes('ER_DUP_ENTRY') && error.message.includes('@')) {
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            message: 'Error duplicado correo => ' + createSocioDto?.email,
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
@@ -105,6 +116,17 @@ export class SocioController {
           );
         }
 
+        if (user?.socio?.veiculo) {
+          throw new HttpException(
+            {
+              status: HttpStatus.FORBIDDEN,
+              message: 'Usuario no cuenta con vehículo. consulte al administrador.',
+            },
+            HttpStatus.FORBIDDEN,
+          );
+        }
+
+
         if (user.socio && createSocioDto.state === 'SINSERVICO') {
           return await this.socioService.changeState(
             user.socio.id,
@@ -112,7 +134,7 @@ export class SocioController {
             createSocioDto.location,
           );
         }
-
+        // validación de horario de trabajo 
         if (user.socio) {
           const socio = await this.socioService.findOne(user.socio.id);
           const time = 24 * 60 * 60 * 1000;
@@ -159,6 +181,17 @@ export class SocioController {
       }
 
       const socio = await this.socioService.findOne(createSocioDto.socio_id);
+
+      if (socio?.veiculo) {
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            message: 'Usuario no cuenta con vehículo. consulte al administrador.',
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
       const time = 24 * 60 * 60 * 1000;
       const fechaActual =
         new Date().getHours() >= 0 && new Date().getHours() <= 5
