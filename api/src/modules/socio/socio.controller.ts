@@ -116,7 +116,7 @@ export class SocioController {
           );
         }
 
-        if (user?.socio?.veiculo) {
+        if (!user?.socio?.veiculo) {
           throw new HttpException(
             {
               status: HttpStatus.FORBIDDEN,
@@ -182,7 +182,7 @@ export class SocioController {
 
       const socio = await this.socioService.findOne(createSocioDto.socio_id);
 
-      if (socio?.veiculo) {
+      if (!socio?.veiculo) {
         throw new HttpException(
           {
             status: HttpStatus.FORBIDDEN,
