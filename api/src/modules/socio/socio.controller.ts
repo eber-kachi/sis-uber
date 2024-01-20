@@ -116,7 +116,7 @@ export class SocioController {
           );
         }
 
-        if (!user?.socio?.veiculo) {
+        if (!user?.socio?.veiculo && createSocioDto.state != 'SINSERVICO') {
           throw new HttpException(
             {
               status: HttpStatus.FORBIDDEN,
