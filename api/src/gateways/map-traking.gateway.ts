@@ -24,7 +24,7 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   clients: any[] = [];
   constructor(
     private readonly sociosService: SocioService, // private readonly sociosService: SocioService,
-  ) {} // private readonly  ticketSrvice: TicketService,
+  ) { } // private readonly  ticketSrvice: TicketService,
 
   @WebSocketServer()
   server: Server;
@@ -138,16 +138,19 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
       throw new Error('Paso un erro no hay viaje');
     }
   }
+
   @SubscribeMessage('socios_conectados')
   async handler_socio_conect(client: Socket, payload: { socio_id: string; location: any }) {
     if (payload !== undefined) {
       // const socio = await this.sociosService.findOne(payload.socio_id);
       // if (socio.estado == 'LIBRE') {
-      //   await this.sociosService.changeState(payload.socio_id, 'OCUPADO', payload.location);
+      await this.sociosService.updateLocations(payload.socio_id, payload.location);
       // }
       // if (socio.estado == 'OCUPADO') {
       //   await this.sociosService.changeState(payload.socio_id, 'LIBRE', payload.location);
       // }
+      const socios = await this.sociosService.getAllWithStatus();
+      this.server.emit('socios_conectados', socios);
     }
 
     const socios = await this.sociosService.getAllWithStatus();
@@ -178,6 +181,14 @@ export class MapTrakingGateway implements OnGatewayInit, OnGatewayConnection, On
   @SubscribeMessage('viaje_track')
   handleTraking(client: Socket, payload: { socio_id: string; position: any }) {
     this.loger.log('change positions => ' + payload.socio_id);
+
+    // client.leave(`socio_events_${socio_id}`);
+    this.server.to(`socio_events_${payload.socio_id}`).emit('viaje_change_track', payload);
+  }
+
+  @SubscribeMessage('socio_track')
+  handleSocioTraking(client: Socket, payload: { socio_id: string; position: any }) {
+    this.loger.log('change positions socio => ' + payload.socio_id, payload.position);
 
     // client.leave(`socio_events_${socio_id}`);
     this.server.to(`socio_events_${payload.socio_id}`).emit('viaje_change_track', payload);

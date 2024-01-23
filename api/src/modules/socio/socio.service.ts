@@ -146,6 +146,15 @@ export class SocioService {
     return this.socioRepository.save(socio);
   }
 
+  async updateLocations(socio_id: any, location: any) {
+    const socio = await this.socioRepository.findOneBy({ id: socio_id });
+    if (location) {
+      socio.latitude = parseFloat(location.latitude);
+      socio.longitude = parseFloat(location.longitude);
+    }
+    return await this.socioRepository.save(socio);
+  }
+
   async reportviajes() {
     // get datetime of Date
     const date = new Date();
