@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { Card } from 'react-bootstrap';
 import ClienteService from '../../../services/api/Cliente.service';
+import CustomSwitch from '@components/ui/CustomSwitch';
 
 const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
   // const { userValue } = useAuthClient({ redirectIfAuthenticated: "/" })
@@ -54,9 +55,9 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
               <thead>
                 <tr>
                   <th>#</th>
-
                   <th>Nombre completo</th>
-
+                  <th>Correo</th>
+                  {/* <th>Estado</th> */}
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -68,7 +69,36 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
                       <td>
                         {object.nombres} {object.apellidos}
                       </td>
-
+                      <td>
+                        {object?.user?.email}
+                      </td>
+                      <td>
+                        {/* <CustomSwitch
+                          enabled={
+                            !!(
+                              `${object?.user?.activo}` === '1' ||
+                              object?.user?.activo === true
+                            )
+                          }
+                          onClick={async () => {
+                            await clienteService
+                              .enabled(object.id)
+                              .then(async (res: any) => {
+                                await getData();
+                                toast(
+                                  res.data.activo
+                                    ? 'Activado con exito'
+                                    : 'Desactivado con exito'
+                                );
+                                console.log(res);
+                              })
+                              .catch((error) => {
+                                console.log(error);
+                                toast('Error al Registrado.', {});
+                              });
+                          }}
+                        /> */}
+                      </td>
                       <td>
                         <div className=''>
                           <Link

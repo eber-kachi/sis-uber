@@ -40,7 +40,7 @@ export class ClienteService {
   }
 
   async findAll() {
-    const cliente = await this.clienteRepository.find({ order: { createdAt: 'DESC' } });
+    const cliente = await this.clienteRepository.find({ relations: { user: true }, order: { createdAt: 'DESC' } });
     return cliente;
   }
 

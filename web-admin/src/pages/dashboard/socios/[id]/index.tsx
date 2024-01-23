@@ -45,6 +45,7 @@ const SocioEditPage = () => {
   const [foto, setFoto] = useState<any>(null);
   const [grupoTrabajo, setGrupoTrabajo] = useState<any[]>([]);
 
+  const [fotoObligado, setFotoObligado] = useState<boolean>(false);
   const [isnew, setIsnew] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
 
@@ -94,9 +95,11 @@ const SocioEditPage = () => {
 
     if (id !== 'new') {
       setIsnew(false);
+      setFotoObligado(false);
       getSocioById().then();
     } else {
       setIsnew(true);
+      setFotoObligado(true);
       setData(null);
     }
 
@@ -280,14 +283,34 @@ const SocioEditPage = () => {
                   <Col xs={12} md={6} className='d-flex'>
                     <Form.Group className='mb-3'>
                       <Form.Label>Foto</Form.Label>
-                      <Form.Control
-                        type='file'
-                        accept='.png, .jpj'
-                        placeholder=''
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFoto(e.target?.files && e.target?.files[0]);
-                        }}
-                      />
+                      {
+                        fotoObligado ? (
+                          <>
+                            <Form.Control
+                              type='file'
+                              accept='.png, .jpj'
+                              placeholder=''
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                setFoto(e.target?.files && e.target?.files[0]);
+                              }}
+                              required
+                            />
+                            <span className="text-danger">Fotografía es obligatorio.</span>
+                          </>
+
+                        ) : (
+                          <>
+                            <Form.Control
+                              type='file'
+                              accept='.png, .jpj'
+                              placeholder=''
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                setFoto(e.target?.files && e.target?.files[0]);
+                              }}
+                            />
+                          </>
+                        )
+                      }
                       {/* {errors.foto?.type === "required" && (
                     <span className="text-danger">{errors.foto?.message} </span>
                   )} */}
