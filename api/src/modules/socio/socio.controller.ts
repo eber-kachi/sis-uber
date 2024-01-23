@@ -106,7 +106,7 @@ export class SocioController {
 
       if (createSocioDto.socio_id.match(validRegex)) {
         const user = await this.socioService.findByEmail(createSocioDto.socio_id);
-        if (!user.socio.activo) {
+        if (!user.socio.activo && createSocioDto.state != 'SINSERVICO') {
           throw new HttpException(
             {
               status: HttpStatus.FORBIDDEN,
