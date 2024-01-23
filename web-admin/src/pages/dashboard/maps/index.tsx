@@ -35,15 +35,14 @@ const CustomMarker = (props: any) => {
       draggable
       position={position}
       label={{
-        text: `${data.veiculo?.n_movil}`,
+        text: `${data?.veiculo?.n_movil}`,
         color: '#fff',
         fontWeight: 'bold',
         className: 'marker-label font-weight-bold -mt-30 ',
       }}
       icon={{
-        url: `${urlfornt}/assets/img/cars/${
-          data.estado === 'LIBRE' ? 'car-green.svg' : 'car-red.svg'
-        }`,
+        url: `${urlfornt}/assets/img/cars/${data.estado === 'LIBRE' ? 'car-green.svg' : 'car-red.svg'
+          }`,
         scale: 0.02,
         scaledSize: new window.google.maps.Size(30, 30),
         origin: new window.google.maps.Point(0, 0),
@@ -118,6 +117,7 @@ const MapsPage = () => {
     //   updatedAt: "2023-06-14T18:38:34.593Z",
     // },
   ]);
+
   const [currenLocationSelect, setCurrenLocationSelect] = useState<{
     latitude: number;
     longitude: number;
@@ -178,10 +178,13 @@ const MapsPage = () => {
       });
       socket.emit('socios_conectados');
       // escuchar la lista de socios conectados al sockets
-      socket.on('socios_conectados', (datas: any[]) => {
+      socket.on('socios_conectados', (datas: any) => {
         console.log('vehiculos_conectados', datas);
         setVeiculos([...datas]);
       });
+
+      // socket.on()
+
     }
     return () => {
       if (socket) {
@@ -294,7 +297,7 @@ const MapsPage = () => {
                           name='viajes'
                           type='radio'
                           aria-label={`${viaje?.cliente?.nombres} ${viaje?.cliente?.apellidos}`}
-                          onChange={() => {}}
+                          onChange={() => { }}
                           // onChange={handlerSelectViaje}
                           onClick={handlerSelectViaje}
                         />
@@ -326,7 +329,7 @@ const MapsPage = () => {
                   {memoizedMarkers.map((markerData: ISocio, index: number) => (
                     <CustomMarker
                       id={markerData.id}
-                      key={+index}
+                      key={markerData.id}
                       data={markerData}
                       position={{
                         lat: markerData.latitude,
