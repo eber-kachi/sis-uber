@@ -24,7 +24,7 @@ const ViajesListPage = ({ dataResponce }: { dataResponce: any[] }) => {
     if (id) {
       getById().then();
     }
-    return () => {};
+    return () => { };
   }, [router.isReady]);
 
   return (
@@ -47,6 +47,8 @@ const ViajesListPage = ({ dataResponce }: { dataResponce: any[] }) => {
                 <tr>
                   <th>#</th>
                   <th>Estado</th>
+                  <th>Fecha</th>
+                  <th>Dirección</th>
                 </tr>
               </thead>
               <tbody>
@@ -61,6 +63,13 @@ const ViajesListPage = ({ dataResponce }: { dataResponce: any[] }) => {
                         ) : (
                           <Badge bg='warning'> {object.estado}</Badge>
                         )}
+                      </td>
+                      <td>
+                        {object?.fecha}
+                      </td>
+                      <td>
+                        <strong>Dirección inicial:</strong> {object?.initial_address} <br /><strong> Dirección final:</strong>{object?.final_address}<br />
+                        <strong>Fecha partida:</strong> {object?.start_time} <br /><strong>Fecha llegada:</strong> {object?.end_time}
                       </td>
                     </tr>
                   ))}

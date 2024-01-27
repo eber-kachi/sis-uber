@@ -30,6 +30,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import React, {
   PropsWithChildren,
+  use,
   useContext,
   useEffect,
   useState,
@@ -45,6 +46,7 @@ import {
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useAuthClient } from '@hooks/useAuthClient';
 
 type SidebarNavItemProps = {
   href: string;
@@ -64,9 +66,8 @@ const SidebarNavItem = (props: SidebarNavItemProps) => {
     <Nav.Item>
       <Link href={href} passHref legacyBehavior>
         <Nav.Link
-          className={`px-3 py-2 d-flex align-items-center ${
-            isActive ? 'active-link' : ''
-          }`}
+          className={`px-3 py-2 d-flex align-items-center ${isActive ? 'active-link' : ''
+            }`}
         >
           {icon ? (
             <FontAwesomeIcon className='nav-icon ms-n3' icon={icon} />
@@ -161,34 +162,73 @@ const SidebarNavGroup = (props: SidebarNavGroupProps) => {
 };
 
 export default function SidebarNav() {
+
+  // const [role, setrole] = useState<string | null>(null)
+
+  const { role } = useAuthClient();
+  // console.log({ userValue });
+
+  // useEffect(() => {
+  //   // Add class to body if sidebar is present
+  //   if (userValue) {
+  //     console.log({ userValue });
+  //     // setrole(String(userValue?.data?.role))
+  //   }
+
+  // }, [userValue]);
+
   return (
     <ul className='list-unstyled'>
       {/* <SidebarNavItem icon={faGauge} href="/">
         Dashboard
         <small className="ms-auto"><Badge bg="info" className="ms-auto">NEW</Badge></small>
       </SidebarNavItem> */}
-      <SidebarNavItem icon={faUserCircle} href='/dashboard/users'>
-        Usuarios
-        {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
-      </SidebarNavItem>
-      <SidebarNavItem icon={faGroupArrowsRotate} href='/dashboard/grupotrabajo'>
-        Grupo trabajo
-        {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
-      </SidebarNavItem>
-      <SidebarNavItem icon={faUsers} href='/dashboard/socios'>
-        Socios
-        {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
-      </SidebarNavItem>
-      <SidebarNavItem icon={faAddressBook} href='/dashboard/clientes'>
-        Clientes
-        {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
-      </SidebarNavItem>
-      <SidebarNavItem icon={faBookAtlas} href='/dashboard/reportes'>
-        Reportes
-      </SidebarNavItem>
-      <SidebarNavItem icon={faMap} href='/dashboard/maps'>
-        Mapa Socios
-      </SidebarNavItem>
+      {role && role == 'ADMIN' && (
+        <>
+          <SidebarNavItem icon={faUserCircle} href='/dashboard/users'>
+            Usuarios
+            {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+          </SidebarNavItem>
+          <SidebarNavItem icon={faGroupArrowsRotate} href='/dashboard/grupotrabajo'>
+            Grupo trabajo
+            {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+          </SidebarNavItem>
+          <SidebarNavItem icon={faUsers} href='/dashboard/socios'>
+            Socios
+            {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+          </SidebarNavItem>
+          <SidebarNavItem icon={faAddressBook} href='/dashboard/clientes'>
+            Clientes
+            {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+          </SidebarNavItem>
+          <SidebarNavItem icon={faBookAtlas} href='/dashboard/reportes'>
+            Reportes
+          </SidebarNavItem>
+          <SidebarNavItem icon={faMap} href='/dashboard/maps'>
+            Mapa Socios
+          </SidebarNavItem>
+        </>
+      )}
+      {role && role == 'USER' && (
+        <>
+          <SidebarNavItem icon={faUsers} href='/dashboard/socios'>
+            Socios
+            {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+          </SidebarNavItem>
+          <SidebarNavItem icon={faAddressBook} href='/dashboard/clientes'>
+            Clientes
+            {/* <small className="ms-auto"><Badge bg="danger" className="ms-auto">DEMO</Badge></small> */}
+          </SidebarNavItem>
+          <SidebarNavItem icon={faBookAtlas} href='/dashboard/reportes'>
+            Reportes
+          </SidebarNavItem>
+          <SidebarNavItem icon={faMap} href='/dashboard/maps'>
+            Mapa Socios
+          </SidebarNavItem>
+        </>
+      )}
+
+
 
       {/* <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText='Base'>
         <SidebarNavItem href='base/accordion.html'>Accordion</SidebarNavItem>

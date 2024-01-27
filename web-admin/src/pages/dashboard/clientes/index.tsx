@@ -112,12 +112,12 @@ const SocioListPage = ({ dataResponce }: { dataResponce: any[] }) => {
                             Viajes
                           </Link>
 
-                          <Button
+                          {/* <Button
                             variant='outline-danger'
                             onClick={() => onClickDelete(object.id)}
                           >
                             Eliminar
-                          </Button>
+                          </Button> */}
                         </div>
                       </td>
                     </tr>

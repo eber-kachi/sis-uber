@@ -2,6 +2,7 @@ import React from 'react'
 import { Container } from 'react-bootstrap'
 
 export default function Footer() {
+  const year = new Date().getFullYear();
   return (
     <footer className="footer border-top px-sm-2 py-2">
       <Container
@@ -14,7 +15,7 @@ export default function Footer() {
             Bootstrap Admin
             Template
           </a> */}{' '}
-          © 2023 Taxi
+          © {year} Waira
         </div>
         <div className="ms-md-auto">
           {/* Taxi &nbsp; */}

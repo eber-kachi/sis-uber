@@ -58,9 +58,16 @@ export default function VeiculoEditPage({
     function getrols() {
       rolService.getAll().then((res: any) => {
         console.log(res);
-        console.log(getFieldState);
+        // console.log(getFieldState);
+        const rols2 = res?.data?.reduce((rols: any[], role: any) => {
+          if (['USER', 'ADMIN'].includes(role)) {
+            return [...rols, role];
+          }
+          return rols;
+        }, [])
 
-        setRols(res.data);
+
+        setRols(rols2);
       });
     }
 

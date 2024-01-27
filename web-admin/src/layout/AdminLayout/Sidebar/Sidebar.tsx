@@ -9,6 +9,8 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
   const { isShow, isShowMd } = props
   const [isNarrow, setIsNarrow] = useState(false)
 
+
+
   const toggleIsNarrow = () => {
     const newValue = !isNarrow
     localStorage.setItem('isNarrow', newValue ? 'true' : 'false')
@@ -32,12 +34,13 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
       id="sidebar"
     >
       <div className="sidebar-brand d-none d-md-flex align-items-center justify-content-center">
-        <svg
+        <h1 className='text-center font-serif'>Waira</h1>
+        {/* <svg
           className="sidebar-brand-full"
           width="118"
           height="46"
         >
-          <title>CoreUI Logo</title>
+          <title>Taxi</title>
           <use xlinkHref="/assets/brand/coreui.svg#full" />
         </svg>
         <svg
@@ -45,9 +48,9 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
           width="46"
           height="46"
         >
-          <title>CoreUI Logo</title>
+          <title>Taxi</title>
           <use xlinkHref="/assets/brand/coreui.svg#signet" />
-        </svg>
+        </svg> */}
       </div>
 
       <div className="sidebar-nav flex-fill">

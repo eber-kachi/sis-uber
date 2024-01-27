@@ -20,13 +20,14 @@ const ListUsers = () => {
         // filtamos solo para editar usuarios que acceden al web-admin
         console.log({ responce });
 
-        // const usersfinaly = responce.data.data.reduce((users: any[], user: any) => {
-        //     // if (['USER', 'ADMIN'].includes(user.role)) {
-        //     return [...users, user];
-        //     // }
-        //     // return users;
-        // }, []);
-        setObjects(responce?.data);
+        const usersfinaly = responce.data.reduce((users: any[], user: any) => {
+            // debugger;
+            if (['USER', 'ADMIN'].includes(user.role)) {
+                return [...users, user];
+            }
+            return users;
+        }, []);
+        setObjects(usersfinaly);
     };
 
     const onClickDelete = (id: string) => {
@@ -89,7 +90,8 @@ const ListUsers = () => {
                                                 <div className='gap'>
                                                     <Link
                                                         title='Editar'
-                                                        className='btn btn-warning text-white mx-2'
+
+                                                        className='btn btn-outline-warning  mx-2'
                                                         href={{
                                                             pathname: '/dashboard/users/[id]',
                                                             query: { id: object.id },
@@ -98,8 +100,9 @@ const ListUsers = () => {
                                                         Editar
                                                     </Link>
                                                     <Button
+                                                        variant='outline-danger'
                                                         title='Eliminar'
-                                                        variant='danger'
+
                                                         onClick={() => onClickDelete(object.id)}
                                                     >
                                                         Eliminar
