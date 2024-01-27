@@ -12,6 +12,7 @@ import { deleteCookie, getCookie } from 'cookies-next';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import TokenStorageService from '@lib/tokenStoraje';
 import { AuthService } from '../../services/api/Auth.service';
+import { useAuth } from 'src/context/AuthContext';
 
 type Inputs = {
   email: string;
@@ -33,20 +34,11 @@ const Index: NextPage = () => {
 
   const authService = new AuthService();
   const token = new TokenStorageService();
+  const { login } = useAuth()
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
-    authService
-      .login(data)
-      .then((res) => {
-        console.log('login', res);
-        setTokenValue(res?.data?.token?.accessToken);
-        router.push('/dashboard');
-      })
-      .catch((errors) => {
-        console.log(errors);
-        setTokenValue('');
-      });
+    login(data)
   };
 
   const getRedirect = () => {
@@ -63,36 +55,36 @@ const Index: NextPage = () => {
     if (a && a.length > 0) {
       router.push('/dashboard');
     }
-  });
+  }, []);
 
-  useEffect(() => {
-    try {
-      // const valueToStore = value instanceof Function ? value(storedValue) : value;
-      // setStoredValue(valueToStore);
-      if (typeof window !== 'undefined') {
-        // window.localStorage.setItem(key, JSON.stringify(storedValue));
-        token.saveToken(tokenValue);
-        // window.localStorage.setItem('tokensss', tokenValue);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, [tokenValue]);
+  // useEffect(() => {
+  //   try {
+  //     // const valueToStore = value instanceof Function ? value(storedValue) : value;
+  //     // setStoredValue(valueToStore);
+  //     if (typeof window !== 'undefined') {
+  //       // window.localStorage.setItem(key, JSON.stringify(storedValue));
+  //       token.saveToken(tokenValue);
+  //       // window.localStorage.setItem('tokensss', tokenValue);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }, [tokenValue]);
 
   console.log('error', errors);
 
-  const login = async (e: SyntheticEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
+  // const login = async (e: SyntheticEvent) => {
+  //   e.stopPropagation();
+  //   e.preventDefault();
 
-    setSubmitting(true);
+  //   setSubmitting(true);
 
-    const res = await axios.post('api/mock/login');
-    if (res.status === 200) {
-      router.push(getRedirect());
-    }
-    setSubmitting(false);
-  };
+  //   const res = await axios.post('api/mock/login');
+  //   if (res.status === 200) {
+  //     router.push(getRedirect());
+  //   }
+  //   setSubmitting(false);
+  // };
 
   return (
     <div className='bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent'>

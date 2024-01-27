@@ -63,7 +63,7 @@ const Home: NextPage = () => {
 
   return (
     <AdminLayout>
-      <div className="row">
+      {/* <div className="row">
         <div className="col-sm-6 col-lg-3">
           <Card bg="primary" text="white" className="mb-4">
             <Card.Body className="pb-0 d-flex justify-content-between align-items-start">
@@ -1522,7 +1522,7 @@ const Home: NextPage = () => {
             </Card.Body>
           </Card>
         </div>
-      </div>
+      </div> */}
     </AdminLayout>
   )
 }

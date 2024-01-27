@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import TokenStorageService from '@lib/tokenStoraje'
 import { useEffect, useState } from 'react'
 import axios from '@lib/axios'
-import { object } from 'prop-types'
 
 export function useAuthClient() {
   const router = useRouter()
@@ -37,6 +36,17 @@ export function useAuthClient() {
     }
   })
 
+  const [role, setRole] = useState<string | null>(() => {
+    if (typeof window === 'undefined') {
+      return null
+    }
+    const item = token.getUser();
+    if (item != '{}') {
+      return String(item?.data?.role)
+    }
+    return null;
+  });
+
   const me = () => {
     axios
       .get('/api/auth/me')
@@ -44,11 +54,13 @@ export function useAuthClient() {
         console.log(res.data)
         token.saveUser(res.data)
         setUserValue(res.data)
+        setRole(String(res?.data?.role))
       })
       .catch((error) => {
         if (error.response.status == 401) {
           token.signOut()
-          router.push('/login')
+          router.replace('/login')
+          setRole(null)
         }
         if (error.response.status !== 409) throw error
       })
@@ -80,11 +92,12 @@ export function useAuthClient() {
     // debugger;
     const condition = tokenValue == null || JSON.stringify(userValue) === '{}'
     console.log('===============>', condition)
+    console.log('===============>', role)
     if (condition) {
       me()
     }
     // if (middleware === 'auth' && error) logout();
   }, [userValue, tokenValue])
 
-  return { userValue, tokenValue, logout }
+  return { userValue, tokenValue, logout, role }
 }

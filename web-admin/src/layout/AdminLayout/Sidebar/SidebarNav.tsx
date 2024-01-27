@@ -47,6 +47,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuthClient } from '@hooks/useAuthClient';
+import { useAuth } from 'src/context/AuthContext';
 
 type SidebarNavItemProps = {
   href: string;
@@ -165,8 +166,10 @@ export default function SidebarNav() {
 
   // const [role, setrole] = useState<string | null>(null)
 
-  const { role } = useAuthClient();
+  // const { role } = useAuthClient();
   // console.log({ userValue });
+
+  const { role } = useAuth();
 
   // useEffect(() => {
   //   // Add class to body if sidebar is present

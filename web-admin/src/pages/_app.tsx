@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import { ToastContainer } from 'react-toastify';
 import { SocketProvider } from '@hooks/socketContext';
 import React, { useEffect } from 'react';
+import { AuthProvider } from '../context/AuthContext';
 
 // You change this configuration value to false so that the Font Awesome core SVG library
 // will not try and insert <style> elements into the <head> of the page.
@@ -27,12 +28,14 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <SSRProvider>
-      <SocketProvider>
-        <ProgressBar />
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Component {...pageProps} />
-        <ToastContainer position='top-right' />
-      </SocketProvider>
+      <AuthProvider>
+        <SocketProvider>
+          <ProgressBar />
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          <Component {...pageProps} />
+          <ToastContainer position='top-right' />
+        </SocketProvider>
+      </AuthProvider>
     </SSRProvider>
   );
 }
